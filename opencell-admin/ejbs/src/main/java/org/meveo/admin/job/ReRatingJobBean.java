@@ -18,16 +18,20 @@
 
 package org.meveo.admin.job;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.async.SynchronizedIterator;
+import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.ReratingService;
@@ -35,11 +39,11 @@ import org.meveo.service.billing.impl.WalletOperationService;
 
 /**
  * Job implementation to rerate wallet operations
- * 
+ *
  * @author Andrius Karpavicius
  */
 @Stateless
-public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
+public class ReRatingJobBean extends IteratorBasedScopedJobBean<Long> {
 
     private static final long serialVersionUID = 2226065462536318643L;
 
@@ -59,27 +63,43 @@ public class ReRatingJobBean extends IteratorBasedJobBean<Long> {
 
     /**
      * Initialize job settings and retrieve data to process
-     * 
+     *
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of Wallet operation Ids to re-rate
      */
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
-        List<Long> ids = walletOperationService.listToRerate();
+        return getIterator(jobExecutionResult);
+    }
+
+    /**
+     * Re-rate wallet operation
+     *
+     * @param walletOperationId Wallet operation id
+     * @param jobExecutionResult Job execution result
+     */
+    private void rerate(Long walletOperationId, JobExecutionResultImpl jobExecutionResult) {
+        reratingService.reRate(walletOperationId, useSamePricePlan);
+    }
+    private Optional<Iterator<Long>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+        String reratingTarget = (String) this.getParamOrCFValue(jobInstance, ReRatingJob.CF_RERATING_TARGET);
+        List<EntityReferenceWrapper> batchEntityWrappers = (List<EntityReferenceWrapper>) this.getParamOrCFValue(jobInstance, ReRatingJob.CF_TARGET_BATCHES);
+        List<Long> targetBatches = CollectionUtils.isNotEmpty(batchEntityWrappers) ? batchEntityWrappers.stream().map(br -> br.getId()).collect(Collectors.toList()) : Collections.emptyList();
+        List<Long> ids = walletOperationService.listToRerate(reratingTarget, targetBatches, jobItemsLimit);
 
         useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
 
         return Optional.of(new SynchronizedIterator<Long>(ids));
     }
 
-    /**
-     * Re-rate wallet operation
-     * 
-     * @param walletOperationId Wallet operation id
-     * @param jobExecutionResult Job execution result
-     */
-    private void rerate(Long walletOperationId, JobExecutionResultImpl jobExecutionResult) {
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIteratorWithLimit(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        return getSynchronizedIterator(jobExecutionResult, jobItemsLimit);
+    }
 
-        reratingService.reRate(walletOperationId, useSamePricePlan);
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult) {
+        return getSynchronizedIterator(jobExecutionResult, 0);
     }
 }

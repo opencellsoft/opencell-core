@@ -84,7 +84,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
 
         try {
             cdrReader = cdrParserService.getReader(readerCode);
-            cdrReader.init("DB");
+            cdrReader.init("DB", jobInstance);
             Integer totalNummberOfRecords = cdrReader.getNumberOfRecords();
             if (totalNummberOfRecords != null) {
                 jobExecutionResult.addNbItemsToProcess(totalNummberOfRecords);
@@ -103,13 +103,12 @@ public class MediationReprocessingJobBean extends BaseJobBean {
             List<Future> futures = new ArrayList<>();
             MeveoUser lastCurrentUser = currentUser.unProxy();
 
-            int checkJobStatusEveryNr = jobInstance.getJobSpeed().getCheckNb();
-            int updateJobStatusEveryNr = nbRuns.longValue() > 3 ? jobInstance.getJobSpeed().getUpdateNb() * nbRuns.intValue() / 2 : jobInstance.getJobSpeed().getUpdateNb();
-
             ICdrReader cdrReaderFinal = cdrReader;
             ICdrParser cdrParserFinal = cdrParser;
 
             String originRecordEL = appProvider.getCdrDeduplicationKeyEL();
+
+            Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
 
             Runnable task = () -> {
 
@@ -121,7 +120,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
 
                 mainLoop: while (true) {
 
-                    if (i % checkJobStatusEveryNr == 0 && !jobExecutionService.isShouldJobContinue(jobExecutionResult.getJobInstance().getId())) {
+                    if (isJobRequestedToStop(jobInstanceId)) {
                         break;
                     }
 
@@ -159,20 +158,18 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                         cdrService.update(cdr);
                     }
 
-                    try {
-                        // Record progress
-                        if (globalI > 0 && globalI % updateJobStatusEveryNr == 0) {
-                            jobExecutionResultService.persistResult(jobExecutionResult);
-                        }
-                    } catch (EJBTransactionRolledbackException e) {
-                        // Will ignore the error here, as its most likely to happen - updating jobExecutionResultImpl entity from multiple threads
-                    } catch (Exception e) {
-                        log.error("Failed to update job progress", e);
-                    }
-
                     i++;
                 }
             };
+
+            // Tracks if job's main thread is still running. Used only to stop job status reporting thread.
+            boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstanceId) };
+
+            // Start job status report task. Not run in future, so it will die when main thread dies
+            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
+                currentUserProvider, log, jobExecutionResultService, jobExecutionService);
+            Thread jobStatusReportThread = new Thread(jobStatusReportTask);
+            jobStatusReportThread.start();
 
             for (int i = 0; i < nbRuns; i++) {
                 log.info("{}/{} Will submit task to run", jobInstance.getJobTemplate(), jobInstance.getCode());
@@ -204,6 +201,10 @@ public class MediationReprocessingJobBean extends BaseJobBean {
                     log.error("Failed to execute async method", cause);
                 }
             }
+
+            // This will exit the status report task
+            isProcessing[0] = false;
+            jobStatusReportThread.interrupt();
 
             // Mark job as stopped if task was killed
             if (wasKilled) {

@@ -7,12 +7,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.provider.Provider;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BillingAccount;
@@ -41,6 +43,7 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.DunningPauseReasonsService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class ProviderResourceImpl implements ProviderResource {
     @Inject
     private ProviderService providerService;
@@ -175,9 +178,7 @@ public class ProviderResourceImpl implements ProviderResource {
             providerByCode.setMaximumDelay(providerUpdateInfos.getMaximumDelay());
         }
 
-        if (provider.getMaximumDeferralPerInvoice() != null) {
-            providerByCode.setMaximumDeferralPerInvoice(providerUpdateInfos.getMaximumDeferralPerInvoice());
-        }
+        providerByCode.setMaximumDeferralPerInvoice(providerUpdateInfos.getMaximumDeferralPerInvoice());
 
         if (provider.getCurrency() != null) {
             checkAndAddCurrency(providerByCode, providerUpdateInfos);

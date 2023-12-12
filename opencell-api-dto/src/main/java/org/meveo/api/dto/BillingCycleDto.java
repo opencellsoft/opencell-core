@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.DateAggregationOption;
+import org.meveo.model.billing.DiscountAggregationModeEnum;
 import org.meveo.model.billing.ReferenceDateEnum;
 import org.meveo.model.billing.ThresholdOptionsEnum;
 
@@ -151,7 +152,7 @@ public class BillingCycleDto extends BusinessEntityDto {
 
     /** The billing cycle type. */
     @XmlElement
-    private BillingEntityTypeEnum type;
+    private BillingEntityTypeEnum type = BillingEntityTypeEnum.BILLINGACCOUNT;
 
     /**
      * What reference date to use when calculating the next invoicing date with an invoice calendar as in: BillingCycle.calendar.nextCalendarDate(referenceDate)
@@ -199,7 +200,7 @@ public class BillingCycleDto extends BusinessEntityDto {
     
     private Boolean useAccountingArticleLabel;
     
-    private DateAggregationOption dateAggregation;
+    private DateAggregationOption dateAggregation = DateAggregationOption.NO_DATE_AGGREGATION;
     
     private Boolean aggregateUnitAmounts;
     
@@ -207,11 +208,31 @@ public class BillingCycleDto extends BusinessEntityDto {
     
     private Boolean ignoreOrders;
 
+    private Boolean ignoreUserAccounts;
+
+    /**
+     * Discount type Rated transaction aggregation mode
+     */
+    @Schema(description = "Discount aggregation mode", allowableValues = {"NO_AGGREGATION", "FULL_AGGREGATION"}, defaultValue = "FULL_AGGREGATION")
+    private DiscountAggregationModeEnum discountAggregation;
+
     /**
      * To decide to use incremental invoice lines or not.
      */
     @Schema(description = "Use incremental mode in invoice lines or not", nullable = true)
     private Boolean incrementalInvoiceLines;
+
+    @Size(max = 2000)
+    private String applicationEl;
+
+    /**
+     * Billing cycle report config
+     */
+    @Schema(description = "Billing cycle report config", nullable = true)
+    private ReportConfig reportConfig = new ReportConfig();
+
+    @Schema(description = "List of additional aggregation criteria")
+    private List<String> additionalAggregationFields;
 
     public String getLastTransactionDateDelayEL() {
 		return lastTransactionDateDelayEL;
@@ -295,6 +316,15 @@ public class BillingCycleDto extends BusinessEntityDto {
             aggregateUnitAmounts = billingCycleEntity.isAggregateUnitAmounts();
             ignoreSubscriptions = billingCycleEntity.isIgnoreSubscriptions();
             ignoreOrders = billingCycleEntity.isIgnoreOrders();
+            discountAggregation = billingCycleEntity.getDiscountAggregation();
+            ignoreUserAccounts = billingCycleEntity.isIgnoreUserAccounts();
+            this.reportConfig = new ReportConfig(billingCycleEntity.getReportConfigPreReportAutoOnCreate(),
+                    billingCycleEntity.getReportConfigPreReportAutoOnInvoiceLinesJob(),
+                    billingCycleEntity.getReportConfigDisplayBillingAccounts(), billingCycleEntity.getReportConfigDisplaySubscriptions(),
+                    billingCycleEntity.getReportConfigDisplayOffers(), billingCycleEntity.getReportConfigDisplayProducts(),
+                    billingCycleEntity.getReportConfigDisplayArticles(), billingCycleEntity.getReportConfigBlockSizeBillingAccounts(),
+                    billingCycleEntity.getReportConfigBlockSizeSubscriptions(), billingCycleEntity.getReportConfigBlockSizeOffers(),
+                    billingCycleEntity.getReportConfigBlockSizeProducts(), billingCycleEntity.getReportConfigBlockSizeArticles());
         }
     }
 
@@ -780,5 +810,63 @@ public class BillingCycleDto extends BusinessEntityDto {
      */
     public Boolean getIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
+    }
+
+    public String getApplicationEl() {
+        return applicationEl;
+    }
+
+    /**
+     * Get the discountAggregation
+     * @return discountAggregation value
+     */
+    public DiscountAggregationModeEnum getDiscountAggregation() {
+        return discountAggregation;
+    }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
+    }
+
+    /**
+     * set the discountAggregation
+     *
+     * @param discountAggregation to set
+     */
+    public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
+        this.discountAggregation = discountAggregation;
+    }
+
+
+	public Boolean getIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(Boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+
+    public ReportConfig getReportConfig() {
+        return reportConfig;
+    }
+
+    public void setReportConfig(ReportConfig reportConfig) {
+        this.reportConfig = reportConfig;
+    }
+
+    /**
+     * Get the additional aggregration fields
+     * @return
+     */
+    public List<String> getAdditionalAggregationFields() {
+        return additionalAggregationFields;
+    }
+
+    /**
+     * Set the additional aggregation fields
+     * @param additionalAggregationFields
+     */
+    public void setAdditionalAggregationFields(List<String> additionalAggregationFields) {
+        this.additionalAggregationFields = additionalAggregationFields;
     }
 }

@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * This program is not suitable for any direct or indirect application in MILITARY industry
  * See the GNU Affero General Public License for more details.
  *
@@ -18,15 +18,6 @@
  */
 package org.meveo.service.job;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.QueryBuilder;
@@ -34,14 +25,24 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobExecutionResultStatusEnum;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The Class JobExecution result service.
- * 
+ *
  * @author Andrius Karpavicius
  * @lastModifiedVersion 11.0
- * 
  */
 @Stateless
 public class JobExecutionResultService extends PersistenceService<JobExecutionResultImpl> {
@@ -51,7 +52,7 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
 
     /**
      * Persist job execution results.
-     * 
+     *
      * @param result Job execution result
      * @return True if job is completely done. False if any data are left to process.
      */
@@ -79,16 +80,17 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
                 log.info("Job execution finished {}", result);
             }
             getEntityManager().createNamedQuery("JobExecutionResult.updateProgress").setParameter("id", result.getId()).setParameter("endDate", result.getEndDate())
-                .setParameter("nbItemsToProcess", (result.getNbItemsToProcess() != 0 ? result.getNbItemsToProcess() : result.getNbItemsCorrectlyProcessed() + result.getNbItemsProcessedWithError() + result.getNbItemsProcessedWithWarning())).setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed())
-                .setParameter("nbItemsProcessedWithError", result.getNbItemsProcessedWithError()).setParameter("nbItemsProcessedWithWarning", result.getNbItemsProcessedWithWarning())
-                .setParameter("report", result.getReport()).setParameter("status", result.getStatus()).executeUpdate();
+                    .setParameter("nbItemsToProcess",
+                            (result.getNbItemsToProcess() != 0 ? result.getNbItemsToProcess() : result.getNbItemsCorrectlyProcessed() + result.getNbItemsProcessedWithError() + result.getNbItemsProcessedWithWarning()))
+                    .setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed()).setParameter("nbItemsProcessedWithError", result.getNbItemsProcessedWithError())
+                    .setParameter("nbItemsProcessedWithWarning", result.getNbItemsProcessedWithWarning()).setParameter("report", result.getReport()).setParameter("status", result.getStatus()).executeUpdate();
         }
     }
 
     /**
      * Gets the find query.
      *
-     * @param jobName job name
+     * @param jobName       job name
      * @param configuration configuration
      * @return querry builder
      */
@@ -105,9 +107,9 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
 
     /**
      * Count job execution history records which end date is older then a given date and belong to a given job (optional)
-     * 
+     *
      * @param jobName job name (optional)
-     * @param date Date to check
+     * @param date    Date to check
      * @return A number of job execution history records which is older then a given date
      */
     public long countJobExecutionHistoryToDelete(String jobName, Date date) {
@@ -129,9 +131,9 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
 
     /**
      * Remove job execution history older than a given date and belong to a given job (optional)
-     * 
+     *
      * @param jobName Job name to match (optional)
-     * @param date Date to check
+     * @param date    Date to check
      * @return A number of records that were removed
      */
     @JpaAmpNewTx
@@ -161,7 +163,7 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
     /**
      * Find JobExecutionResultImpl.
      *
-     * @param jobName job's name
+     * @param jobName       job's name
      * @param configuration pagination configuration
      * @return list of job's result.
      */
@@ -173,7 +175,7 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
     /**
      * Count.
      *
-     * @param jobName job name
+     * @param jobName       job name
      * @param configuration configuration
      * @return number of job
      */
@@ -204,7 +206,7 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
 
     /**
      * Finds the last job execution result by a given job instance.
-     * 
+     *
      * @param jobInstance JobInstance filter
      * @return last job execution result
      */
@@ -214,5 +216,61 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
         qb.addOrderCriterionAsIs("id", false);
 
         return (JobExecutionResultImpl) qb.getQuery(getEntityManager()).setMaxResults(1).getResultList().get(0);
+    }
+
+    /**
+     * Get a list of unfinished job execution results for a current node and mark all them as canceled
+     *
+     * @return A list of unfinished job execution results
+     */
+    public List<JobExecutionResultImpl> listUnfinishedJobsAndMarkThemCanceled(String nodeName) {
+
+        EntityManager em = getEntityManager();
+        List<JobExecutionResultImpl> jobInstances = em.createNamedQuery("JobExecutionResult.listUnfinishedJobs", JobExecutionResultImpl.class).getResultList();
+
+        em.createNamedQuery("JobExecutionResult.cancelUnfinishedJobsByNode").setParameter("nodeName", nodeName).executeUpdate();
+
+        return jobInstances;
+    }
+
+    /**
+     * Gets the job duration limit
+     *
+     * @param jobExecutionResult the job execution result
+     * @return the difference between now and the start date of job
+     */
+    public Long getJobDurationLimit(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        Long jobDurationLimit = jobInstanceService.getJobDurationLimit(jobInstance);
+        if (jobDurationLimit == null || jobDurationLimit == 0) {
+            return null;
+        }
+        // Convert configured duration from minutes to milliseconds
+        jobDurationLimit = TimeUnit.MILLISECONDS.convert(jobDurationLimit, TimeUnit.MINUTES);
+
+        // Get the real duration which job has taken to run
+        Date startDate = jobExecutionResult.getStartDate();
+        Date currentDate = new Date();
+        long jobExecutionDuration = currentDate.getTime() - startDate.getTime();
+
+        return TimeUnit.SECONDS.convert(jobDurationLimit - jobExecutionDuration, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Gets the job time limit
+     *
+     * @param jobExecutionResult the job execution result
+     * @return the difference between limit time and the start date of job
+     */
+    public Long getJobTimeLimit(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        Date jobTimeLimit = jobInstanceService.getJobTimeLimit(jobInstance);
+        if (jobTimeLimit == null) {
+            return null;
+        }
+        Date dateLimit = jobExecutionResult.getStartDate();
+        dateLimit = DateUtils.setHourToDate(dateLimit, jobTimeLimit.getHours());
+        dateLimit = DateUtils.setMinuteToDate(dateLimit, jobTimeLimit.getMinutes());
+        Date currentDate = new Date();
+
+        return TimeUnit.SECONDS.convert(dateLimit.getTime() - currentDate.getTime(), TimeUnit.MILLISECONDS);
     }
 }

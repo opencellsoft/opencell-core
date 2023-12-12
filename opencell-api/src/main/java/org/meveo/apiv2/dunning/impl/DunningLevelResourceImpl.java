@@ -5,14 +5,17 @@ import static javax.ws.rs.core.Response.ok;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.resource.DunningLevelResource;
 import org.meveo.apiv2.dunning.service.DunningLevelApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 import org.meveo.model.dunning.DunningLevel;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningLevelResourceImpl implements DunningLevelResource {
 
 	@Inject

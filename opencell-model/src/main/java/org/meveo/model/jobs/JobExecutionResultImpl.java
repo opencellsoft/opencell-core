@@ -59,7 +59,8 @@ import org.meveo.model.NotifiableEntity;
         @NamedQuery(name = "JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", query = "select count(*) FROM JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
         @NamedQuery(name = "JobExecutionResult.purgeHistoryByDateAndJobInstance", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
         @NamedQuery(name = "JobExecutionResult.updateProgress", query = "update JobExecutionResultImpl set endDate=:endDate, nbItemsToProcess=:nbItemsToProcess, nbItemsCorrectlyProcessed=:nbItemsCorrectlyProcessed, nbItemsProcessedWithError=:nbItemsProcessedWithError, nbItemsProcessedWithWarning=:nbItemsProcessedWithWarning, report=:report, status=:status where id=:id"),
-        @NamedQuery(name = "JobExecutionResult.cancelAllRunningJobs", query = "update JobExecutionResultImpl je set je.status='CANCELLED', je.endDate=NOW(), je.report='job cancelled due to the server was shutdown in the middle of job execution' where je.status = 'RUNNING'") })
+        @NamedQuery(name = "JobExecutionResult.cancelUnfinishedJobsByNode", query = "update JobExecutionResultImpl je set je.status='CANCELLED', je.endDate=NOW(), je.report='job cancelled due to the server was shutdown in the middle of job execution' where je.status = 'RUNNING' and je.nodeName=:nodeName"),
+        @NamedQuery(name = "JobExecutionResult.listUnfinishedJobs", query = "select jr from JobExecutionResultImpl jr where jr.id in (select distinct (case when je.parentJobExecutionResult is null then je.id else je.parentJobExecutionResult end) from JobExecutionResultImpl je where je.status = 'RUNNING')") })
 
 public class JobExecutionResultImpl extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
@@ -149,6 +150,12 @@ public class JobExecutionResultImpl extends BaseEntity {
     private String report;
 
     /**
+     * A name of node that job ran on
+     */
+    @Column(name = "node")
+    private String nodeName;
+
+    /**
      * Indicates that job has not completed fully - there might be more data to process
      */
     @Transient
@@ -181,11 +188,12 @@ public class JobExecutionResultImpl extends BaseEntity {
      * 
      * @param jobInstance Job instance
      */
-    public JobExecutionResultImpl(JobInstance jobInstance, JobLauncherEnum jobLauncher) {
+    public JobExecutionResultImpl(JobInstance jobInstance, JobLauncherEnum jobLauncher, String nodeName) {
         this.jobInstance = jobInstance;
         this.status = JobExecutionResultStatusEnum.RUNNING;
         this.startDate = new Date();
         this.jobLauncherEnum = jobLauncher;
+        this.nodeName = nodeName;
     }
 
     /**
@@ -260,12 +268,23 @@ public class JobExecutionResultImpl extends BaseEntity {
      * @param error Message to log
      * @return A total number of processed items, successful or failed
      */
-    public synchronized long registerError(String error) {
+    public long registerError(String error) {
+        return registerError(error, 1);
+    }
+
+    /**
+     * Increment a count of items processed with error and log an error
+     * 
+     * @param error Message to log
+     * @param numberFailed Number failed
+     * @return A total number of processed items, successful or failed
+     */
+    public synchronized long registerError(String error, int numberFailed) {
         if (jobInstance.isVerboseReport() && !StringUtils.isBlank(error)) {
             addReport(error);
             errors.add(error);
         }
-        nbItemsProcessedWithError++;
+        nbItemsProcessedWithError = nbItemsProcessedWithError + numberFailed;
 
         return nbItemsCorrectlyProcessed + nbItemsProcessedWithError + nbItemsProcessedWithWarning;
     }
@@ -498,6 +517,15 @@ public class JobExecutionResultImpl extends BaseEntity {
     public synchronized void addReport(String messageToAppend) {
         this.report = (this.report == null ? "" : (this.report + " \n ")) + messageToAppend;
     }
+    
+    /**
+     * Append message to report to the beginning
+     * 
+     * @param messageToAppend A message to append
+     */
+    public synchronized void addReportToBeginning(String messageToAppend) {
+        this.report = messageToAppend + (this.report == null ? "" : (" \n " + this.report));
+    }
 
     /**
      * @return Job execution status
@@ -541,6 +569,20 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public void setJobLauncherEnum(JobLauncherEnum jobLauncherEnum) {
         this.jobLauncherEnum = jobLauncherEnum;
+    }
+
+    /**
+     * @return A name of node that job run on
+     */
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    /**
+     * @param nodeName A name of node that job run on
+     */
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
     }
 
     /**
@@ -679,6 +721,11 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public JobExecutionResultStatusEnum getCumulativeStatus() {
         cumulativeStatus = status;
+
+        // If main node has completed, then ignore statuses of worker nodes
+        if (status == JobExecutionResultStatusEnum.COMPLETED || status == JobExecutionResultStatusEnum.COMPLETED_MORE || status == JobExecutionResultStatusEnum.RUNNING) {
+            return status;
+        }
 
         for (JobExecutionResultImpl workerJob : workerJobExecutionResults) {
             cumulativeStatus = cumulativeStatus.getStatusWithHigherPriority(workerJob.getStatus());

@@ -13,9 +13,9 @@ import javax.validation.constraints.NotNull;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.cpq.AttributeBaseEntity;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValidationType;
-import org.meveo.model.cpq.ProductVersionAttribute;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.trade.CommercialRuleHeader;
 
@@ -124,60 +124,112 @@ public class ProductVersionAttributeDTO {
     public ProductVersionAttributeDTO() {
         super();
     }
-    public ProductVersionAttributeDTO(ProductVersionAttribute productVersionAttribute) {
-    	Attribute attribute=productVersionAttribute.getAttribute();
-        if(attribute != null) {
-        this.id=attribute.getId();
-        this.code=attribute.getCode();
-        this.description=attribute.getDescription();
-        this.disabled=attribute.isDisabled();
-        this.attributeType=attribute.getAttributeType(); 
-		this.allowedValues = new HashSet<>(attribute.getAllowedValues());
-		
-        this.display=productVersionAttribute.isDisplay();
-        this.mandatory = productVersionAttribute.isMandatory();
-        this.unitNbDecimal=attribute.getUnitNbDecimal();
-        this.readOnly=productVersionAttribute.getReadOnly();
-        this.validationType = productVersionAttribute.getValidationType();
-        this.validationPattern = productVersionAttribute.getValidationPattern();
-        this.validationLabel = productVersionAttribute.getValidationLabel();
-        if (!attribute.getChargeTemplates().isEmpty()) {
-        	for (ChargeTemplate charge:attribute.getChargeTemplates()) {
-        		this.chargeTemplateCodes.add(charge.getCode());
-        	}
-        }
-        if (!attribute.getCommercialRules().isEmpty()) {
-        	for (CommercialRuleHeader rule:attribute.getCommercialRules()) {
-        		this.commercialRuleCodes.add(rule.getCode());
-        	}
-        }   
-        if(!attribute.getMedias().isEmpty()){
-			this.mediaCodes = attribute.getMedias().stream()
-								.map(tag -> tag.getCode())
-								.collect(Collectors.toSet());
-		} 
-        if(!attribute.getTags().isEmpty()){
-			this.tagCodes = attribute.getTags().stream()
-								.map(tag -> tag.getCode())
-								.collect(Collectors.toList());
+
+	public ProductVersionAttributeDTO(AttributeBaseEntity attributebaseEntity) {
+		new ProductVersionAttributeDTO(attributebaseEntity,true);
+
+	}
+    public ProductVersionAttributeDTO(AttributeBaseEntity attributebaseEntity, boolean loadNestedEntities) {
+		Attribute attribute=attributebaseEntity.getAttribute();
+		if (attribute != null) {
+			this.id = attribute.getId();
+			this.code = attribute.getCode();
+			this.description = attribute.getDescription();
+			this.disabled = attribute.isDisabled();
+			this.attributeType = attribute.getAttributeType();
+			this.allowedValues = new HashSet<>(attribute.getAllowedValues());
+			this.priority = attribute.getPriority();
+			this.display = attributebaseEntity.isDisplay();
+			this.mandatory = attributebaseEntity.isMandatory();
+			this.unitNbDecimal = attribute.getUnitNbDecimal();
+			this.readOnly = attributebaseEntity.getReadOnly();
+			this.validationType = attributebaseEntity.getValidationType();
+			this.validationPattern = attributebaseEntity.getValidationPattern();
+			this.validationLabel = attributebaseEntity.getValidationLabel();
+			if (loadNestedEntities) {
+				if (!attribute.getChargeTemplates().isEmpty()) {
+					for (ChargeTemplate charge : attribute.getChargeTemplates()) {
+						this.chargeTemplateCodes.add(charge.getCode());
+					}
+				}
+				if (!attribute.getCommercialRules().isEmpty()) {
+					for (CommercialRuleHeader rule : attribute.getCommercialRules()) {
+						this.commercialRuleCodes.add(rule.getCode());
+					}
+				}
+				if (!attribute.getMedias().isEmpty()) {
+					this.mediaCodes = attribute.getMedias().stream()
+							.map(tag -> tag.getCode())
+							.collect(Collectors.toSet());
+				}
+				if (!attribute.getTags().isEmpty()) {
+					this.tagCodes = attribute.getTags().stream()
+							.map(tag -> tag.getCode())
+							.collect(Collectors.toList());
+				}
+				if (!attribute.getAssignedAttributes().isEmpty()) {
+					for (Attribute attr : attribute.getAssignedAttributes()) {
+						assignedAttributeCodes.add(attr.getCode());
+					}
+				}
+				if (attribute.getGroupedAttributes() != null && !attribute.getGroupedAttributes().isEmpty()) {
+					this.groupedAttributes = attribute.getGroupedAttributes().stream()
+							.map(ga -> new GroupedAttributeDto(ga))
+							.collect(Collectors.toList());
+				}
+			}
+
+
+			this.attributeCode = attributebaseEntity.getAttribute().getCode();
+			this.sequence = attributebaseEntity.getSequence();
+			this.mandatoryWithEl = attributebaseEntity.getMandatoryWithEl();
+			this.defaultValue = attributebaseEntity.getDefaultValue();
 		}
-        if (!attribute.getAssignedAttributes().isEmpty()) {
-        	for (Attribute attr:attribute.getAssignedAttributes()) {
-        		assignedAttributeCodes.add(attr.getCode());
-        	}
-        }
-    	if(attribute.getGroupedAttributes()!=null && !attribute.getGroupedAttributes().isEmpty()){
-			this.groupedAttributes = attribute.getGroupedAttributes().stream()
-					.map(ga -> new GroupedAttributeDto(ga))
-					.collect(Collectors.toList());
+	}
+
+	public ProductVersionAttributeDTO(Attribute attribute,List<GroupedAttributeDto> groupedAttributes) {
+		this.groupedAttributes=groupedAttributes;
+		if(attribute != null) {
+			this.id=attribute.getId();
+			this.code=attribute.getCode();
+			this.description=attribute.getDescription();
+			this.disabled=attribute.isDisabled();
+			this.attributeType=attribute.getAttributeType();
+			this.allowedValues = attribute.getAllowedValues();
+			if (!attribute.getChargeTemplates().isEmpty()) {
+				for (ChargeTemplate charge:attribute.getChargeTemplates()) {
+					this.chargeTemplateCodes.add(charge.getCode());
+				}
+			}
+			if (!attribute.getCommercialRules().isEmpty()) {
+				for (CommercialRuleHeader rule:attribute.getCommercialRules()) {
+					this.commercialRuleCodes.add(rule.getCode());
+				}
+			}
+			if(!attribute.getMedias().isEmpty()){
+				this.mediaCodes = attribute.getMedias().stream()
+						.map(tag -> tag.getCode())
+						.collect(Collectors.toSet());
+			}
+			if(!attribute.getTags().isEmpty()){
+				this.tagCodes = attribute.getTags().stream()
+						.map(tag -> tag.getCode())
+						.collect(Collectors.toList());
+			}
+			if (!attribute.getAssignedAttributes().isEmpty()) {
+				for (Attribute attr:attribute.getAssignedAttributes()) {
+					assignedAttributeCodes.add(attr.getCode());
+				}
+			}
+			if(attribute.getGroupedAttributes()!=null && !attribute.getGroupedAttributes().isEmpty()){
+				this.groupedAttributes = attribute.getGroupedAttributes().stream()
+						.map(ga -> new GroupedAttributeDto(ga))
+						.collect(Collectors.toList());
+			}
+
+			this.attributeCode = attribute.getCode();
 		}
-        
-        this.attributeCode = productVersionAttribute.getAttribute().getCode();
-        this.sequence = productVersionAttribute.getSequence();
-        this.mandatoryWithEl = productVersionAttribute.getMandatoryWithEl(); 
-        this.defaultValue = productVersionAttribute.getDefaultValue();  
-        }
-    }
+	}
     /**
      * @return the sequence
      */

@@ -45,6 +45,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaypalPaymentMethod;
 import org.meveo.model.payments.StripePaymentMethod;
+import org.meveo.model.payments.SipsPaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.security.MeveoUser;
 
@@ -393,6 +394,8 @@ public class PaymentMethodDto extends BaseEntityDto implements IEnableDto, IEnti
             break;   
         case CASH:
         	pmEntity = new CashPaymentMethod(disabledBool, alias, disabledBool, customerAccount, userId);
+        case SIPS:
+            pmEntity = new SipsPaymentMethod(disabledBool, alias, disabledBool, customerAccount, userId);
         default:
             break;
         }

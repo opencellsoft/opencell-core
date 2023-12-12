@@ -216,6 +216,8 @@ public class AccountingArticleApiService implements AccountingArticleServiceBase
             accountingArticle.setAllowanceCode(baseEntity.getAllowanceCode());
         }
         
+        accountingArticle.setPhysical(baseEntity.isPhysical());
+        
         accountingArticle.setIgnoreAggregation(baseEntity.isIgnoreAggregation());
 
         accountingArticleService.update(accountingArticle);

@@ -53,6 +53,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.config.annotation.FilterProperty;
 import org.meveo.api.security.config.annotation.FilterResults;
+import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.commons.utils.StringUtils;
@@ -74,7 +75,6 @@ import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -120,9 +120,6 @@ public class PaymentApi extends BaseApi {
 	@Inject
 	private JournalService journalService;
 
-	@Inject
-	private TradingCurrencyService tradingCurrencyService;
-
 	/**
      * @param paymentDto payment object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
@@ -157,7 +154,7 @@ public class PaymentApi extends BaseApi {
 
         Payment payment = new Payment();
 		paymentService.calculateAmountsByTransactionCurrency(payment, customerAccount,
-				paymentDto.getAmount(), paymentDto.getTransactionalcurrency(), payment.getTransactionDate());
+				paymentDto.getAmount(), paymentDto.getTransactionalCurrency(), payment.getTransactionDate());
 
 		payment.setJournal(occTemplate.getJournal());
         payment.setPaymentMethod(paymentDto.getPaymentMethod());
@@ -201,13 +198,13 @@ public class PaymentApi extends BaseApi {
 		payment.setJournal(journalService.findByCode("BAN"));
         paymentService.create(payment);
 
-        if (paymentDto.isToMatching()) {
-            matchPayment(paymentDto, customerAccount, payment);
-            paymentHistoryService.addHistory(customerAccount,
-            		payment,
-    				null, paymentDto.getAmount().multiply(new BigDecimal(100)).longValue(),
-    				PaymentStatusEnum.ACCEPTED, null, null, payment.getReference(), null, null,
-    				null,null,paymentDto.getListAoIdsForMatching());            
+		paymentHistoryService.addHistory(customerAccount,
+				payment,
+				null, paymentDto.getAmount().multiply(new BigDecimal(100)).longValue(),
+				PaymentStatusEnum.ACCEPTED, null, null, payment.getReference(), null, null,
+				null,null,paymentDto.getListAoIdsForMatching());
+		if (paymentDto.isToMatching()) {
+			matchPayment(paymentDto, customerAccount, payment);
         } else {
             log.info("no matching created ");
         }
@@ -260,7 +257,7 @@ public class PaymentApi extends BaseApi {
 			aosToPaid.add(ao);
 		}
 		 Collections.sort(aosToPaid, Comparator.comparing(AccountOperation::getDueDate));
-		if(checkAccountOperationCurrency(aosToPaid, paymentDto.getTransactionalcurrency())) {
+		if(checkAccountOperationCurrency(aosToPaid, paymentDto.getTransactionalCurrency())) {
 			throw new BusinessApiException("Transaction currency is different from account operation currency");
 		}
 		for(AccountOperation ao :aosToPaid ) {
@@ -291,6 +288,8 @@ public class PaymentApi extends BaseApi {
 	 * @author akadid abdelmounaim
 	 * @lastModifiedVersion 5.0
 	 */
+
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
 	public CustomerPaymentsResponse getPaymentList(String customerAccountCode, PagingAndFiltering pagingAndFiltering) throws Exception {
 
 		CustomerPaymentsResponse result = new CustomerPaymentsResponse();
@@ -378,6 +377,7 @@ public class PaymentApi extends BaseApi {
 	 * @return balance for customer account
 	 * @throws BusinessException business exception
 	 */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
 	public double getBalance(String customerAccountCode) throws BusinessException {
 
 		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);

@@ -2,15 +2,18 @@ package org.meveo.apiv2.catalog.resource.pricelist;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.catalog.PriceListLineDto;
 import org.meveo.apiv2.catalog.service.pricelist.PriceListLineApiService;
 import org.meveo.apiv2.generic.common.LinkGenerator;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 @Stateless
+@Interceptors({ WsRestApiInterceptor.class })
 public class PriceListLineResourceImpl implements PriceListLineResource {
 
     @Inject

@@ -39,6 +39,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.payments.impl.*;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTransactionService;
 
@@ -206,7 +207,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 		
 		aos.stream().forEach(accountOperation -> {
 	          // check amount to match
-	        Optional<AccountOperationAndSequence> accountOperationAndSequenceOptional = accountOperations.stream().filter(aoas -> aoas.getId() == accountOperation.getId()).findFirst();
+	        Optional<AccountOperationAndSequence> accountOperationAndSequenceOptional = accountOperations.stream().filter(aoas -> aoas.getId().equals(accountOperation.getId())).findFirst();
 			if (accountOperationAndSequenceOptional.isPresent()) {
 				if (accountOperationAndSequenceOptional.get().getAmountToMatch() != null) {
 					BigDecimal amountToMatch = accountOperationAndSequenceOptional.get().getAmountToMatch();
@@ -235,24 +236,25 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 				});
 
 		try {
-			Long creditAoId = aoIds.get(0); // First AO is Credit, and shall be add with DEBIT to do unitary matching
+			// First AO is Credit, and shall be add with DEBIT to do unitary matching
+			Long creditAoId = aos.stream().filter(ao -> OperationCategoryEnum.CREDIT == ao.getTransactionCategory()).findFirst()
+					.orElseThrow(() -> new BusinessApiException("No credit AO passed for matching")).getId();
 
 			MatchingReturnObject matchingResult = new MatchingReturnObject();
 			List<PartialMatchingOccToSelect> partialMatchingOcc = new ArrayList<>();
 			matchingResult.setPartialMatchingOcc(partialMatchingOcc);
-			if(aos.size()>0) {
+			if (CollectionUtils.isNotEmpty(aos)) {
 			    TradingCurrency theFirstTradingCurrency = aos.get(0).getTransactionalCurrency();
 			    for (AccountOperation accountOperation : aos) {
 			        if (!theFirstTradingCurrency.getId().equals(accountOperation.getTransactionalCurrency().getId())) {
 	                    throw new BusinessApiException(resourceMessages.getString("accountOperation.error.sameCurrency"));
 	                }
-	                Long aoId = accountOperation.getId();
-	                if (aoId.equals(creditAoId)) {
+	                if (accountOperation.getId().equals(creditAoId)) {
 	                    // process only DEBIT AO
 	                    continue;
 	                }
 	                MatchingReturnObject unitaryResult = matchingCodeService.matchOperations(customer.getId(), customer.getCode(),
-	                        List.of(creditAoId, aoId), aoId, accountOperation.getAmountForUnmatching());
+	                        List.of(creditAoId, accountOperation.getId()), accountOperation.getId(), accountOperation.getAmountForUnmatching());
 
 	                if (matchingResult.getPartialMatchingOcc() != null) {
 	                    partialMatchingOcc.addAll(matchingResult.getPartialMatchingOcc());

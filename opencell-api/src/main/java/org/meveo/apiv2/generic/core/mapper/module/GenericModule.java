@@ -9,6 +9,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.meveo.model.IEntity;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Tax;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.payments.PaymentMethod;
 
@@ -53,6 +54,17 @@ public class GenericModule extends SimpleModule {
         addSerializer(Date.class, new SqlDateSerializer(Date.class));
         addSerializer(BigDecimal.class, new BigDecimalSerializer());
         addKeyDeserializer(Tax.class, new KeyDeserializer() {
+            @Override
+            public Object deserializeKey(String key, DeserializationContext ctxt)
+                    throws IOException, JsonProcessingException {
+                try {
+                    return Class.forName(key);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        addKeyDeserializer(TradingLanguage.class, new KeyDeserializer() {
             @Override
             public Object deserializeKey(String key, DeserializationContext ctxt)
                     throws IOException, JsonProcessingException {

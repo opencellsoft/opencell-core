@@ -37,6 +37,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.billing.SubscriptionApi;
+import org.meveo.api.cpq.AttributeApi;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CpqOfferDto;
@@ -60,6 +61,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListCpqOfferResponseDto;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
+import org.meveo.api.dto.response.cpq.GetAttributeDtoResponse;
 import org.meveo.api.dto.response.cpq.GetProductVersionResponse;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -77,7 +79,6 @@ import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
-import org.meveo.model.admin.FileType;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -196,6 +197,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     private FileTypeService fileTypeService;
 
     @Inject
+    private AttributeApi attributeApi;
+
+    @Inject
     CustomGenericEntityCodeService customGenericEntityCodeService;
 
     @Override
@@ -299,7 +303,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             offerTemplate.setOfferModel(loadEntityByCode(offerTemplateService, postData.getOfferModelCode(), OfferTemplate.class));
         }
 
-        offerTemplate.setIsOfferChangeRestricted(postData.isOfferChangeRestricted());
+        if (postData.isOfferChangeRestricted() != null) {
+        	offerTemplate.setIsOfferChangeRestricted(postData.isOfferChangeRestricted());
+        }
 
         if (postData.getAllowedOfferChange() != null && !postData.getAllowedOfferChange().isEmpty()) {
             List<OfferTemplate> allowedOffers = new ArrayList<>();
@@ -392,9 +398,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        offerTemplate.setDescription(postData.getDescription());
-        offerTemplate.setName(postData.getName());
-        offerTemplate.setLongDescription(postData.getLongDescription());
+        if(postData.getDescription() != null)
+        	offerTemplate.setDescription(postData.getDescription());
+        if(postData.getName() != null)
+        	offerTemplate.setName(postData.getName());
+        if(postData.getLongDescription() != null) 
+        	offerTemplate.setLongDescription(postData.getLongDescription());
         
         if(!LifeCycleStatusEnum.RETIRED.equals(offerTemplate.getLifeCycleStatus())) {
             offerTemplate.setSequence(postData.getSequence());
@@ -493,7 +502,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
 
     private void processTemplateAttribute(OfferTemplateDto postData, OfferTemplate offerTemplate) {
-        List<OfferTemplateAttributeDTO> offerAttributes = postData.getOfferAttributes();
+        List<ProductVersionAttributeDTO> offerAttributes = postData.getOfferAttributes();
         offerTemplate.getOfferAttributes().clear();
         if (offerAttributes != null && !offerAttributes.isEmpty()) {
             offerTemplate.getOfferAttributes().addAll(offerAttributes.stream().map(offerAttributeDto -> {
@@ -838,11 +847,20 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
                                         getProductVersionResponse = new GetProductVersionResponse(productVersion, false, true);
 
-                                        if (productVersion.getAttributes() != null && !productVersion.getAttributes().isEmpty()) {
-                                            Set<ProductVersionAttributeDTO> attributes = productVersion.getAttributes().stream().map(ProductVersionAttributeDTO::new)
-                                                    .collect(Collectors.toSet());
+                                        if(productVersion.getAttributes()!= null && !productVersion.getAttributes().isEmpty()) {
+                                            Set<ProductVersionAttributeDTO> attributes = productVersion.getAttributes().stream().map(d -> {
+                                                GetAttributeDtoResponse result =attributeApi.populateAttributToDto(d, config);
+                                                return result;
+                                            }).collect(Collectors.toSet());
                                             getProductVersionResponse.setProductAttributes(attributes);
-                                            Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes().stream().map(att -> new GroupedAttributeDto(att))
+                                        }
+                                        if(productVersion.getGroupedAttributes()!= null && !productVersion.getGroupedAttributes().isEmpty()) {
+                                            Set<GroupedAttributeDto> groupedAttributeDtos = productVersion.getGroupedAttributes()
+                                                    .stream()
+                                                    .map(d -> {
+                                                        GroupedAttributeDto result =attributeApi.populateGroupedAttributToDto(d);
+                                                        return result;
+                                                    })
                                                     .collect(Collectors.toSet());
                                             getProductVersionResponse.setGroupedAttributes(groupedAttributeDtos);
                                         }
@@ -878,8 +896,16 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 dto.setAllowedDiscountPlans(discountPlanDtos);
             }
         }
-        if (loadAttributes) {
-            dto.setOfferAttributes(offerTemplate.getOfferAttributes().stream().map(OfferTemplateAttributeDTO::new).collect(Collectors.toList()));
+        if(loadAttributes) {
+
+            if(offerTemplate.getOfferAttributes()!= null && !offerTemplate.getOfferAttributes().isEmpty()) {
+                List<ProductVersionAttributeDTO> attributes = offerTemplate.getOfferAttributes().stream().map(d -> {
+                    GetAttributeDtoResponse result =attributeApi.populateAttributToDto(d, config);
+                    return result;
+                }).collect(Collectors.toList());
+
+                dto.setOfferAttributes(attributes);
+            }
         }
         return dto;
     }

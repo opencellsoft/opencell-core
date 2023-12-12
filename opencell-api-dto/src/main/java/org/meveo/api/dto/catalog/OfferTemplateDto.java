@@ -35,6 +35,7 @@ import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
 import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
+import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OfferTemplate;
 
@@ -78,7 +79,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "offerProducts")
     @XmlElement(name = "offerProducts")
     @Schema(description = "list of The offer component")
-    protected List<OfferProductsDto> offerProducts=new ArrayList<OfferProductsDto>();
+    protected List<OfferProductsDto> offerProducts=new ArrayList<>();
 
     /** The offer product templates. */
     @XmlElementWrapper(name = "allowedDiscountPlans")
@@ -91,16 +92,16 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlElementWrapper(name = "offerAttributes")
     @XmlElement(name = "offerAttributes")
     @Schema(description = "list of attributes")
-    protected List<OfferTemplateAttributeDTO> offerAttributes=new ArrayList<OfferTemplateAttributeDTO>();
+    protected List<ProductVersionAttributeDTO> offerAttributes=new ArrayList<>();
     
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
-    protected List<AttributeDTO> attributes=new ArrayList<AttributeDTO>();
+    protected List<AttributeDTO> attributes=new ArrayList<>();
  
     @XmlElementWrapper(name = "commercialRuleCodes")
     @XmlElement(name = "commercialRuleCodes")
     @Schema(description = "list of codes of commercial rules")
-    protected List<String> commercialRuleCodes=new ArrayList<String>();
+    protected List<String> commercialRuleCodes=new ArrayList<>();
     
     /** The media codes. */
     @XmlElementWrapper(name = "mediaCodes")
@@ -110,7 +111,7 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
 
     @Schema(description = "indicat if offer change is restricted")
-    private boolean isOfferChangeRestricted;
+    private Boolean isOfferChangeRestricted;
 
     @Schema(description = "list of allowed offer change")
     private List<String> allowedOfferChange;
@@ -484,12 +485,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
 		this.commercialRuleCodes = commercialRuleCodes;
 	}
 
-    public boolean isOfferChangeRestricted() {
+    public Boolean isOfferChangeRestricted() {
         return isOfferChangeRestricted;
     }
 
-    public void setOfferChangeRestricted(boolean offerChangeRestricted) {
-        isOfferChangeRestricted = offerChangeRestricted;
+    public void setOfferChangeRestricted(Boolean offerChangeRestricted) {
+        this.isOfferChangeRestricted = offerChangeRestricted;
     }
 
     public List<String> getAllowedOfferChange() {
@@ -539,14 +540,14 @@ public class OfferTemplateDto extends ProductOfferingDto {
 	/**
 	 * @return the offerAttributes
 	 */
-	public List<OfferTemplateAttributeDTO> getOfferAttributes() {
+	public List<ProductVersionAttributeDTO> getOfferAttributes() {
 		return offerAttributes;
 	}
 
 	/**
 	 * @param offerAttributes the offerAttributes to set
 	 */
-	public void setOfferAttributes(List<OfferTemplateAttributeDTO> offerAttributes) {
+	public void setOfferAttributes(List<ProductVersionAttributeDTO> offerAttributes) {
 		this.offerAttributes = offerAttributes;
 	}
 

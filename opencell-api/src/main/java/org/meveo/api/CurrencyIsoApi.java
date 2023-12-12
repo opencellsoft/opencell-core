@@ -45,7 +45,7 @@ public class CurrencyIsoApi extends BaseApi {
     @Inject
     private CurrencyService currencyService;
 
-    public void create(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
+    public Currency create(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             String generatedCode = getGenericCode(Currency.class.getName());
@@ -66,10 +66,11 @@ public class CurrencyIsoApi extends BaseApi {
         currency.setCurrencyCode(postData.getCode());
         currency.setDescriptionEn(postData.getDescription());
         currencyService.create(currency);
-
+        
+        return currency;
     }
 
-    public void update(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
+    public Currency update(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -85,6 +86,8 @@ public class CurrencyIsoApi extends BaseApi {
         currency.setDescriptionEn(postData.getDescription());
 
         currencyService.update(currency);
+        
+        return currency;
     }
 
     public CurrencyIsoDto find(String currencyCode) throws MeveoApiException {
@@ -120,12 +123,12 @@ public class CurrencyIsoApi extends BaseApi {
         currencyService.remove(currency);
     }
 
-    public void createOrUpdate(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
+    public Currency createOrUpdate(CurrencyIsoDto postData) throws MeveoApiException, BusinessException {
 
         if(!StringUtils.isBlank(postData.getCode()) && currencyService.findByCode(postData.getCode()) != null) {
-            update(postData);
+            return update(postData);
         } else {
-            create(postData);
+            return create(postData);
         }
     }
     

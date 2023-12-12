@@ -163,6 +163,104 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     private String internalNote;
 
     private Set<String> pricePlanCodes = new HashSet<>();
+    
+ // Parameter 1
+    @Schema(description = "Description of Parameter 1")
+    private String parameter1Description;
+
+    @Schema(description = "Translated descriptions of Parameter 1")
+    private List<LanguageDescriptionDto> parameter1TranslatedDescriptions;
+
+    @Schema(description = "Translated long descriptions of Parameter 1")
+    private List<LanguageDescriptionDto> parameter1TranslatedLongDescriptions;
+
+    @Schema(description = "Format of Parameter 1")
+    private ChargeTemplate.ParameterFormat parameter1Format;
+
+    @Schema(description = "Is Parameter 1 Mandatory?")
+    private Boolean parameter1IsMandatory;
+
+    @Schema(description = "Is Parameter 1 Hidden?")
+    private Boolean parameter1IsHidden;
+
+    // Parameter 2
+    @Schema(description = "Description of Parameter 2")
+    private String parameter2Description;
+
+    @Schema(description = "Translated descriptions of Parameter 2")
+    private List<LanguageDescriptionDto> parameter2TranslatedDescriptions;
+
+    @Schema(description = "Translated long descriptions of Parameter 2")
+    private List<LanguageDescriptionDto> parameter2TranslatedLongDescriptions;
+
+    @Schema(description = "Format of Parameter 2")
+    private ChargeTemplate.ParameterFormat parameter2Format;
+
+    @Schema(description = "Is Parameter 2 Mandatory?")
+    private Boolean parameter2IsMandatory;
+
+    @Schema(description = "Is Parameter 2 Hidden?")
+    private Boolean parameter2IsHidden;
+
+    // Parameter 3
+    @Schema(description = "Description of Parameter 3")
+    private String parameter3Description;
+
+    @Schema(description = "Translated descriptions of Parameter 3")
+    private List<LanguageDescriptionDto> parameter3TranslatedDescriptions;
+
+    @Schema(description = "Translated long descriptions of Parameter 3")
+    private List<LanguageDescriptionDto> parameter3TranslatedLongDescriptions;
+
+    @Schema(description = "Format of Parameter 3")
+    private ChargeTemplate.ParameterFormat parameter3Format;
+
+    @Schema(description = "Is Parameter 3 Mandatory?")
+    private Boolean parameter3IsMandatory;
+
+    @Schema(description = "Is Parameter 3 Hidden?")
+    private Boolean parameter3IsHidden;
+
+    // Parameter Extra
+    @Schema(description = "Description of Extra Parameter")
+    private String parameterExtraDescription;
+
+    @Schema(description = "Translated descriptions of Extra Parameter")
+    private List<LanguageDescriptionDto> parameterExtraTranslatedDescriptions;
+
+    @Schema(description = "Translated long descriptions of Extra Parameter")
+    private List<LanguageDescriptionDto> parameterExtraTranslatedLongDescriptions;
+
+    @Schema(description = "Format of Extra Parameter")
+    private ChargeTemplate.ParameterFormat parameterExtraFormat;
+
+    @Schema(description = "Is Extra Parameter Mandatory?")
+    private Boolean parameterExtraIsMandatory;
+
+    @Schema(description = "Is Extra Parameter Hidden?")
+    private Boolean parameterExtraIsHidden;
+    
+    // Business Key
+    @Schema(description = "Business Key El")
+    private String businessKeyEl;
+    
+    @Schema(description = "Business Key Description")
+    private String businessKeyDescription;
+
+    @Schema(description = "Translated descriptions of Business Key")
+    private List<LanguageDescriptionDto> businessKeyTranslatedDescriptions;
+
+    @Schema(description = "Translated long descriptions of Business Key")
+    private List<LanguageDescriptionDto> businessKeyTranslatedLongDescriptions;
+
+    @Schema(description = "Format of Business Key")
+    private ChargeTemplate.BusinessKeyFormat businessKeyFormat;
+
+    @Schema(description = "Is Business Key Mandatory?")
+    private Boolean businessKeyIsMandatory;
+
+    @Schema(description = "Is Business Key Hidden?")
+    private Boolean businessKeyIsHidden;
 
     /**
      * Instantiates a new charge template dto.
@@ -223,7 +321,47 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
         	status=chargeTemplate.getStatus();
         }
         internalNote = chargeTemplate.getInternalNote();
+        
+        // New Fields for Parameters
+        parameter1Description = chargeTemplate.getParameter1Description();
+        parameter1TranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter1TranslatedDescriptions());
+        parameter1TranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter1TranslatedLongDescriptions());
+        parameter1Format = chargeTemplate.getParameter1Format();
+        parameter1IsMandatory = chargeTemplate.isParameter1IsMandatory();
+        parameter1IsHidden = chargeTemplate.isParameter1IsHidden();
+
+        parameter2Description = chargeTemplate.getParameter2Description();
+        parameter2TranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter2TranslatedDescriptions());
+        parameter2TranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter2TranslatedLongDescriptions());
+        parameter2Format = chargeTemplate.getParameter2Format();
+        parameter2IsMandatory = chargeTemplate.isParameter2IsMandatory();
+        parameter2IsHidden = chargeTemplate.isParameter2IsHidden();
+
+        parameter3Description = chargeTemplate.getParameter3Description();
+        parameter3TranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter3TranslatedDescriptions());
+        parameter3TranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameter3TranslatedLongDescriptions());
+        parameter3Format = chargeTemplate.getParameter3Format();
+        parameter3IsMandatory = chargeTemplate.isParameter3IsMandatory();
+        parameter3IsHidden = chargeTemplate.isParameter3IsHidden();
+
+        parameterExtraDescription = chargeTemplate.getParameterExtraDescription();
+        parameterExtraTranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameterExtraTranslatedDescriptions());
+        parameterExtraTranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getParameterExtraTranslatedLongDescriptions());
+        parameterExtraFormat = chargeTemplate.getParameterExtraFormat();
+        parameterExtraIsMandatory = chargeTemplate.isParameterExtraIsMandatory();
+        parameterExtraIsHidden = chargeTemplate.isParameterExtraIsHidden();
+
+        // Business Key
+        businessKeyEl = chargeTemplate.getBusinessKeyEl();
+        businessKeyDescription = chargeTemplate.getBusinessKeyDescription();
+        businessKeyTranslatedDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getBusinessKeyTranslatedDescriptions());
+        businessKeyTranslatedLongDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getBusinessKeyTranslatedLongDescriptions());
+        businessKeyFormat = chargeTemplate.getBusinessKeyFormat();
+        businessKeyIsMandatory = chargeTemplate.isBusinessKeyIsMandatory();
+        businessKeyIsHidden = chargeTemplate.isBusinessKeyIsHidden();
+        
     }
+     
 
     /**
      * Gets the language descriptions.
@@ -620,4 +758,254 @@ public class ChargeTemplateDto extends EnableBusinessDto implements Serializable
     public void setPricePlanCodes(Set<String> pricePlanCodes) {
         this.pricePlanCodes = pricePlanCodes;
     }
+
+	public String getParameter1Description() {
+		return parameter1Description;
+	}
+
+	public void setParameter1Description(String parameter1Description) {
+		this.parameter1Description = parameter1Description;
+	}
+
+	public List<LanguageDescriptionDto> getParameter1TranslatedDescriptions() {
+		return parameter1TranslatedDescriptions;
+	}
+
+	public void setParameter1TranslatedDescriptions(List<LanguageDescriptionDto> parameter1TranslatedDescriptions) {
+		this.parameter1TranslatedDescriptions = parameter1TranslatedDescriptions;
+	}
+
+	public List<LanguageDescriptionDto> getParameter1TranslatedLongDescriptions() {
+		return parameter1TranslatedLongDescriptions;
+	}
+
+	public void setParameter1TranslatedLongDescriptions(List<LanguageDescriptionDto> parameter1TranslatedLongDescriptions) {
+		this.parameter1TranslatedLongDescriptions = parameter1TranslatedLongDescriptions;
+	}
+
+	public ChargeTemplate.ParameterFormat getParameter1Format() {
+		return parameter1Format;
+	}
+
+	public void setParameter1Format(ChargeTemplate.ParameterFormat parameter1Format) {
+		this.parameter1Format = parameter1Format;
+	}
+
+	public Boolean getParameter1IsMandatory() {
+		return parameter1IsMandatory;
+	}
+
+	public void setParameter1IsMandatory(Boolean parameter1IsMandatory) {
+		this.parameter1IsMandatory = parameter1IsMandatory;
+	}
+
+	public Boolean getParameter1IsHidden() {
+		return parameter1IsHidden;
+	}
+
+	public void setParameter1IsHidden(Boolean parameter1IsHidden) {
+		this.parameter1IsHidden = parameter1IsHidden;
+	}
+
+	public String getParameter2Description() {
+		return parameter2Description;
+	}
+
+	public void setParameter2Description(String parameter2Description) {
+		this.parameter2Description = parameter2Description;
+	}
+
+	public List<LanguageDescriptionDto> getParameter2TranslatedDescriptions() {
+		return parameter2TranslatedDescriptions;
+	}
+
+	public void setParameter2TranslatedDescriptions(List<LanguageDescriptionDto> parameter2TranslatedDescriptions) {
+		this.parameter2TranslatedDescriptions = parameter2TranslatedDescriptions;
+	}
+
+	public List<LanguageDescriptionDto> getParameter2TranslatedLongDescriptions() {
+		return parameter2TranslatedLongDescriptions;
+	}
+
+	public void setParameter2TranslatedLongDescriptions(List<LanguageDescriptionDto> parameter2TranslatedLongDescriptions) {
+		this.parameter2TranslatedLongDescriptions = parameter2TranslatedLongDescriptions;
+	}
+
+	public ChargeTemplate.ParameterFormat getParameter2Format() {
+		return parameter2Format;
+	}
+
+	public void setParameter2Format(ChargeTemplate.ParameterFormat parameter2Format) {
+		this.parameter2Format = parameter2Format;
+	}
+
+	public Boolean getParameter2IsMandatory() {
+		return parameter2IsMandatory;
+	}
+
+	public void setParameter2IsMandatory(Boolean parameter2IsMandatory) {
+		this.parameter2IsMandatory = parameter2IsMandatory;
+	}
+
+	public Boolean getParameter2IsHidden() {
+		return parameter2IsHidden;
+	}
+
+	public void setParameter2IsHidden(Boolean parameter2IsHidden) {
+		this.parameter2IsHidden = parameter2IsHidden;
+	}
+
+	public String getParameter3Description() {
+		return parameter3Description;
+	}
+
+	public void setParameter3Description(String parameter3Description) {
+		this.parameter3Description = parameter3Description;
+	}
+
+	public List<LanguageDescriptionDto> getParameter3TranslatedDescriptions() {
+		return parameter3TranslatedDescriptions;
+	}
+
+	public void setParameter3TranslatedDescriptions(List<LanguageDescriptionDto> parameter3TranslatedDescriptions) {
+		this.parameter3TranslatedDescriptions = parameter3TranslatedDescriptions;
+	}
+
+	public List<LanguageDescriptionDto> getParameter3TranslatedLongDescriptions() {
+		return parameter3TranslatedLongDescriptions;
+	}
+
+	public void setParameter3TranslatedLongDescriptions(List<LanguageDescriptionDto> parameter3TranslatedLongDescriptions) {
+		this.parameter3TranslatedLongDescriptions = parameter3TranslatedLongDescriptions;
+	}
+
+	public ChargeTemplate.ParameterFormat getParameter3Format() {
+		return parameter3Format;
+	}
+
+	public void setParameter3Format(ChargeTemplate.ParameterFormat parameter3Format) {
+		this.parameter3Format = parameter3Format;
+	}
+
+	public Boolean getParameter3IsMandatory() {
+		return parameter3IsMandatory;
+	}
+
+	public void setParameter3IsMandatory(Boolean parameter3IsMandatory) {
+		this.parameter3IsMandatory = parameter3IsMandatory;
+	}
+
+	public Boolean getParameter3IsHidden() {
+		return parameter3IsHidden;
+	}
+
+	public void setParameter3IsHidden(Boolean parameter3IsHidden) {
+		this.parameter3IsHidden = parameter3IsHidden;
+	}
+
+	public String getParameterExtraDescription() {
+		return parameterExtraDescription;
+	}
+
+	public void setParameterExtraDescription(String parameterExtraDescription) {
+		this.parameterExtraDescription = parameterExtraDescription;
+	}
+
+	public List<LanguageDescriptionDto> getParameterExtraTranslatedDescriptions() {
+		return parameterExtraTranslatedDescriptions;
+	}
+
+	public void setParameterExtraTranslatedDescriptions(List<LanguageDescriptionDto> parameterExtraTranslatedDescriptions) {
+		this.parameterExtraTranslatedDescriptions = parameterExtraTranslatedDescriptions;
+	}
+
+	public List<LanguageDescriptionDto> getParameterExtraTranslatedLongDescriptions() {
+		return parameterExtraTranslatedLongDescriptions;
+	}
+
+	public void setParameterExtraTranslatedLongDescriptions(
+			List<LanguageDescriptionDto> parameterExtraTranslatedLongDescriptions) {
+		this.parameterExtraTranslatedLongDescriptions = parameterExtraTranslatedLongDescriptions;
+	}
+
+	public ChargeTemplate.ParameterFormat getParameterExtraFormat() {
+		return parameterExtraFormat;
+	}
+
+	public void setParameterExtraFormat(ChargeTemplate.ParameterFormat parameterExtraFormat) {
+		this.parameterExtraFormat = parameterExtraFormat;
+	}
+
+	public Boolean getParameterExtraIsMandatory() {
+		return parameterExtraIsMandatory;
+	}
+
+	public void setParameterExtraIsMandatory(Boolean parameterExtraIsMandatory) {
+		this.parameterExtraIsMandatory = parameterExtraIsMandatory;
+	}
+
+	public Boolean getParameterExtraIsHidden() {
+		return parameterExtraIsHidden;
+	}
+
+	public void setParameterExtraIsHidden(Boolean parameterExtraIsHidden) {
+		this.parameterExtraIsHidden = parameterExtraIsHidden;
+	}
+
+	public String getBusinessKeyEl() {
+		return businessKeyEl;
+	}
+
+	public void setBusinessKeyEl(String businessKeyEl) {
+		this.businessKeyEl = businessKeyEl;
+	}
+
+	public String getBusinessKeyDescription() {
+		return businessKeyDescription;
+	}
+
+	public void setBusinessKeyDescription(String businessKeyDescription) {
+		this.businessKeyDescription = businessKeyDescription;
+	}
+
+	public List<LanguageDescriptionDto> getBusinessKeyTranslatedDescriptions() {
+		return businessKeyTranslatedDescriptions;
+	}
+
+	public void setBusinessKeyTranslatedDescriptions(List<LanguageDescriptionDto> businessKeyTranslatedDescriptions) {
+		this.businessKeyTranslatedDescriptions = businessKeyTranslatedDescriptions;
+	}
+
+	public List<LanguageDescriptionDto> getBusinessKeyTranslatedLongDescriptions() {
+		return businessKeyTranslatedLongDescriptions;
+	}
+
+	public void setBusinessKeyTranslatedLongDescriptions(List<LanguageDescriptionDto> businessKeyTranslatedLongDescriptions) {
+		this.businessKeyTranslatedLongDescriptions = businessKeyTranslatedLongDescriptions;
+	}
+
+	public ChargeTemplate.BusinessKeyFormat getBusinessKeyFormat() {
+		return businessKeyFormat;
+	}
+
+	public void setBusinessKeyFormat(ChargeTemplate.BusinessKeyFormat businessKeyFormat) {
+		this.businessKeyFormat = businessKeyFormat;
+	}
+
+	public Boolean getBusinessKeyIsMandatory() {
+		return businessKeyIsMandatory;
+	}
+
+	public void setBusinessKeyIsMandatory(Boolean businessKeyIsMandatory) {
+		this.businessKeyIsMandatory = businessKeyIsMandatory;
+	}
+
+	public Boolean getBusinessKeyIsHidden() {
+		return businessKeyIsHidden;
+	}
+
+	public void setBusinessKeyIsHidden(Boolean businessKeyIsHidden) {
+		this.businessKeyIsHidden = businessKeyIsHidden;
+	}
+    
 }

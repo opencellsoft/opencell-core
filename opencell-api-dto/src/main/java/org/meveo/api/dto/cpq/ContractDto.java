@@ -5,12 +5,11 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.meveo.api.dto.BusinessEntityDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.apiv2.cpq.contracts.BillingRuleDto;
 import org.meveo.model.cpq.contract.Contract;
 import org.meveo.model.cpq.enums.ContractAccountLevel;
-import org.meveo.model.cpq.enums.ContractStatusEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -19,7 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @version 10.0
  */
 @SuppressWarnings("serial")
-public class ContractDto extends BusinessEntityDto {
+public class ContractDto extends EnableBusinessDto  {
 
 	@Schema(description = "contract account level, associate seller or customer or customer account or billing account to this contract",
 			example = "possible value are : SELLER, CUSTOMER, CUSTOMER_ACCOUNT, BILLING_ACCOUNT")
@@ -43,9 +42,9 @@ public class ContractDto extends BusinessEntityDto {
 
 	@Schema(description = "renwal a the contract")
     @NotNull
-	private boolean renewal;
+	private Boolean renewal;
 	@Schema(description = "duration of the contract")
-	private int contractDuration;
+	private Integer contractDuration;
 	@Schema(description = "list of the custom field if any")
 	private CustomFieldsDto customFields;
 
@@ -141,28 +140,25 @@ public class ContractDto extends BusinessEntityDto {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-	/**
-	 * @return the renewal
-	 */
-	public boolean isRenewal() {
+	
+	public Boolean getRenewal() {
 		return renewal;
 	}
-	/**
-	 * @param renewal the renewal to set
-	 */
-	public void setRenewal(boolean renewal) {
+
+	public void setRenewal(Boolean renewal) {
 		this.renewal = renewal;
 	}
+
 	/**
 	 * @return the contractDuration
 	 */
-	public int getContractDuration() {
+	public Integer getContractDuration() {
 		return contractDuration;
 	}
 	/**
 	 * @param contractDuration the contractDuration to set
 	 */
-	public void setContractDuration(int contractDuration) {
+	public void setContractDuration(Integer contractDuration) {
 		this.contractDuration = contractDuration;
 	}
 

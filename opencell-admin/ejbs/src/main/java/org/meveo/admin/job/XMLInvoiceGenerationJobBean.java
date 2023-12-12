@@ -19,8 +19,10 @@
 package org.meveo.admin.job;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Optional;
@@ -30,11 +32,14 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
+import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 
 /**
@@ -49,6 +54,9 @@ public class XMLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
     @Inject
     private InvoiceService invoiceService;
+
+    @Inject
+    private BillingRunService billingRunService;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
@@ -73,6 +81,11 @@ public class XMLInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
         if (parameter != null && parameter.trim().length() > 0) {
             try {
                 billingRunId = Long.parseLong(parameter);
+                BillingRun billingRun = billingRunService.findById(billingRunId);
+                if (billingRun != null && !BillinRunApplicationElFilterUtils.isToProcessBR(billingRun, jobInstance)) {
+                    log.warn("BillingRun applicationEl='{}' is evaluate to 'false', abort current process.", billingRun.getApplicationEl());
+                    return of(new SynchronizedIterator<>(Collections.emptyList()));
+                }
             } catch (Exception e) {
                 log.error("Can not extract billing run ID from a parameter {}", parameter, e);
                 jobExecutionResult.addErrorReport(e.getMessage());

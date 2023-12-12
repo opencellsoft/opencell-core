@@ -146,6 +146,10 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		return ofNullable(invoiceService.findByInvoiceNumber(code));
 	}
 
+	public Optional<Invoice> findById(Long id, List<String> fieldTofetch) {
+		return ofNullable(invoiceService.findById(id, fieldTofetch));
+	}
+
 	/**
 	 * @param invoiceTypeId
 	 * @param invoiceNumber
@@ -250,12 +254,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 			invoice.getInvoiceLines().add(invoiceLine);
 			result.addInvoiceLines(invoiceLineResource);
 		}
-
-		String listAdjustmentCode = paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ, ADJ_INV, ADJ_REF");
-		if (listAdjustmentCode.contains(invoice.getInvoiceType().getCode())) {
-			invoiceLinesService.validateAdjAmount(invoice);
-		}
-
 		invoiceService.calculateInvoice(invoice);
 		invoiceService.updateBillingRunStatistics(invoice);
 		result.skipValidation(invoiceLinesInput.getSkipValidation());
@@ -288,8 +286,6 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 		}
 		// Populate Custom fields
 		invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceLineInput.getInvoiceLine().getCustomFields(), invoiceLine, false);
-		// for adjustment
-		invoiceLine = invoiceLinesService.adjustment(invoiceLine, invoice);
         // Update Invoice Line
 		invoiceLinesService.updateInvoiceLine(invoiceLine, invoiceLineInput.getInvoiceLine(), discountPlan);
 		invoiceService.getEntityManager().flush();
@@ -559,7 +555,7 @@ public class InvoiceApiService extends BaseApi implements ApiService<Invoice> {
 	 */
 	public Invoice updateValidatedInvoice(Invoice invoice, org.meveo.apiv2.billing.InvoicePatchInput invoiceResource) {      
     	ICustomFieldEntity customFieldEntity = new Invoice();
-		customFieldEntity = invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), customFieldEntity, false);
+		customFieldEntity = invoiceBaseApi.populateCustomFieldsForGenericApi(invoiceResource.getCustomFields(), invoice, false);
         return invoiceService.updateValidatedInvoice(invoice, invoiceResource.getComment(), customFieldEntity.getCfValues(), invoiceResource.getPurchaseOrder());
     }
 	

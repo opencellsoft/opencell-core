@@ -54,7 +54,7 @@ import org.meveo.service.job.Job;
  * @author Andrius Karpavicius
  */
 @Stateless
-public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperationNative> {
+public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletOperationNative> {
 
     private static final long serialVersionUID = -2740290205290535899L;
 
@@ -80,7 +80,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     private Long nrOfRecords = null;
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED) // Transaction set to REQUIRED, so ScrollableResultset would do paging. With TX=NEVER all data is retrieved at once resulting in memory increase
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
         super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::bindRTs);
     }
@@ -109,33 +109,7 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
         log.info("Remove wallet operations rated to 0");
         walletOperationService.removeZeroWalletOperation();
 
-        Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 10000L);
-        Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
-        if (nbThreads <= -1) {
-            nbThreads = (long) Runtime.getRuntime().availableProcessors();
-        }
-        int fetchSize = batchSize.intValue() * nbThreads.intValue();
-
-        // Number of Wallet operations to process in a single job run
-        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("ratedTransactionsJob.processNrInJobRun", 4000000);
-
-        Object[] convertSummary = (Object[]) emWrapper.getEntityManager().createNamedQuery("WalletOperation.getConvertToRTsSummary").getSingleResult();
-
-        nrOfRecords = (Long) convertSummary[0];
-        maxId = (Long) convertSummary[1];
-        minId = (Long) convertSummary[2];
-
-        if (nrOfRecords.intValue() == 0) {
-            return Optional.empty();
-        }
-
-        statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
-        scrollableResults = statelessSession.createNamedQuery("WalletOperationNative.listConvertToRTs").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun)
-            .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
-
-        hasMore = nrOfRecords >= processNrInJobRun;
-
-        return Optional.of(new SynchronizedIterator<WalletOperationNative>(scrollableResults, nrOfRecords.intValue()));
+        return getIterator(jobExecutionResult);
     }
 
     /**
@@ -158,8 +132,8 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
      * @param jobExecutionResult Job execution result
      */
     private void closeResultset(JobExecutionResultImpl jobExecutionResult) {
-        scrollableResults.close();
-        statelessSession.close();
+        if(scrollableResults !=null) scrollableResults.close();
+        if(statelessSession !=null) statelessSession.close();
     }
 
     /**
@@ -177,5 +151,58 @@ public class RatedTransactionsJobBean extends IteratorBasedJobBean<WalletOperati
     @Override
     protected boolean isProcessItemInNewTx() {
         return false;
+    }
+
+    private Optional<Iterator<WalletOperationNative>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+        Long batchSize = (Long) getParamOrCFValue(jobInstance, Job.CF_BATCH_SIZE, 10000L);
+        Long nbThreads = (Long) this.getParamOrCFValue(jobInstance, Job.CF_NB_RUNS, -1L);
+        if (nbThreads == -1) {
+            nbThreads = (long) Runtime.getRuntime().availableProcessors();
+        }
+        int fetchSize = batchSize.intValue() * nbThreads.intValue();
+
+        // Number of Wallet operations to process in a single job run
+        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("jobs.ratedTransactionsJob.processNrInJobRun", 4000000);
+
+        if (jobItemsLimit > 0) {
+            List<Long> ids = emWrapper.getEntityManager().createNamedQuery("WalletOperation.getOpenIds", Long.class)
+                    .setMaxResults(jobItemsLimit).getResultList();
+
+            nrOfRecords = Long.valueOf(ids.size());
+            if (!ids.isEmpty()) {
+                maxId = Long.valueOf(ids.get(ids.size() - 1));
+                minId = Long.valueOf(ids.get(0));
+            }
+        } else {
+            Object[] convertSummary = (Object[]) emWrapper.getEntityManager().createNamedQuery("WalletOperation.getConvertToRTsSummary").getSingleResult();
+
+            nrOfRecords = (Long) convertSummary[0];
+            maxId = (Long) convertSummary[1];
+            minId = (Long) convertSummary[2];
+        }
+
+        if (nrOfRecords.intValue() == 0) {
+            return Optional.empty();
+        }
+
+        statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
+        scrollableResults = statelessSession.createNamedQuery("WalletOperationNative.listConvertToRTs").setParameter("maxId", maxId)
+                .setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun > jobItemsLimit && jobItemsLimit > 0 ? jobItemsLimit : processNrInJobRun)
+                .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
+
+        hasMore = nrOfRecords >= processNrInJobRun;
+
+        return Optional.of(new SynchronizedIterator<WalletOperationNative>(scrollableResults, nrOfRecords.intValue()));
+    }
+
+    @Override
+    Optional<Iterator<WalletOperationNative>> getSynchronizedIteratorWithLimit(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        return getSynchronizedIterator(jobExecutionResult, jobItemsLimit);
+    }
+
+    @Override
+    Optional<Iterator<WalletOperationNative>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult) {
+        return getSynchronizedIterator(jobExecutionResult, 0);
     }
 }

@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -51,7 +49,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.cpq.Attribute;
-import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.Product;
 import org.meveo.model.cpq.enums.OperatorEnum;
 import org.meveo.model.cpq.enums.RuleOperatorEnum;
@@ -82,12 +79,12 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
     @Inject
     private ServiceInstanceService serviceInstanceService;
 
-	 private String multiValuesAttributeSeparator = ";";
-	    
-	 @PostConstruct
-	 private void init() {
-		 multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
-	 }
+    private String multiValuesAttributeSeparator = ";";
+
+    @PostConstruct
+    private void init() {
+        multiValuesAttributeSeparator = paramBeanFactory.getInstance().getProperty("attribute.multivalues.separator", ";");
+    }
 	 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, Map<String, Object> attributes) throws BusinessException {
 		return getAccountingArticle(product, null, attributes, null);
@@ -95,11 +92,14 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate, OfferTemplate offer,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
+		
 		List<ArticleMappingLine> articleMappingLines = null;
 		String param1 = ofNullable(walletOperation).map(WalletOperation::getParameter1).orElse(null);
 		String param2 = ofNullable(walletOperation).map(WalletOperation::getParameter2).orElse(null);
 		String param3 = ofNullable(walletOperation).map(WalletOperation::getParameter3).orElse(null);
+		
 		articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, offer, null, null, null);
+		
 		if(articleMappingLines.isEmpty() && chargeTemplate != null && product != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(product, chargeTemplate, null, null, null, null);
 		}
@@ -124,32 +124,27 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		if(articleMappingLines.isEmpty() && walletOperation != null && walletOperation.getParameter3() != null) {
 			articleMappingLines = articleMappingLineService.findByProductAndCharge(null, null, null, null, null, param3);
 		}
-		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter1())) {
-			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter1())
-							|| walletOperation.getParameter1().equals(articleMappingLine.getParameter1()))
-					.collect(toList());
+		
+        List<ArticleMappingLine> filteredArticleMappingLines = new ArrayList<ArticleMappingLine>();
+        for (ArticleMappingLine articleMappingLine : articleMappingLines) {
+
+            if ((walletOperation == null || ((StringUtils.isBlank(articleMappingLine.getParameter1()) || articleMappingLine.getParameter1().equals(walletOperation.getParameter1()))
+                    && (StringUtils.isBlank(articleMappingLine.getParameter2()) || articleMappingLine.getParameter2().equals(walletOperation.getParameter2()))
+                    && (StringUtils.isBlank(articleMappingLine.getParameter3()) || articleMappingLine.getParameter3().equals(walletOperation.getParameter3()))))
+                    && filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL())) {
+
+                filteredArticleMappingLines.add(articleMappingLine);
 		}
-		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter2())) {
-			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter2())
-							|| walletOperation.getParameter2().equals(articleMappingLine.getParameter2()))
-					.collect(toList());
 		}
-		if(walletOperation != null && !StringUtils.isBlank(walletOperation.getParameter3())) {
-			articleMappingLines = articleMappingLines.stream()
-					.filter(articleMappingLine -> StringUtils.isBlank(articleMappingLine.getParameter3())
-							|| walletOperation.getParameter3().equals(articleMappingLine.getParameter3()))
-					.collect(toList());
-		}
-		if(articleMappingLines != null) {
-			articleMappingLines = articleMappingLines
-					.stream()
-					.filter(articleMappingLine -> filterMappingLines(walletOperation, articleMappingLine.getMappingKeyEL()))
-					.collect(toList());
-		}
+		
 		AttributeMappingLineMatch attributeMappingLineMatch = new AttributeMappingLineMatch();
-		articleMappingLines.forEach(aml -> {
+		for (ArticleMappingLine aml : filteredArticleMappingLines) {
+			
+			if (aml.getAttributesMapping().isEmpty()) {
+                attributeMappingLineMatch.addFullMatch(aml);
+                continue;
+		}
+            
 			List<AttributeMapping> matchedAttributesMapping = new ArrayList<>();
 			List<AttributeMapping> attributesMapping = aml.getAttributesMapping();
 				AtomicBoolean continueProcess = new AtomicBoolean(true);
@@ -177,33 +172,42 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				}
 
 				Set<Attribute> matchedAttributes = matchedAttributesMapping.stream().map(AttributeMapping::getAttribute).collect(Collectors.toSet());
-				//fullMatch
-				if (attributesMapping.size() >= matchedAttributesMapping.size() && (matchedAttributes.size() == attributes.keySet().size())) {
-					attributeMappingLineMatch.addFullMatch(aml);
-				} else {
-					if (!(attributesMapping.size() > 0 && matchedAttributesMapping.size() == 0)) {
-						attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
-					}
-				}
-		});
-		if (attributeMappingLineMatch.getFullMatchsArticle().size() > 1) {
-			throw new RatingException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
+            // fullMatch
+            if (attributesMapping.size() >= matchedAttributesMapping.size() && (matchedAttributes.size() == attributes.keySet().size())) {
+                attributeMappingLineMatch.addFullMatch(aml);
+            } else {
+                if (!(attributesMapping.size() > 0 && matchedAttributesMapping.size() == 0)) {
+                    attributeMappingLineMatch.addPartialMatch(aml, matchedAttributesMapping.size());
+                }
+            }		
 		}
-		AccountingArticle result = null;
-		if(attributeMappingLineMatch.getFullMatchsArticle().size() == 1) {
-			result = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
+		
+		
+        AccountingArticle accountingArticle = null;
+        if (attributeMappingLineMatch.getFullMatchesCount() == 1) {
+            accountingArticle = attributeMappingLineMatch.getFullMatchsArticle().iterator().next();
+
+        } else if (attributeMappingLineMatch.getFullMatchesCount() > 1) {
+			throw new RatingException("More than one accounting article found for product " + product.getId() + " and charge template " + chargeTemplate.getId());
+
 		} else {
+            ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
+            if (bestMatch != null) {
+                accountingArticle = bestMatch.getAccountingArticle();
+
+            } else {
 			ParamBean paramBean = ParamBean.getInstance();
 			String defaultArticle = paramBean.getProperty("default.article", "ART-STD");
-			ArticleMappingLine bestMatch = attributeMappingLineMatch.getBestMatch();
-			result = bestMatch != null ? bestMatch.getAccountingArticle() : findByCode(defaultArticle, Arrays.asList("taxClass"));
+                accountingArticle = findByCode(defaultArticle, Arrays.asList("taxClass"));
+
+                if (accountingArticle != null) {
+                    Hibernate.initialize(accountingArticle);
+                    detach(accountingArticle);
 		}
-		if(result != null) {
-			Hibernate.initialize(result);
-			detach(result);
 		}
-		return  result != null ? Optional.of(result) : Optional.empty();
 	}
+        return accountingArticle != null ? Optional.of(accountingArticle) : Optional.empty();
+    }
 
 	public Optional<AccountingArticle> getAccountingArticle(Product product, ChargeTemplate chargeTemplate,
 															Map<String, Object> attributes, WalletOperation walletOperation) throws InvalidELException, ValidationException {
@@ -288,13 +292,12 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 		return getAccountingArticleByChargeInstance(chargeInstance, null);
 	}
 
-	@SuppressWarnings("rawtypes")
     public AccountingArticle getAccountingArticleByChargeInstance(ChargeInstance chargeInstance, WalletOperation walletOperation) throws InvalidELException, ValidationException {
         if (chargeInstance == null) {
             return null;
         }
         ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
-        Map<String, Object> attributes = extractAttributes(serviceInstance);
+        Map<String, Object> attributes = serviceInstance.extractAttributes();
         Optional<AccountingArticle> accountingArticle;
 		accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null,
 				chargeInstance.getChargeTemplate(),
@@ -304,24 +307,20 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 
         return accountingArticle.isPresent() ? accountingArticle.get() : null;
     }
-	
-	public AccountingArticle getAccountingArticle(ServiceInstance serviceInstance, ChargeTemplate chargeTemplate, OfferTemplate offer, WalletOperation walletOperation) {
-		Optional<AccountingArticle> accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion()!=null ? serviceInstance.getProductVersion().getProduct() : null, chargeTemplate, offer, extractAttributes(serviceInstance), walletOperation);
-		return accountingArticle.isPresent() ? accountingArticle.get() : null;
-	}
 
-	private Map<String, Object> extractAttributes(ServiceInstance serviceInstance) {
-		Map<String, Object> attributes = new HashMap<>();
-        List<AttributeValue> attributeValues = serviceInstance != null ? serviceInstance.getAttributeInstances().stream().map(ai -> (AttributeValue) ai).collect(toList()) : new ArrayList<>();
-        for (AttributeValue attributeValue : attributeValues) {
-            Attribute attribute = attributeValue.getAttribute();
-            Object value = attribute.getAttributeType().getValue(attributeValue);
-            if (value != null) {
-                attributes.put(attributeValue.getAttribute().getCode(), value);
-            }
-        }
-		return attributes;
-	}
+    public AccountingArticle getAccountingArticle(ServiceInstance serviceInstance, ChargeTemplate chargeTemplate, OfferTemplate offer, WalletOperation walletOperation) {
+
+        Map<String, Object> attributeValues = serviceInstance != null ? serviceInstance.extractAttributes() : new HashMap<String, Object>();
+        Optional<AccountingArticle> accountingArticle = getAccountingArticle(serviceInstance != null && serviceInstance.getProductVersion() != null ? serviceInstance.getProductVersion().getProduct() : null,
+            chargeTemplate, offer, attributeValues, walletOperation);
+        return accountingArticle.isPresent() ? accountingArticle.get() : null;
+    }
+
+    public AccountingArticle getAccountingArticle(Long serviceInstanceId, Long chargeTemplateId, Long offerTemplateId) {
+        return getAccountingArticle(serviceInstanceService.findAndFetchProductById(serviceInstanceId), chargeTemplateId == null ? null : chargeTemplateService.findById(chargeTemplateId),
+            offerTemplateId == null ? null : offerTemplateService.findById(offerTemplateId), null);
+    }
+    
 	
 	public List<AccountingArticle> findByTaxClassAndSubCategory(TaxClass taxClass, InvoiceSubCategory invoiceSubCategory) {
 		return getEntityManager().createNamedQuery("AccountingArticle.findByTaxClassAndSubCategory", AccountingArticle.class)
@@ -330,11 +329,15 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.getResultList();
 	}
 
-	public AccountingCode getArticleAccountingCode(InvoiceLine invoiceLine, AccountingArticle accountingArticle) {
-		// **1** if accountingCodeEL is filled then return the evaluated accountingCode
+	public AccountingCode getArticleAccountingCode(Invoice invoice, AccountingArticle accountingArticle) {
+		if (invoice == null || accountingArticle == null) {
+			return null;
+		}
+
+		 // **1** if accountingCodeEL is filled then return the evaluated accountingCode
 		if (StringUtils.isNotBlank(accountingArticle.getAccountingCodeEl())) {
 			String resultEl = evaluateAccountingCodeArticleEl(accountingArticle.getAccountingCodeEl(),
-					accountingArticle, invoiceLine.getInvoice(), String.class);
+					accountingArticle, invoice, String.class);
 
 			if (StringUtils.isBlank(resultEl)) {
 				throw new BusinessException("No accounting code found for EL=" + accountingArticle.getAccountingCodeEl());
@@ -355,7 +358,7 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
 				.setParameter("ACCOUNTING_ARTICLE_ID", accountingArticle.getId()).getResultList();
 
 		if (codeMappings != null && !codeMappings.isEmpty()) {
-			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoiceLine.getInvoice(), accountingArticle);
+			AccountingCode accountingCode = accountingCodeMappingMatching(codeMappings, invoice, accountingArticle);
 
 			if (accountingCode != null) {
 				return accountingCode;
@@ -647,9 +650,5 @@ public class AccountingArticleService extends BusinessService<AccountingArticle>
             throw new EntityDoesNotExistsException(AccountingArticle.class, articleCode);
         return accountingArticle;
     }
-
-	public AccountingArticle getAccountingArticle(Long serviceInstanceId, Long chargeTemplateId, Long offerTemplateId) {
-		return getAccountingArticle(serviceInstanceService.findFetchProductById(serviceInstanceId), chargeTemplateId==null?null:chargeTemplateService.findById(chargeTemplateId), offerTemplateId==null?null:offerTemplateService.findById(offerTemplateId), null);
-	}
 
 }

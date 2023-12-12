@@ -102,6 +102,7 @@ public class OneShotRatingService extends RatingService implements Serializable 
                     }
                 }
                 for (WalletOperation walletOperation : walletOperations) {
+	                checkDiscountedWalletOpertion(walletOperation, walletOperations);
                     walletOperationService.chargeWalletOperation(walletOperation);
                 }
 

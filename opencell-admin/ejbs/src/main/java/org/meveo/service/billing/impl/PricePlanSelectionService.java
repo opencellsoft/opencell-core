@@ -2,11 +2,13 @@ package org.meveo.service.billing.impl;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -17,6 +19,7 @@ import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.commons.utils.ELUtils;
+import org.meveo.commons.utils.ListUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -44,6 +47,7 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Stateless
 public class PricePlanSelectionService implements Serializable {
 
     private static final long serialVersionUID = 6228282058872986933L;
@@ -133,6 +137,67 @@ public class PricePlanSelectionService implements Serializable {
         }
     }
 
+    public List<PricePlanMatrix> determineAvailablePricePlansForRating(WalletOperation bareWo, Long buyerCountryId, TradingCurrency buyerCurrency) {
+
+        long subscriptionAge = 0;
+        Date subscriptionDate = DateUtils.truncateTime(bareWo.getSubscriptionDate());
+        Date operationDate = DateUtils.truncateTime(bareWo.getOperationDate());
+        if (subscriptionDate != null && operationDate != null) {
+            subscriptionAge = DateUtils.monthsBetween(operationDate, DateUtils.addDaysToDate(subscriptionDate, -1));
+        }
+
+        Date startDate = operationDate;
+        Date endDate = operationDate;
+        RecurringChargeTemplate recurringChargeTemplate = getRecurringChargeTemplateFromChargeInstance(bareWo.getChargeInstance());
+
+        if ((recurringChargeTemplate != null && recurringChargeTemplate.isProrataOnPriceChange() && bareWo.getEndDate().after(bareWo.getStartDate()))) {
+            startDate = DateUtils.truncateTime(bareWo.getStartDate());
+            endDate = DateUtils.truncateTime(bareWo.getEndDate());
+        }
+
+        EntityManager em = getEntityManager();
+
+        Object[] params = new Object[] { "chargeCode", bareWo.getCode(), "sellerId", bareWo.getSeller().getId(), "tradingCountryId", buyerCountryId, "tradingCurrencyId",
+                buyerCurrency != null ? buyerCurrency.getId() : null, "subscriptionDate", subscriptionDate, "subscriptionAge", subscriptionAge, "operationDate", operationDate, "param1", bareWo.getParameter1(), "param2",
+                bareWo.getParameter2(), "param3", bareWo.getParameter3(), "offerId", bareWo.getOfferTemplate() != null ? bareWo.getOfferTemplate().getId() : null, "quantity", bareWo.getQuantity(), "startDate", startDate,
+                "endDate", endDate };
+
+        // When matching in DB only, no PricePlanMatrix.criteriaEl and validityCalendar fields will be consulted and the highest priority will be chosen
+        boolean matchDbOnly = ParamBean.getInstance().getPropertyAsBoolean("pricePlan.default.matchDBOnly", false);
+
+        if (matchDbOnly) {
+            TypedQuery<PricePlanMatrix> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRatingMatchDB", PricePlanMatrix.class);
+
+            for (int i = 0; i < 28; i = i + 2) {
+                query.setParameter((String) params[i], params[i + 1]);
+            }
+
+            return query.getResultList();
+
+        } else {
+            TypedQuery<PricePlanMatrixForRating> query = em.createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCodeForRating", PricePlanMatrixForRating.class);
+
+            for (int i = 0; i < 28; i = i + 2) {
+                query.setParameter((String) params[i], params[i + 1]);
+            }
+
+            List<PricePlanMatrixForRating> chargePricePlans = query.getResultList();
+            List<Long> matchingPPMs = chargePricePlans.stream()
+                                                 .filter(ppm -> isMatchingPricePlan(ppm, bareWo))
+                                                 .map(PricePlanMatrixForRating::getId)
+                                                 .collect(Collectors.toList());
+            if (ListUtils.isEmtyCollection(matchingPPMs)) {
+                throw new NoPricePlanException("No active price plan matched for parameters: " + StringUtils.concatenate(params));
+            }
+
+            List<PricePlanMatrix> result = em.createQuery("FROM PricePlanMatrix WHERE id in :ids", PricePlanMatrix.class)
+                                          .setParameter("ids", matchingPPMs)
+                                          .getResultList();
+            result.sort(Comparator.comparingInt(a -> matchingPPMs.indexOf(a.getId())));
+            return result;
+        }
+    }
+
     /**
      * Find a matching price plan for a given wallet operation - used to resolve Price plan criteriaEL and validityCalendar fields that can not be done in DB
      *
@@ -172,16 +237,42 @@ public class PricePlanSelectionService implements Serializable {
 
     }
 
+    private boolean isMatchingPricePlan(PricePlanMatrixForRating pricePlan, WalletOperation bareOperation) throws InvalidELException {
+
+
+        log.trace("Try to verify price plan {} for WO {}", pricePlan.getId(), bareOperation.getCode());
+
+        if (!StringUtils.isBlank(pricePlan.getCriteriaEL())) {
+            UserAccount ua = bareOperation.getWallet().getUserAccount();
+            if (!elUtils.evaluateBooleanExpression(pricePlan.getCriteriaEL(), bareOperation, ua, null, pricePlan, null)) {
+                // log.trace("The operation is not compatible with price plan criteria EL: {}", pricePlan.getCriteriaEL());
+                return false;
+            }
+        }
+
+        if (pricePlan.getValidityCalendar() != null) {
+            org.meveo.model.catalog.Calendar validityCalendar = getEntityManager().find(org.meveo.model.catalog.Calendar.class, pricePlan.getValidityCalendar());
+            boolean validityCalendarOK = validityCalendar.previousCalendarDate(bareOperation.getOperationDate()) != null;
+            if (!validityCalendarOK) {
+                // log.trace("The operation date " + operationDate + " does not match pricePlan validity calendar " + validityCalendar.getCode() + "period range ");
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
     /**
      * get pricePlanVersion Valid for the given operationDate
      * 
-     * @param ppmId Price plan ID
+     * @param pricePlanId Price plan ID
      * @param serviceInstance Service instance
      * @param operationDate Operation date
      * @return PricePlanMatrixVersion Matched Price plan version or NULL if nothing found
      * @throws RatingException More than one Price plan version was found for a given date
      */
-    public PricePlanMatrixVersion getPublishedVersionValidForDate(Long ppmId, ServiceInstance serviceInstance, Date operationDate) throws RatingException {
+    public PricePlanMatrixVersion getPublishedVersionValidForDate(Long pricePlanId, ServiceInstance serviceInstance, Date operationDate) throws RatingException {
         Date operationDateParam = new Date();
         if (serviceInstance == null || PriceVersionDateSettingEnum.EVENT.equals(serviceInstance.getPriceVersionDateSetting())) {
             operationDateParam = operationDate;
@@ -190,7 +281,7 @@ public class PricePlanSelectionService implements Serializable {
             operationDateParam = serviceInstance.getPriceVersionDate();
         }
 
-        if (operationDateParam != null) {
+        if (operationDateParam == null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(operationDate);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -200,13 +291,13 @@ public class PricePlanSelectionService implements Serializable {
             operationDateParam = calendar.getTime();
         }
 
-        List<PricePlanMatrixVersion> result = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class).setParameter("pricePlanMatrixId", ppmId)
+        List<PricePlanMatrixVersion> result = this.getEntityManager().createNamedQuery("PricePlanMatrixVersion.getPublishedVersionValideForDate", PricePlanMatrixVersion.class).setParameter("pricePlanMatrixId", pricePlanId)
             .setParameter("operationDate", operationDateParam).getResultList();
         if (CollectionUtils.isEmpty(result)) {
             return null;
         }
         if (result.size() > 1) {
-            throw new RatingException("More than one pricePlanVersion for pricePlan '" + ppmId + "' matching date: " + operationDate);
+            throw new RatingException("More than one pricePlanVersion for pricePlan '" + pricePlanId + "' matching date: " + operationDate);
         }
         return result.get(0);
     }
@@ -259,7 +350,19 @@ public class PricePlanSelectionService implements Serializable {
      * @throws NoPricePlanException No price plan line was matched
      */
     public PricePlanMatrixLine determinePricePlanLine(PricePlanMatrix pricePlan, WalletOperation bareWalletOperation) throws NoPricePlanException {
-        PricePlanMatrixVersion ppmVersion = getPublishedVersionValidForDate(pricePlan.getId(), bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
+        return determinePricePlanLine(pricePlan.getId(), bareWalletOperation);
+    }
+    
+    /**
+     * Determine a price plan matrix line matching wallet operation parameters. Business type attributes defined in a price plan version will be resolved via Wallet operation properties.
+     * 
+     * @param pricePlanId Applicable price plan ID
+     * @param bareWalletOperation Wallet operation to match
+     * @return A matched Price plan matrix line
+     * @throws NoPricePlanException No price plan line was matched
+     */
+    public PricePlanMatrixLine determinePricePlanLine(Long pricePlanId, WalletOperation bareWalletOperation) throws NoPricePlanException {
+        PricePlanMatrixVersion ppmVersion = getPublishedVersionValidForDate(pricePlanId, bareWalletOperation.getServiceInstance(), bareWalletOperation.getOperationDate());
         if (ppmVersion != null) {
             PricePlanMatrixLine ppLine = determinePricePlanLine(ppmVersion, bareWalletOperation);
             if (ppLine != null) {

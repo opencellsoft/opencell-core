@@ -42,6 +42,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.meveo.api.dto.AgedReceivableDto;
@@ -74,6 +76,13 @@ public class GenericFileExportManager {
     private static final String EN_AGED_BALANCE_FILENAME = "Aged_trial_balance_";
     private static final String EN_DATE_FORMAT = "MM/dd/yyyy";
     private String saveDirectory;
+
+    /**
+     * Excel styles enum
+     */
+    protected enum ExcelStylesEnum {
+        BIG_DECIMAL_FORMAT, NUMERIC_FORMAT, STRING_FORMAT, DATE_FORMAT
+    }
 
     public String export(String entityName, List<Map<String, Object>> mapResult, String fileType, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn, String locale){
     	log.debug("Save directory "+paramBeanFactory.getChrootDir());
@@ -176,11 +185,14 @@ public class GenericFileExportManager {
      * @param ordredColumn
      * @throws IOException
      */
-    private void writeExcelFile(File file, List<Map<String, Object>> CSVLineRecords, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn) throws IOException {
-        var wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+    private void writeExcelFile(File file, List<Map<String, Object>> records, Map<String, GenericFieldDetails> fieldDetails, List<String> ordredColumn) throws IOException {
+        FileOutputStream fileOut = null;
+        var wb = new SXSSFWorkbook();
+        wb.setCompressTempFiles(true);
+        SXSSFSheet sheet = wb.createSheet();
+        Map<String, CellStyle> excelCellStyles = createExcelCellStyles(wb);
         int i = 0;
-        if (CSVLineRecords != null && !CSVLineRecords.isEmpty()) {
+        if (records != null && !records.isEmpty()) {
         	var rowHeader = sheet.createRow(i++);
             IntStream.range(0, ordredColumn.size())
                     .forEach(index -> {
@@ -189,14 +201,14 @@ public class GenericFileExportManager {
                         cell.setCellValue(extractValue(ordredColumn.get(index), fieldDetail));
                     });
 		    //Cell
-            IntStream.range(0, CSVLineRecords.size())
+            IntStream.range(0, records.size())
                 .forEach(indexRow -> {
                     var rowCell = sheet.createRow(indexRow+1);
                     IntStream.range(0, ordredColumn.size())
                         .forEach(indexCol -> {
                             Cell cell = rowCell.createCell(indexCol);
                             String key = ordredColumn.get(indexCol);
-                            Object value = CSVLineRecords.get(indexRow).get(key);
+                            Object value = records.get(indexRow).get(key);
 
                             GenericFieldDetails fieldDetail = fieldDetails.get(key);
 
@@ -232,26 +244,29 @@ public class GenericFileExportManager {
 
                             //cell.setCellValue(applyTransformation(fieldDetails.get(key), value));
                             if (value instanceof Integer || value instanceof BigInteger) {
-                                applyNumericFormat(wb, cell);
+                                cell.setCellStyle(excelCellStyles.get(wb.hashCode() + ExcelStylesEnum.NUMERIC_FORMAT.name()));
                             } else if (value instanceof Long || value instanceof BigDecimal || value instanceof Double || value instanceof Float) {
-                                applyBigDecimalFormat(wb, cell);
+                                cell.setCellStyle(excelCellStyles.get(wb.hashCode() + ExcelStylesEnum.BIG_DECIMAL_FORMAT.name()));
                             } else if (value instanceof Date) {
-                                applyDateFormat(wb, cell);
+                                cell.setCellStyle(excelCellStyles.get(wb.hashCode() + ExcelStylesEnum.DATE_FORMAT.name()));
                             } else if (value instanceof String && value.toString().startsWith("0.00")) {
-                                applyBigDecimalFormat(wb, cell);
+                                cell.setCellStyle(excelCellStyles.get(wb.hashCode() + ExcelStylesEnum.BIG_DECIMAL_FORMAT.name()));
                             } else {
-                                applyStringFormat(wb, cell);
+                                cell.setCellStyle(excelCellStyles.get(wb.hashCode() + ExcelStylesEnum.STRING_FORMAT.name()));
                             }
                         });
                 });
-                try {
-                    FileOutputStream fileOut = new FileOutputStream(file);
-                    wb.write(fileOut);
+            try {
+                fileOut = new FileOutputStream(file);
+                wb.write(fileOut);
+            } catch (IOException e) {
+                throw new RuntimeException("error during file writing : ", e);
+            } finally {
+                if (fileOut != null) {
                     fileOut.close();
-                    wb.close();
-                } catch (IOException e) {
-                    throw new RuntimeException("error during file writing : ", e);
                 }
+                wb.close();
+            }
         }
     }
     
@@ -327,32 +342,32 @@ public class GenericFileExportManager {
     	 return value == null ? StringUtils.EMPTY : value.toString();
 	}
 
-    private void applyBigDecimalFormat(Workbook outWorkbook, Cell cell) {
-        CellStyle style = outWorkbook.createCellStyle();
+    private CellStyle getBigDecimalFormat(Workbook outWorkbook) {
+        CellStyle cellStyle = outWorkbook.createCellStyle();
         DataFormat format = outWorkbook.createDataFormat();
-        style.setDataFormat(format.getFormat("#,##0.00"));
-        style.setAlignment(HorizontalAlignment.RIGHT);
-        cell.setCellStyle(style);
+        cellStyle.setDataFormat(format.getFormat("#,##0.00"));
+        cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+        return cellStyle;
     }
 
-    private void applyNumericFormat(Workbook outWorkbook, Cell cell) {
-        CellStyle style = outWorkbook.createCellStyle();
-        style.setDataFormat((short) 1);
-        style.setAlignment(HorizontalAlignment.RIGHT);
-        cell.setCellStyle(style);
+    private CellStyle getNumericFormat(Workbook outWorkbook) {
+        CellStyle cellStyle = outWorkbook.createCellStyle();
+        cellStyle.setDataFormat((short) 1);
+        cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+        return cellStyle;
     }
 
-    private void applyStringFormat(Workbook outWorkbook, Cell cell) {
-        CellStyle style = outWorkbook.createCellStyle();
-        style.setAlignment(HorizontalAlignment.LEFT);
-        cell.setCellStyle(style);
+    private CellStyle getStringFormat(Workbook outWorkbook) {
+        CellStyle cellStyle = outWorkbook.createCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.LEFT);
+        return cellStyle;
     }
 
-    private void applyDateFormat(Workbook outWorkbook, Cell cell) {
-        CellStyle style = outWorkbook.createCellStyle();
-        style.setDataFormat((short) 14);
-        style.setAlignment(HorizontalAlignment.LEFT);
-        cell.setCellStyle(style);
+    private CellStyle getDateFormat(Workbook outWorkbook) {
+        CellStyle cellStyle = outWorkbook.createCellStyle();
+        cellStyle.setDataFormat((short) 14);
+        cellStyle.setAlignment(HorizontalAlignment.LEFT);
+        return cellStyle;
     }
 
     /**
@@ -472,5 +487,14 @@ public class GenericFileExportManager {
      */
     private String nameOrHeader(GenericFieldDetails genericFieldDetails) {
         return Optional.ofNullable(genericFieldDetails.getName()).orElse(genericFieldDetails.getHeader());
+    }
+
+    private Map<String, CellStyle> createExcelCellStyles(Workbook outWorkbook) {
+        Map<String, CellStyle> excelCellStyles = new HashMap<>();
+        excelCellStyles.put(outWorkbook.hashCode() + ExcelStylesEnum.BIG_DECIMAL_FORMAT.name(), getBigDecimalFormat(outWorkbook));
+        excelCellStyles.put(outWorkbook.hashCode() + ExcelStylesEnum.NUMERIC_FORMAT.name(), getNumericFormat(outWorkbook));
+        excelCellStyles.put(outWorkbook.hashCode() + ExcelStylesEnum.STRING_FORMAT.name(), getStringFormat(outWorkbook));
+        excelCellStyles.put(outWorkbook.hashCode() + ExcelStylesEnum.DATE_FORMAT.name(), getDateFormat(outWorkbook));
+        return excelCellStyles;
     }
 }

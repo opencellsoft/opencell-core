@@ -1,5 +1,6 @@
 package org.meveo.apiv2.billing.impl;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoiceStatusEnum.DRAFT;
 import static org.meveo.model.billing.InvoiceStatusEnum.NEW;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotFoundException;
@@ -34,6 +36,7 @@ import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.InvoiceTypeRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.billing.BasicInvoice;
@@ -69,6 +72,7 @@ import org.meveo.service.billing.impl.InvoiceSubTotalsService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class InvoiceResourceImpl implements InvoiceResource {
 
 	private static final String PPL_CREATION = "PPL_CREATION";
@@ -520,7 +524,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
 
 	@Override
     public Response updateValidateInvoice(Long id, InvoicePatchInput input) {
-        final Invoice invoice = findValidatedInvoiceToUpdate(id);		
+		Invoice invoice = findValidatedInvoiceToUpdate(id);
         invoiceApiService.updateValidatedInvoice(invoice, input);
         return Response.ok().entity(LinkGenerator.getUriBuilderFromResource(InvoiceResource.class, id).build()).build();
     }
@@ -531,7 +535,7 @@ public class InvoiceResourceImpl implements InvoiceResource {
      * @return {@link org.meveo.apiv2.billing.Invoice}
      */
     private Invoice findValidatedInvoiceToUpdate(Long id) {
-        Invoice invoice = invoiceApiService.findById(id).orElseThrow(NotFoundException::new);
+        Invoice invoice = invoiceApiService.findById(id, asList("invoiceType")).orElseThrow(NotFoundException::new);
         final InvoiceStatusEnum status = invoice.getStatus();
 
         if(!(VALIDATED.equals(status))) {

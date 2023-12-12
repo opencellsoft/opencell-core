@@ -86,6 +86,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -203,6 +204,7 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
 import org.meveo.model.catalog.DiscountPlanItemTypeEnum;
+import org.meveo.model.catalog.DiscountPlanStatusEnum;
 import org.meveo.model.catalog.DiscountPlanTypeEnum;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.communication.email.EmailTemplate;
@@ -236,6 +238,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.base.NativePersistenceService;
 import org.meveo.service.base.PersistenceService;
+import org.meveo.service.billing.impl.InvoiceLineService.InvoiceLineCreationStatistics;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.DiscountPlanItemService;
@@ -1434,6 +1437,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck, boolean save) {
     	invoice = invoiceService.refreshOrRetrieve(invoice);
+        if (invoice.getStatus() != InvoiceStatusEnum.VALIDATED) {
+            invoice.setStatus(InvoiceStatusEnum.DRAFT);
+        }
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
@@ -1498,6 +1504,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				ScriptInterface validationRuleScript = injectScriptParameters(methodContext, validationRule);
 				validationRuleScript.execute(methodContext);
 				validationResult = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
+				invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
 			} else if (validationRule.getType() == ValidationRuleTypeEnum.EXPRESSION_LANGUAGE) {
 				validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
 			} else if (validationRule.getType() == ValidationRuleTypeEnum.RULE_SET) {
@@ -1545,12 +1552,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (InvoiceValidationStatusEnum.REJECTED.equals(failStatus)) {
 			invoice.setStatus(InvoiceStatusEnum.REJECTED);
 			invoice.setRejectedByRule(validationRule);
-			if (invoice.getRejectReason() == null)
+			if (StringUtils.isBlank(invoice.getRejectReason()))
 				invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
 		} else if (InvoiceValidationStatusEnum.SUSPECT.equals(failStatus)) {
 			invoice.setStatus(InvoiceStatusEnum.SUSPECT);
 			invoice.setRejectedByRule(validationRule);
-			if (invoice.getRejectReason() == null)
+			if (StringUtils.isBlank(invoice.getRejectReason()))
 				invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
 		}
 	}
@@ -1561,11 +1568,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if(scriptInstance != null && !MapUtils.isEmpty(validationRule.getRuleValues())){
 		    scriptInstance.getScriptParameters().stream().forEach(sp -> {
 				if (validationRule.getRuleValues().containsKey(sp.getCode())) {
-					methodContext.put(sp.getCode(), (sp.isCollection())? 
+					methodContext.put(sp.getCode(), (sp.isCollection())?
 									scriptInstanceService.parseListFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName(), sp.getValuesSeparator())
 									: scriptInstanceService.parseObjectFromString(String.valueOf(validationRule.getRuleValues().get(sp.getCode())), sp.getClassName()));
 				}
-			});	                        	                            
+			});
 		}
 		return validationRuleScript;
 	}
@@ -2678,9 +2685,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 Subscription subscription = getSubscriptionFromRT(ratedTransactions);
                 List<Map<String, Object>> groupedRTs = ratedTransactionService.getGroupedRTs(ratedTransactionIds);
                 AggregationConfiguration configuration = new AggregationConfiguration(appProvider.isEntreprise());
-                List<InvoiceLine> invoiceLines = new ArrayList<>();
-                invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
-                        null, null, invoiceLines, generateInvoiceRequestDto.getOpenOrderCode());
+                
+                InvoiceLineCreationStatistics stats = invoiceLinesService.createInvoiceLines(groupedRTs, configuration,
+                        generateInvoiceRequestDto.getOpenOrderCode());
+                
+                List<InvoiceLine> invoiceLines =stats.getInvoiceLines();
+                
                 invoices = createAggregatesAndInvoiceUsingILAndSubscription(entity, null, filter, null, invoiceDate,
                         firstTransactionDate, lastTransactionDate, minAmountForAccounts, isDraft,
                         !generateInvoiceRequestDto.getSkipValidation(), false, invoiceLines,
@@ -3371,7 +3381,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 || (billingRun.getComputeDatesAtValidation() == null && billingCycle.isComputeDatesAtValidation())) {
             recalculateDate(invoice, billingRun, billingAccount, billingCycle);
         }
-        if (billingRun.getSkipValidationScript() != null && !billingRun.isSkipValidationScript()) {
+        if (!billingRun.isSkipValidationScript()) {
             applyAutomaticInvoiceCheck(invoice, true);
         }
         if (invoice.getStatus().equals(InvoiceStatusEnum.REJECTED)) {
@@ -4031,6 +4041,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         List<DiscountPlanItem> subscriptionApplicableDiscountPlanItems = new ArrayList<>();
         List<DiscountPlanItem> billingAccountApplicableDiscountPlanItems = new ArrayList<>();
 
+        subscription = subscriptionService.refreshOrRetrieve(subscription);
         if (subscription != null && subscription.getDiscountPlanInstances() != null && !subscription.getDiscountPlanInstances().isEmpty()) {
             addApplicableDiscount(subscriptionApplicableDiscountPlanItems,  subscription.getDiscountPlanInstances(), billingAccount, customerAccount, invoice);
         }
@@ -4095,9 +4106,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(), invoice.getInvoiceDate())) {
-            List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), null,
-                    invoice != null ? invoice.getInvoiceDate() : null);
+        if(invoice.getDiscountPlan()!=null && discountPlanService.isDiscountPlanApplicable(billingAccount, invoice.getDiscountPlan(),invoice.getInvoiceDate())) {
+            List<DiscountPlanItem> discountItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, invoice.getDiscountPlan(), 
+                    null,invoice.getInvoiceDate(),invoice);
             
             subscriptionApplicableDiscountPlanItems.addAll(discountItems);
         }
@@ -4134,6 +4145,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     addAmountsToMap(amountCumulativeForTax, discountAggregate.getAmountsByTax());
                     discountAggregates.add(discountAggregate);
                     otherDiscount = otherDiscount.add(discountAggregate.getAmountWithoutTax().abs());
+                    if (invoice.getDiscountPlan() != null && invoice.getDiscountPlan().getStatus() != DiscountPlanStatusEnum.IN_USE.IN_USE) {
+                        invoice.getDiscountPlan().setStatus(DiscountPlanStatusEnum.IN_USE.IN_USE);
+                    }
                 }
             }
 
@@ -4189,6 +4203,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.addAmountWithoutTax(taxAggregate.getAmountWithoutTax());
                 invoice.addAmountWithTax(taxAggregate.getAmountWithTax());
                 invoice.addAmountTax(taxAggregate.getAmountTax());
+                invoice.addTransactionalAmountWithoutTax(taxAggregate.getTransactionalAmountWithoutTax());
+                invoice.addTransactionalAmountWithTax(taxAggregate.getTransactionalAmountWithTax());
+                invoice.addTransactionalAmountTax(taxAggregate.getTransactionalAmountTax());
             }
             Map<String, TaxInvoiceAgregate> simpleTaxMap = taxAggregates.entrySet().stream()
                   .filter(x -> !x.getValue().getTax().isComposite())
@@ -4222,7 +4239,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Update net to pay amount
         final BigDecimal amountWithTax = invoice.getAmountWithTax() != null ? invoice.getAmountWithTax() : BigDecimal.ZERO;
         invoice.setNetToPay(amountWithTax.add(invoice.getDueBalance() != null ? invoice.getDueBalance() : BigDecimal.ZERO));
-
+		if(CollectionUtils.isEmpty(invoice.getInvoiceLines()) && CollectionUtils.isNotEmpty(subCategoryAggregates)){
+			invoice.setInvoiceLines(subCategoryAggregates.stream().flatMap(sub -> sub.getInvoiceLinesToAssociate().stream()).collect(toList()));
+		}
         if(invoice.getInvoiceLines() != null && !invoice.getInvoiceLines().isEmpty()) {
             BigDecimal amountDiscount = invoice.getInvoiceLines()
                     .stream()
@@ -4230,9 +4249,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .reduce(BigDecimal::add)
                     .orElse(BigDecimal.ZERO);
             amountDiscount = amountDiscount.add(otherDiscount);
+            // Always set AmountWithoutTaxBeforeDiscount = AmountWithoutTax before calculate discount : to manager case where amountDiscount == 0
+	        invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax());
             if(!amountDiscount.equals(BigDecimal.ZERO)) {
                 invoice.setDiscountAmount(amountDiscount);
-                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
+                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount.abs()));
             }
             if(amountDiscount.equals(BigDecimal.ZERO) && invoice.getDiscountPlan() != null
                     && invoice.getDiscountPlan().getDiscountPlanType() == DiscountPlanTypeEnum.INVOICE && discountAggregates != null) {
@@ -4242,7 +4263,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         .reduce(BigDecimal::add)
                         .orElse(BigDecimal.ZERO);
                 invoice.setDiscountAmount(amountDiscount);
-                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount));
+                invoice.setAmountWithoutTaxBeforeDiscount(invoice.getAmountWithoutTax().add(amountDiscount.abs()));
             }
         }
         
@@ -4308,15 +4329,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.addInvoiceAggregate(taxAggregate);
         }
 
-        if (isEnterprise) {
-            taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
-            taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
-            taxAggregate.addTransactionAmountWithoutTax(amountByTax.getValue().getTransactionalAmountWithoutTax());
-        } else {
-            taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
-            taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
-            taxAggregate.addTransactionAmountWithTax(amountByTax.getValue().getTransactionalAmountWithTax());
-        }
+        taxAggregate.addAmountWithoutTax(amountByTax.getValue().getAmountWithoutTax());
+        taxAggregate.addAmountWithTax(amountByTax.getValue().getAmountWithTax());
+        taxAggregate.addAmountTax(amountByTax.getValue().getAmountTax());
+        taxAggregate.addTransactionAmountWithoutTax(amountByTax.getValue().getTransactionalAmountWithoutTax());
+        taxAggregate.addTransactionAmountWithTax(amountByTax.getValue().getTransactionalAmountWithTax());
+        taxAggregate.addTransactionAmountTax(amountByTax.getValue().getTransactionalAmountTax());
+
         return taxAggregate;
     }
 
@@ -4480,8 +4499,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 continue;
             }
             if (dpi.getDiscountPlan().isActive()) {
-                applicableDiscountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, dpi.getDiscountPlan(), null, null, null, null, invoice.getInvoiceDate());
-                dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
+            	 applicableDiscountPlanItems = discountPlanItemService.getApplicableDiscountPlanItems(billingAccount, dpi.getDiscountPlan(), null,invoice.getInvoiceDate(),invoice);
+                 dpi.setApplicationCount(dpi.getApplicationCount() == null ? 1 : dpi.getApplicationCount() + 1);
 
                 if (dpi.getDiscountPlan().getApplicationLimit() != 0 && dpi.getApplicationCount() >= dpi.getDiscountPlan().getApplicationLimit()) {
                     dpi.setStatusDate(new Date());
@@ -4913,7 +4932,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoiceAgregateTax.setAmountTax(BigDecimal.ZERO);
         invoiceAgregateTax.setBillingAccount(billingAccount);
         invoiceAgregateTax.setAuditable(auditable);
-        invoice.addInvoiceAggregate(invoiceAgregateTax);
+        //invoice.addInvoiceAggregate(invoiceAgregateTax);
         return invoiceAgregateTax;
     }
 
@@ -4970,6 +4989,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             ratedTransactionDto.getStartDate(), ratedTransactionDto.getEndDate(), seller, tax, tax.getPercent(), null, taxClass, null, null, null, null);
 
         rt.setWallet(userAccount != null ? userAccount.getWallet() : null);
+        rt.setBusinessKey(ratedTransactionDto.getBusinessKey());
         // #3355 : setting params 1,2,3
         if (isDetailledInvoiceMode) {
             rt.setParameter1(ratedTransactionDto.getParameter1());
@@ -5518,7 +5538,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         Invoice invoice = initBasicInvoiceInvoice(amountWithTax, invoiceDate, order, billingAccount, invoiceType, comment, seller,
-                buildAutoMatching(resource.getAutoMatching(), invoiceType), purchaseOrder);
+                buildAutoMatching(resource.getAutoMatching(), invoiceType), purchaseOrder, resource.getDueDate());
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
@@ -5541,7 +5561,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new EntityDoesNotExistsException(InvoiceType.class, "SECURITY_DEPOSIT");
         }
         Seller defaultSeller = securityDepositInput.getSeller();
-		Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "", defaultSeller, false, null);
+		Invoice invoice = initBasicInvoiceInvoice(securityDepositInput.getAmount(), new Date(), null, securityDepositInput.getBillingAccount(), advType, "", defaultSeller, false, null, null);
         invoice.updateAudit(currentUser);
         getEntityManager().persist(invoice);
         postCreate(invoice);
@@ -5558,7 +5578,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param comment Comment
      * @return {@link Invoice}
      */
-    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType, String comment, Seller seller, boolean isAutoMatching, String purchaseOrder) {
+    private Invoice initBasicInvoiceInvoice(final BigDecimal amountWithTax, final Date invoiceDate, Order order, BillingAccount billingAccount, InvoiceType advType, String comment, Seller seller, boolean isAutoMatching, String purchaseOrder, Date dueDate) {
         Invoice invoice = new Invoice();
         invoice.setInvoiceType(advType);
         invoice.setBillingAccount(billingAccount);
@@ -5574,7 +5594,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setInvoiceDate(invoiceDate);
         invoice.setDetailedInvoice(true);
         invoice.setNetToPay(amountWithTax);
-        Date dueDate = calculateDueDate(invoice, billingAccount.getBillingCycle(), billingAccount, billingAccount.getCustomerAccount(), order);
+		if(dueDate == null){
+			dueDate = calculateDueDate(invoice, billingAccount.getBillingCycle(), billingAccount, billingAccount.getCustomerAccount(), order);
+		}
         invoice.setDueDate(dueDate);
         setInitialCollectionDate(invoice, billingAccount.getBillingCycle(), null);
         invoice.setSeller(seller);
@@ -5658,7 +5680,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         EntityManager em = getEntityManager();
         for (InvoiceLine invoiceLine : invoiceLines) {
             // Order can span multiple billing accounts and some Billing account-dependent values have to be recalculated
-        	if ((entityToInvoice instanceof CommercialOrder || entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId()))) {
+        	if ((entityToInvoice instanceof CommercialOrder || entityToInvoice instanceof Order || entityToInvoice instanceof CpqQuote || entityToInvoice instanceof BillingAccount ) && (billingAccount == null || (invoiceLine.getBillingAccount() != null && !billingAccount.getId().equals(invoiceLine.getBillingAccount().getId())))) {
                 billingAccount = invoiceLine.getBillingAccount();
                 if (defaultPaymentMethod == null && billingAccount != null) {
                     defaultPaymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
@@ -5672,6 +5694,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             
             if (invoiceProcessTypeEnum == null || invoiceProcessTypeEnum == InvoiceProcessTypeEnum.AUTOMATIC) {
                 AccountingArticle accountingArticle = invoiceLine.getAccountingArticle();
+                accountingArticle = accountingArticleService.refreshOrRetrieve(accountingArticle);
                 if (!StringUtils.isBlank(accountingArticle.getInvoiceTypeEl())) {
                     String invoiceTypeCode = evaluateInvoiceTypeEl(accountingArticle.getInvoiceTypeEl(), invoiceLine);
                     invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
@@ -5691,6 +5714,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             
             paymentMethod = resolvePMethod(billingAccount, billingCycle, defaultPaymentMethod, invoiceLine);
+            invoiceLine.setSubscription(subscriptionService.refreshOrRetrieve(invoiceLine.getSubscription()));
             Seller seller = getSelectedSeller(invoiceLine);
             String invoiceKey = billingAccount.getId() +  (seller!=null ? "_"+seller.getId():null) + "_" + invoiceType.getId() + "_" + paymentMethod.getId() + "_" + invoiceLine.getOpenOrderNumber();
             InvoiceLinesGroup ilGroup = invoiceLinesGroup.get(invoiceKey);
@@ -6205,20 +6229,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
             }
             }
-
-
-
-
-
-
-
-
             invoiceAggregateProcessingInfo.invoice.assignTemporaryInvoiceNumber();
             applyAutomaticInvoiceCheck(invoiceAggregateProcessingInfo.invoice, automaticInvoiceCheck);
             postCreate(invoiceAggregateProcessingInfo.invoice);
         }
         applyExchangeRateToInvoiceLineAndAggregate(invoiceList);
-        return invoiceList;
+        return refreshOrRetrieve(invoiceList);
 
     }
 
@@ -6318,6 +6334,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         for (InvoiceLine invoiceLine : invoiceLines) {
 
             addFixedDiscount(invoiceLine);
+            invoiceLine.setSubscription(subscriptionService.refreshOrRetrieve(invoiceLine.getSubscription()));
+            invoiceLine.setAccountingArticle(accountingArticleService.refreshOrRetrieve(invoiceLine.getAccountingArticle()));
             InvoiceSubCategory invoiceSubCategory = invoiceLine.getAccountingArticle().getInvoiceSubCategory();
 
             scaKey = invoiceSubCategory.getId().toString();
@@ -6328,7 +6346,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Tax tax = invoiceLine.getTax();
             UserAccount userAccount = invoiceLine.getSubscription() == null ? null : invoiceLine.getSubscription().getUserAccount();
             if(userAccount==null) {
-                userAccount=invoiceLine.getBillingAccount().getUsersAccounts().size()==1?invoiceLine.getBillingAccount().getUsersAccounts().get(0):null;
+                userAccount=invoiceLine.getBillingAccount() != null && invoiceLine.getBillingAccount().getUsersAccounts().size()==1?invoiceLine.getBillingAccount().getUsersAccounts().get(0):null;
             }
             // Check if tax has to be recalculated. Does not apply to RatedTransactions that had tax explicitly set/overridden
             if (calculateTaxOnSubCategoryLevel && !invoiceLine.isTaxOverridden()) {
@@ -6394,18 +6412,24 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
                     scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
                     scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
-                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(), invoiceLine.getTransactionalAmountWithTax(), invoiceLine.getTransactionalAmountTax());
+                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(),
+                            invoiceLine.getTransactionalAmountWithTax(),
+                            invoiceLine.getTransactionalAmountTax());
                 } else {
                     scAggregate.addTransactionAmountWithoutTax(toTransactional(invoiceLine.getAmountWithoutTax(), appliedRate));
                     scAggregate.addTransactionAmountWithTax(toTransactional(invoiceLine.getAmountWithTax(), appliedRate));
                     scAggregate.addTransactionAmountTax(toTransactional(invoiceLine.getAmountTax(), appliedRate));
-                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(scAggregate.getTransactionalAmountWithoutTax(), scAggregate.getTransactionalAmountWithTax(), scAggregate.getTransactionalAmountTax());
+                    scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(toTransactional(invoiceLine.getAmountWithoutTax(), appliedRate),
+                            toTransactional(invoiceLine.getAmountWithTax(), appliedRate),
+                            toTransactional(invoiceLine.getAmountTax(), appliedRate));
                 }
             } else {
                 scAggregate.addTransactionAmountWithoutTax(invoiceLine.getTransactionalAmountWithoutTax());
                 scAggregate.addTransactionAmountWithTax(invoiceLine.getTransactionalAmountWithTax());
                 scAggregate.addTransactionAmountTax(invoiceLine.getTransactionalAmountTax());
-                scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(), invoiceLine.getTransactionalAmountWithTax(), invoiceLine.getTransactionalAmountTax());
+                scAggregate.getAmountsByTax().get(invoiceLine.getTax()).addTransactionalAmounts(invoiceLine.getTransactionalAmountWithoutTax(),
+                        invoiceLine.getTransactionalAmountWithTax(),
+                        invoiceLine.getTransactionalAmountTax());
             }
         }
         if (moreInvoiceLinesExpected) {
@@ -6423,10 +6447,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void addFixedDiscount(InvoiceLine invoiceLine) {
-        if(invoiceLine.getDiscountPlan() != null && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()) {
+        if(invoiceLine.getDiscountPlan() != null && !DiscountPlanTypeEnum.INVOICE_LINE.equals(invoiceLine.getDiscountPlan().getDiscountPlanType()) && invoiceLine.getDiscountPlan().getDiscountPlanItems() != null && !invoiceLine.getDiscountPlan().getDiscountPlanItems().isEmpty()) {
         	List<DiscountPlanItem> discountPlanItems = discountPlanItemService.getFixedDiscountPlanItemsByDP(invoiceLine.getDiscountPlan().getId());
             for(DiscountPlanItem discountPlanItem : discountPlanItems) {
-            if(discountPlanItem != null && discountPlanItemService.isDiscountPlanItemApplicable(invoiceLine.getBillingAccount(),discountPlanItem,invoiceLine.getAccountingArticle(),invoiceLine.getSubscription(),null) ) {
+            if(discountPlanItem != null && discountPlanItemService.isDiscountPlanItemApplicable(invoiceLine.getBillingAccount(),discountPlanItem,invoiceLine,invoiceLine.getAccountingArticle(),invoiceLine.getSubscription()) ) {
                 invoiceLine.setAmountWithoutTax(invoiceLine.getAmountWithoutTax().subtract(discountPlanItem.getDiscountValue()));
                 invoiceLine.setAmountWithTax(invoiceLine.getAmountWithoutTax().add(invoiceLine.getAmountTax()));
                 invoiceLine.setDiscountAmount(invoiceLine.getDiscountAmount().add(discountPlanItem.getDiscountValue()));
@@ -6791,10 +6815,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         if (invoiceResource.getSubscription() != null && invoiceResource.getSubscription().getId() != null) {
-            // Subscription can only be edited for manual invoice in “draft-like” status (NEW, DRAFT, REJECTED, SUSPECT)
+            // Subscription can only be edited for manual invoice in draft-like status (NEW, DRAFT, REJECTED, SUSPECT)
             if (!(toUpdate.getStatus() == InvoiceStatusEnum.NEW || toUpdate.getStatus() == InvoiceStatusEnum.DRAFT ||
                     toUpdate.getStatus() == InvoiceStatusEnum.REJECTED ||toUpdate.getStatus() == InvoiceStatusEnum.SUSPECT)) {
-                throw new BusinessException("Subscription can only be edited for manual invoice in “draft-like” status (NEW, DRAFT, REJECTED, SUSPECT)");
+                throw new BusinessException("Subscription can only be edited for manual invoice in �draft-like� status (NEW, DRAFT, REJECTED, SUSPECT)");
             }
 
             // Check if the invoice is not generation by a billingRun
@@ -6835,6 +6859,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     throw new BusinessApiException("InvoiceId " + invoiceId + " cant be linked");
                 }
                 LinkedInvoice linkedInvoice = new LinkedInvoice(invoiceTmp, toUpdate);
+				if(toUpdate.getInvoiceType() != null && toUpdate.getInvoiceType().getCode().equals("ADJ")) {
+					linkedInvoice.setType(InvoiceTypeEnum.ADJUSTMENT);
+					invoiceTmp.getLinkedInvoices().add(new LinkedInvoice(toUpdate, invoiceTmp));
+	            }
                 if (!invoiceTmp.getLinkedInvoices().contains(linkedInvoice)) {
                     toUpdate.getLinkedInvoices().add(linkedInvoice);
                 }
@@ -6922,15 +6950,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return currentRate;
     }
 
-    public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
-        if(lastAppliedRate == null) return;
-        toUpdate = refreshOrRetrieve(toUpdate);
-        toUpdate.getLinkedInvoices().stream().filter(linkedInvoice ->
-                        InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
-                                && linkedInvoice.getLinkedInvoiceValue() != null &&
-                                linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
-                .forEach(linkedInvoice -> linkedInvoice.setTransactionalAmount(linkedInvoice.getAmount() != null ? linkedInvoice.getAmount().multiply(lastAppliedRate) : null));
-    }
+	public void refreshAdvanceInvoicesConvertedAmount(Invoice toUpdate, BigDecimal lastAppliedRate) {
+		if (lastAppliedRate != null) {
+			toUpdate = refreshOrRetrieve(toUpdate);
+			toUpdate.getLinkedInvoices().stream()
+					.filter(linkedInvoice -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(linkedInvoice.getType())
+							&& linkedInvoice.getLinkedInvoiceValue() != null
+							&& linkedInvoice.getLinkedInvoiceValue().getStatus().equals(InvoiceStatusEnum.VALIDATED))
+					.forEach(linkedInvoice -> linkedInvoice.setTransactionalAmount(linkedInvoice.getAmount() != null ? linkedInvoice.getAmount().multiply(lastAppliedRate) : null));
+		}
+	}
 
     /**
      * @param paginationConfiguration
@@ -6979,7 +7008,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return duplicate(invoice, null);
     }
 
-    public Invoice duplicate(Invoice invoice, List<Long> invoiceLinesIds) {        
+    public Invoice duplicate(Invoice invoice, List<Long> invoiceLinesIds) {
         return duplicateByType(invoice, invoiceLinesIds, false);
     }
     
@@ -7045,12 +7074,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            duplicateInvoiceLine.setLinkedInvoiceLine(invoiceLine); // Add linked adjusted invoiceLine
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
-        }
-
-        if (isAdjustment) {
-            invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
         }
 
         return duplicateInvoice;
@@ -7137,12 +7163,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceLinesService.detach(invoiceLine);
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
+            duplicateInvoiceLine.setLinkedInvoiceLine(invoiceLine); // Add linked adjusted invoiceLine
             duplicateInvoiceLine.setRatedTransactions(invoiceLine.getRatedTransactions());
             invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
             duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
         }
-
-        invoiceLinesService.validateAdjAmount(invoiceLines, invoice);
 
         return duplicateInvoice;
     }
@@ -7202,7 +7227,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     private void addLinkedInvoice(Invoice invoice, Invoice duplicatedInvoice) {
         LinkedInvoice linkedInvoice = new LinkedInvoice(invoice, duplicatedInvoice, duplicatedInvoice.getAmountWithTax(), duplicatedInvoice.getTransactionalAmountWithTax(), InvoiceTypeEnum.ADJUSTMENT);
-        duplicatedInvoice.getLinkedInvoices().addAll(of(linkedInvoice));
+	    LinkedInvoice reversLinkedInvoice = new LinkedInvoice(duplicatedInvoice, invoice, null, null, null);
+        duplicatedInvoice.getLinkedInvoices().addAll(of(linkedInvoice, reversLinkedInvoice));
     }
 
     public Invoice duplicateInvoiceLines(Invoice invoice, List<Long> invoiceLineIds) {
@@ -7419,7 +7445,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     .map(LinkedInvoice::getTransactionalAmount)
                     .reduce(BigDecimal::add).orElse(ZERO);
             //if balance is well calculated and balance=0, we don't need to recalculate
-            if ((sum.add(invoiceBalance)).compareTo(invoice.getTransactionalAmountWithoutTax()) == 0) {
+            if ((sum.add(invoiceBalance)).compareTo(invoice.getTransactionalAmountWithTax()) == 0) {
                 CommercialOrder commercialOrder = CollectionUtils.isNotEmpty(advInvoices) ? advInvoices.get(0).getCommercialOrder() : null;
                 if (BigDecimal.ZERO.compareTo(invoiceBalance) == 0 && !(commercialOrder != null && commercialOrder.equals(invoice.getCommercialOrder()))) {
                     return;
@@ -7528,7 +7554,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (invoice.getLinkedInvoices() != null) {
 			Predicate<LinkedInvoice> advFilter = i -> InvoiceTypeEnum.ADVANCEMENT_PAYMENT.equals(i.getType());
 			if (delete) {
-				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> li.getLinkedInvoiceValue().setTransactionalInvoiceBalance(li.getLinkedInvoiceValue().getTransactionalInvoiceBalance().add(li.getTransactionalAmount())));
+				invoice.getLinkedInvoices().stream().filter(advFilter).forEach(li -> li.getLinkedInvoiceValue().setInvoiceBalance(li.getLinkedInvoiceValue().getInvoiceBalance().add(li.getAmount())));
 				linkedInvoiceService.deleteByInvoiceIdAndType(invoice.getId(), InvoiceTypeEnum.ADVANCEMENT_PAYMENT);
 				invoice.getLinkedInvoices().removeIf(advFilter);
 			} else {
@@ -7644,6 +7670,101 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
 		filters = genericRequestMapper.evaluateFilters(filters, entityClass);
 		return new PaginationConfiguration(filters);
+	}
+	/**
+	 * get list of invoices that have ubl reference is false
+	 *
+	 * @param billingRunId
+	 * @param statusList
+	 * @return
+	 */
+	public List<Long> listInvoicesWithoutXml(List<InvoiceStatusEnum> statusList) {
+		return getEntityManager().createNamedQuery("Invoice.xmlWithStatusForUBL", Long.class).setParameter("statusList", statusList).getResultList();
+	}
+	
+	/**
+	 * Produce invoice's XML file and update invoice record in DB.
+	 *
+	 * @param invoice Invoice to produce XML for
+	 * @param draftWalletOperationsId Wallet operations (ids) to include in a draft invoice
+	 * @return Update invoice entity
+	 * @throws BusinessException business exception
+	 */
+	public Invoice produceInvoiceUBLFormat(Invoice invoice) throws BusinessException, JAXBException {
+		InvoiceUblHelper invoiceUblHelper = InvoiceUblHelper.getInstance();
+		Path pathCreatedFile = null;
+		
+		ScriptInstance customUblScript = invoice.getInvoiceType().getCustomUblScript();
+        if (customUblScript != null) {
+            ScriptInterface script = scriptInstanceService.getScriptInstance(customUblScript.getCode());
+            Map<String, Object> methodContext = new HashMap<>();
+            methodContext.put(Script.CONTEXT_ENTITY, invoice);
+            methodContext.put(Script.CONTEXT_CURRENT_USER, currentUser);
+            methodContext.put(Script.CONTEXT_APP_PROVIDER, appProvider);
+            methodContext.put("InvoiceUblHelper", invoiceUblHelper);
+            if (script != null) {
+                script.execute(methodContext);
+            }
+            pathCreatedFile = (Path) methodContext.get(Script.RESULT_VALUE);
+        } else {
+        	pathCreatedFile = invoiceUblHelper.createInvoiceUBL(invoice);
+        }
+        
+		invoice.setXmlDate(new Date());
+		invoice.setUblReference(true);
+		invoice = updateNoCheck(invoice);
+		entityUpdatedEventProducer.fire(invoice);
+		
+		if (pathCreatedFile != null)
+			pathCreatedFile.toFile().setReadOnly();
+		
+		return invoice;
+	}
+
+    public void validateAdjAmount(Invoice newInvoice) {
+        // Check global Invoice Amount
+        LinkedInvoice linkedInvoice = invoiceService.findBySourceInvoiceByAdjId(newInvoice.getId());
+        if (linkedInvoice != null) {
+            Invoice srcInvoice = linkedInvoice.getInvoice();
+
+            // get sum of validated linked invoice using srcInvoice
+            BigDecimal sumValidatedLinkedInvoice = (BigDecimal) getEntityManager()
+                    .createNamedQuery("Invoice.SUM_VALIDATED_LINKED_INVOICES").setParameter("SRC_INVOICE_ID", srcInvoice.getId()).getSingleResult();
+
+            if (sumValidatedLinkedInvoice == null) {
+                sumValidatedLinkedInvoice = ZERO;
+            }
+
+            if (!ZERO.equals(sumValidatedLinkedInvoice)) {
+                if(newInvoice.getAmountWithTax().add(sumValidatedLinkedInvoice).compareTo(srcInvoice.getAmountWithTax()) > 0) {
+                    throw new BusinessException("The adjustment amount exceeds the remaining invoice amount.");
+                }
+            } else {
+                // check amount with tax
+                if (newInvoice.getAmountWithTax().compareTo(srcInvoice.getAmountWithTax()) > 0) {
+                    throw new BusinessException("The adjustment amount exceeds the remaining invoice amount.");
+                }
+            }
+        }
+
+        // Check invoice line
+        if (CollectionUtils.isNotEmpty(newInvoice.getInvoiceLines())) {
+            newInvoice.getInvoiceLines().forEach(invoiceLine -> {
+                if (invoiceLine.getLinkedInvoiceLine() != null) {
+                    // check amount with tax
+                    if (invoiceLine.getAmountWithTax().compareTo(invoiceLine.getLinkedInvoiceLine().getAmountWithTax()) > 0) {
+                        throw new BusinessException("Adjustment Line Amount With Tax '"+ invoiceLine.getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())
+                                +"' is greater than Linked Line '" + invoiceLine.getLinkedInvoiceLine().getAmountWithTax().setScale(appProvider.getInvoiceRounding(), appProvider.getInvoiceRoundingMode().getRoundingMode())+"'");
+                    }
+                }
+            });
+        }
+    }
+	
+	public List<Invoice> findByInvoicesNumber(String invoiceNumber) {
+			return (List<Invoice>) getEntityManager().createQuery("SELECT inv FROM Invoice inv WHERE inv.invoiceNumber = :invoiceNumber")
+					.setParameter("invoiceNumber", invoiceNumber).setMaxResults(1)
+					.getResultList();
 	}
 
 }

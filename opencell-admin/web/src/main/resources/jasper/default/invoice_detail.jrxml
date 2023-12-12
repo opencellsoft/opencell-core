@@ -4,7 +4,50 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Transact-Amount-EPE"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MyInvoiceIssue"/>
+	<subDataset name="categoryDataset" uuid="caf372ed-b5fb-4515-871b-63c01682a70b">
+		<queryString language="xPath">
+			<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
+		</queryString>
+		<field name="articleLabelLine" class="java.lang.String">
+			<fieldDescription><![CDATA[article/@label]]></fieldDescription>
+		</field>
+		<field name="periodStartDate" class="java.lang.String">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="@periodStartDate"/>
+			<fieldDescription><![CDATA[@periodStartDate]]></fieldDescription>
+		</field>
+		<field name="periodEndDate" class="java.lang.String">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="@periodEndDate"/>
+			<fieldDescription><![CDATA[@periodEndDate]]></fieldDescription>
+		</field>
+		<field name="label_line" class="java.lang.String">
+			<fieldDescription><![CDATA[label]]></fieldDescription>
+		</field>
+		<field name="articleCodeLine" class="java.lang.String">
+			<fieldDescription><![CDATA[article/@code]]></fieldDescription>
+		</field>
+		<field name="quantity" class="java.lang.String">
+			<fieldDescription><![CDATA[quantity]]></fieldDescription>
+		</field>
+		<field name="unitAmountWithoutTax" class="java.lang.String">
+			<fieldDescription><![CDATA[unitAmountWithoutTax]]></fieldDescription>
+		</field>
+		<field name="amountWithoutTax" class="java.lang.String">
+			<fieldDescription><![CDATA[amountWithoutTax]]></fieldDescription>
+		</field>
+		<field name="transactionalAmountWithoutTax" class="java.lang.String">
+			<fieldDescription><![CDATA[transactionalAmountWithoutTax]]></fieldDescription>
+		</field>
+		<field name="taxIndex_line" class="java.lang.String">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="@taxIndex"/>
+			<fieldDescription><![CDATA[@taxIndex]]></fieldDescription>
+		</field>
+		<field name="country" class="java.lang.String">
+			<property name="net.sf.jasperreports.xpath.field.expression" value="/invoice/@country"/>
+			<fieldDescription><![CDATA[/invoice/@country]]></fieldDescription>
+		</field>
+		<sortField name="articleLabelLine"/>
+	</subDataset>
 	<queryString language="xPath">
 		<![CDATA[/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line]]>
 	</queryString>
@@ -253,77 +296,16 @@
 		<groupExpression><![CDATA[$F{useraccount_code}]]></groupExpression>
 	</group>
 	<group name="2">
-		<groupExpression><![CDATA[$F{label_line}]]></groupExpression>
 		<groupHeader>
-			<band height="40">
-				<textField>
-					<reportElement x="69" y="-39" width="222" height="37" uuid="aebac6ee-7be4-4a44-9230-ee3968716f66"/>
-					<textElement verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{articleLabelLine} != null ? ($F{articleLabelLine}.substring(0, 1).toUpperCase() + $F{articleLabelLine}.substring(1)) + "\n"  : "" +
-($F{country}=="US" ? java.time.LocalDate.parse($F{periodStartDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : java.time.LocalDate.parse($F{periodStartDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))
- + ($F{periodEndDate}.isEmpty() ? "" : " - " + $F{periodEndDate}) + "\n" +
-$F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></textFieldExpression>
-				</textField>
-				<textField pattern="MMM-yy" isBlankWhenNull="true">
-					<reportElement x="12" y="-39" width="55" height="37" uuid="a3729a4b-61ce-4e22-8dc7-177cd79b03e2"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{articleCodeLine}]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="2" isBlankWhenNull="true">
-					<reportElement x="287" y="-39" width="59" height="37" uuid="e0af6223-26d1-4cfa-a956-382e45a88ded"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="9"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(Double.valueOf($V{quantity}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(Double.valueOf($V{quantity})))]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="351" y="-39" width="85" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<box leftPadding="0" rightPadding="2"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="9" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{unitAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{unitAmountWithoutTax})))]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
-					<reportElement mode="Transparent" x="440" y="-39" width="85" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<box leftPadding="0" rightPadding="2"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="9" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(Double.valueOf($V{quantity})*new Double($F{amountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(Double.valueOf($V{quantity})*new Double($F{amountWithoutTax})))]]></textFieldExpression>
-				</textField>
-				<textField evaluationTime="Group" evaluationGroup="2" pattern="" isBlankWhenNull="true">
-					<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="528" y="-39" width="45" height="37" uuid="0ca42a84-59db-46b9-a4d3-227e7163639c">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<box leftPadding="0" rightPadding="2"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="9" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{taxIndex_line}.replaceAll(',', '\n')]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement x="11" y="-1" width="565" height="1" forecolor="#999999" uuid="3b4bb476-6f45-44a1-9025-a797860912ec"/>
-					<graphicElement>
-						<pen lineWidth="0.5" lineStyle="Dotted" lineColor="#999999"/>
-					</graphicElement>
-				</line>
-			</band>
+			<band height="42"/>
 		</groupHeader>
 	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<pageHeader>
-		<band height="62">
+	<detail>
+		<band height="70">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT}==1]]></printWhenExpression>
 			<line>
 				<reportElement x="11" y="23" width="565" height="1" forecolor="#CCCCCC" uuid="49fddbb7-327b-4080-b5d7-05bd11bed13d"/>
 				<graphicElement>
@@ -444,12 +426,131 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				</textElement>
 				<textFieldExpression><![CDATA["VAT"]]></textFieldExpression>
 			</textField>
+			<componentElement>
+				<reportElement key="" positionType="Float" stretchType="ElementGroupHeight" isPrintRepeatedValues="false" x="10" y="23" width="562" height="47" isPrintWhenDetailOverflows="true" forecolor="#000000" uuid="cd698aa3-bc9d-4146-a0b2-67721657e013"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
+					<datasetRun subDataset="categoryDataset" uuid="423093c2-5080-4025-8e57-ddbea34dba62">
+						<dataSourceExpression><![CDATA[$P{REPORT_DATA_SOURCE}.dataSource("/invoice/detail/userAccounts/userAccount/categories/category/subCategories/subCategory/line")]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="55" uuid="ef6e8767-1590-4cc4-8e02-8f69cf182e2a">
+						<jr:detailCell height="45" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="55" height="45" uuid="e857a67d-5741-4b35-ab83-e306499980af"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{articleCodeLine}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="220" uuid="cb89ff64-f08d-460f-b218-65b4942519cc">
+						<jr:detailCell height="45" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+							</box>
+							<textField pattern="#,##0.00" isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="220" height="45" uuid="3aad346a-5727-40b8-81c1-3c32c5a01472"/>
+								<textElement textAlignment="Left" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{articleLabelLine} != null ? ("  " + $F{articleLabelLine}.substring(0, 1).toUpperCase() + $F{articleLabelLine}.substring(1)) + "\n"  : "" +
+($F{country}=="US" ? "  " + java.time.LocalDate.parse($F{periodStartDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("MM/dd/yyyy")) : "  " + java.time.LocalDate.parse($F{periodStartDate}, java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+ + ($F{periodEndDate}.isEmpty() ? "" : " - " + "  " + $F{periodEndDate}) + "\n" +
+"  " + $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="59" uuid="ef6e8767-1590-4cc4-8e02-8f69cf182e2a">
+						<jr:detailCell height="45" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="59" height="45" uuid="e857a67d-5741-4b35-ab83-e306499980af"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(Double.valueOf($F{quantity}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(Double.valueOf($F{quantity})))]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="85" uuid="ef6e8767-1590-4cc4-8e02-8f69cf182e2a">
+						<jr:detailCell height="45" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="85" height="45" uuid="e857a67d-5741-4b35-ab83-e306499980af"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{unitAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{unitAmountWithoutTax})))]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="85" uuid="ef6e8767-1590-4cc4-8e02-8f69cf182e2a">
+						<jr:detailCell height="45" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="85" height="45" uuid="e857a67d-5741-4b35-ab83-e306499980af"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(Double.valueOf($F{transactionalAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(Double.valueOf($F{transactionalAmountWithoutTax})))]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="45" uuid="ef6e8767-1590-4cc4-8e02-8f69cf182e2a">
+						<jr:detailCell height="45" rowSpan="1">
+							<box>
+								<pen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<topPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<leftPen lineWidth="0.0" lineColor="#CCCCCC"/>
+								<bottomPen lineWidth="0.5" lineColor="#CCCCCC"/>
+								<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+							</box>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="45" height="45" uuid="e857a67d-5741-4b35-ab83-e306499980af"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="SansSerif" size="11" isBold="false"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{taxIndex_line}.replaceAll(',', '\n')]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
 		</band>
-	</pageHeader>
+	</detail>
 	<pageFooter>
 		<band height="102">
 			<staticText>
-				<reportElement x="267" y="-2" width="100" height="12" forecolor="#0D0101" uuid="7d6b994e-8c71-4788-8493-0a4360de8339">
+				<reportElement x="267" y="0" width="100" height="17" forecolor="#0D0101" uuid="7d6b994e-8c71-4788-8493-0a4360de8339">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -467,21 +568,21 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<text><![CDATA[Total w/o tax]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="267" y="10" width="100" height="27" forecolor="#0D0101" uuid="f79f7809-0136-48db-b0e1-b6a73956fa7a"/>
+				<reportElement x="267" y="17" width="100" height="27" forecolor="#0D0101" uuid="f79f7809-0136-48db-b0e1-b6a73956fa7a"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{invAmountWithoutTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{invAmountWithoutTax})))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="367" y="10" width="99" height="27" forecolor="#0D0101" uuid="70c1495f-5376-431a-b519-0dcecb971ad9"/>
+				<reportElement x="367" y="17" width="99" height="27" forecolor="#0D0101" uuid="70c1495f-5376-431a-b519-0dcecb971ad9"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new java.math.BigDecimal(Double.valueOf($V{totalAmountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($V{totalAmountWithoutTax}))))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new java.math.BigDecimal(Double.valueOf($V{totalAmountWithTax})).subtract(new java.math.BigDecimal(Double.valueOf($V{totalAmountWithoutTax})))))]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="393" y="-2" width="73" height="12" forecolor="#0D0101" uuid="c4ea0e2d-750c-4986-b371-b16eda7970bd">
+				<reportElement x="393" y="0" width="73" height="17" forecolor="#0D0101" uuid="c4ea0e2d-750c-4986-b371-b16eda7970bd">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -499,7 +600,7 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<text><![CDATA[Total tax]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="503" y="-2" width="73" height="12" forecolor="#0D0101" uuid="38086c97-c16a-4e5d-bd80-cca71f4f026b">
+				<reportElement x="503" y="0" width="73" height="17" forecolor="#0D0101" uuid="38086c97-c16a-4e5d-bd80-cca71f4f026b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -517,16 +618,16 @@ $F{label_line}.substring(0, 1).toUpperCase() + $F{label_line}.substring(1)]]></t
 				<text><![CDATA[Total incl. tax]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="477" y="10" width="99" height="27" forecolor="#0D0101" uuid="191c017a-c3ac-4c3e-a666-3bbb464e9297"/>
+				<reportElement x="477" y="17" width="99" height="27" forecolor="#0D0101" uuid="191c017a-c3ac-4c3e-a666-3bbb464e9297"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{country}=="FR" || $F{country}=="UK") ? (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.FRENCH)).format(new Double($F{invAmountWithTax}))) : (new java.text.DecimalFormat("#,##0.00", java.text.DecimalFormatSymbols.getInstance(Locale.US)).format(new Double($F{invAmountWithTax})))]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="267" y="10" width="309" height="1" forecolor="#999999" uuid="7e75e123-780a-4280-b85c-7ed1cdb4a857"/>
+				<reportElement x="267" y="16" width="309" height="1" forecolor="#999999" uuid="7e75e123-780a-4280-b85c-7ed1cdb4a857"/>
 				<graphicElement>
-					<pen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<pen lineWidth="0.5" lineColor="#CCCCCC"/>
 				</graphicElement>
 			</line>
 		</band>

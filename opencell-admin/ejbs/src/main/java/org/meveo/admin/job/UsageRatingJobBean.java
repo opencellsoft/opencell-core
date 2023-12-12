@@ -36,7 +36,7 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.UsageRatingService;
 
 @Stateless
-public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
+public class UsageRatingJobBean extends IteratorBasedScopedJobBean<Long> {
 
     private static final long serialVersionUID = 6091764740338888327L;
 
@@ -69,29 +69,7 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
      * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
      */
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
-
-        JobInstance jobInstance = jobExecutionResult.getJobInstance();
-
-        rateUntilDate = null;
-        ratingGroup = null;
-        parameter1 = null;
-        parameter2 = null;
-        try {
-            rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
-            ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");
-            parameter1 = (String) this.getParamOrCFValue(jobInstance, "parameter1");
-            parameter2 = (String) this.getParamOrCFValue(jobInstance, "parameter2");
-        } catch (Exception e) {
-            log.warn("Can't get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
-        }
-
-        // Number of EDRs to process in a single job run
-        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("usageRatingJob.processNrInJobRun", 2000000);
-
-        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup,parameter1,parameter2, processNrInJobRun);
-        hasMore = ids.size() == processNrInJobRun;
-
-        return Optional.of(new SynchronizedIterator<Long>(ids));
+        return getIterator(jobExecutionResult);
     }
 
     /**
@@ -123,5 +101,39 @@ public class UsageRatingJobBean extends IteratorBasedJobBean<Long> {
     @Override
     protected boolean isProcessItemInNewTx() {
         return false;
+    }
+
+    private Optional<Iterator<Long>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+        rateUntilDate = null;
+        ratingGroup = null;
+        parameter1 = null;
+        parameter2 = null;
+        try {
+            rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
+            ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");
+            parameter1 = (String) this.getParamOrCFValue(jobInstance, "parameter1");
+            parameter2 = (String) this.getParamOrCFValue(jobInstance, "parameter2");
+        } catch (Exception e) {
+            log.warn("Can't get customFields for {}. {}", jobInstance.getJobTemplate(), e.getMessage());
+        }
+
+        // Number of EDRs to process in a single job run
+        int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("jobs.usageRatingJob.processNrInJobRun", 2000000);
+
+        List<Long> ids = edrService.getEDRsToRate(rateUntilDate, ratingGroup,parameter1,parameter2, jobItemsLimit);
+        hasMore = ids.size() == processNrInJobRun;
+
+        return Optional.of(new SynchronizedIterator<Long>(ids));
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIteratorWithLimit(JobExecutionResultImpl jobExecutionResult, int jobItemsLimit) {
+        return getSynchronizedIterator(jobExecutionResult, jobItemsLimit);
+    }
+
+    @Override
+    Optional<Iterator<Long>> getSynchronizedIterator(JobExecutionResultImpl jobExecutionResult) {
+        return getSynchronizedIterator(jobExecutionResult, 0);
     }
 }

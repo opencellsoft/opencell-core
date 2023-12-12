@@ -34,6 +34,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.UntdidVatPaymentOptionService;
+import org.meveo.service.script.ScriptInstanceCategoryService;
 import org.primefaces.model.DualListModel;
 
 @Named
@@ -53,6 +54,9 @@ public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
 	
 	@Inject
 	private UntdidVatPaymentOptionService untdidVatPaymentOptionService;
+	
+    @Inject
+    private ScriptInstanceCategoryService scriptInstanceCategoryService;
 	
 	private DualListModel<InvoiceType> invoiceTypesDM;
 
@@ -85,6 +89,13 @@ public class InvoiceTypeBean extends CustomFieldBean<InvoiceType> {
                 facesContext.validationFailed();
                 return "";
             }
+        }
+        // Custom UBL script
+		if (entity.getCustomUblScript() != null && (entity.getCustomUblScript().getScriptInstanceCategory() == null
+				|| !"UBL_GENERATION".equals(scriptInstanceCategoryService.refreshOrRetrieve(entity.getCustomUblScript().getScriptInstanceCategory()).getCode()))) {
+            messages.error(new BundleKey(BUNDLE_KEY_MESSAGES, "invoiceType.customUblScript.invalid"), entity.getCode());
+            facesContext.validationFailed();
+            return "";
         }
         // default vat payment option
         if(entity.getUntdidVatPaymentOption() == null) {

@@ -30,13 +30,17 @@ import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.apiv2.ordering.services.ApiService;
+
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.RatedTransactionAction;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.service.billing.impl.BillingRunReportService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
 import org.meveo.service.billing.impl.InvoiceLineService;
@@ -72,6 +76,9 @@ public class BillingRunApiService implements ApiService<BillingRun> {
     @Inject
     private LinkedInvoiceService linkedInvoiceService;
 
+    @Inject
+    private BillingRunReportService billingRunReportService;
+
     private static final String INVOICING_JOB_CODE = "Invoicing_Job_V2";
     private static final String INVOICE_LINES_JOB_CODE = "Invoice_Lines_Job_V2";
 
@@ -81,6 +88,7 @@ public class BillingRunApiService implements ApiService<BillingRun> {
     @Override
     public BillingRun create(BillingRun billingRun) {
         billingRunService.create(billingRun);
+        billingRunReportService.generateBillingRunReport(billingRun);
         return billingRun;
     }
 
@@ -131,6 +139,14 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                 && billingRun.getStatus() != OPEN) {
             throw new BadRequestException("Billing run status must be either {NEW, OPEN, INVOICE_LINES_CREATED, DRAFT_INVOICES, REJECTED}");
         }
+        
+        if (billingRun.isDisabled()) {
+        	throw new BusinessException(String.format("Billing run %d is disabled. It cannot be processed.", billingRun.getId()));
+        }
+        
+        if (!BillinRunApplicationElFilterUtils.isToProcessBR(billingRun, new JobInstance())) {
+        	throw new BusinessException(String.format("Billing run %d has been disabled by application EL. It cannot be processed.", billingRun.getId()));
+        }
 
         if (billingRun.getStatus() == NEW || billingRun.getStatus() == INVOICE_LINES_CREATED
                 || billingRun.getStatus() == DRAFT_INVOICES || billingRun.getStatus() == REJECTED
@@ -143,15 +159,18 @@ public class BillingRunApiService implements ApiService<BillingRun> {
                     invoiceLineJobParams.put(INVOICE_LIENS_JOB_PARAMETERS,
                             asList(new EntityReferenceWrapper(BillingRun.class.getName(),
                                     null, billingRun.getReferenceCode())));
-                    JobInstance invoicingJob = jobInstanceService.refreshOrRetrieve(invoiceLineJob.getFollowingJob());
-                    if (invoicingJob != null && invoicingJob.getCfValues() != null) {
-                        if (invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS) != null
-                                && !((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).isEmpty()) {
-                            ((List) invoicingJob.getCfValues().getValue(INVOICING_JOB_PARAMETERS)).clear();
+                    JobInstance invoicingJob = invoiceLineJob.getFollowingJob() != null
+                            ? jobInstanceService.refreshOrRetrieve(invoiceLineJob.getFollowingJob())
+                            : jobInstanceService.findByCode(INVOICING_JOB_CODE);
+                    if (invoicingJob != null) {
+                        if (invoicingJob.getCfValues() == null) {
+                            invoicingJob.setCfValues(new CustomFieldValues());
                         }
                         invoicingJob.getCfValues().setValue(INVOICING_JOB_PARAMETERS,
                                 asList(new EntityReferenceWrapper(BillingRun.class.getName(),
                                         null, billingRun.getReferenceCode())));
+                        invoiceLineJob.setFollowingJob(invoicingJob);
+                        jobInstanceService.update(invoiceLineJob);
                         jobInstanceService.update(invoicingJob);
                     }
                     executeJob(invoiceLineJob, invoiceLineJobParams);
@@ -280,4 +299,35 @@ public class BillingRunApiService implements ApiService<BillingRun> {
              linkedInvoiceService.removeLinkedAdvances(invoices.stream().map(Invoice::getId).collect(Collectors.toList()));
          }
 	 }
+	 
+	 public Optional<BillingRun> enableBillingRun(Long billingRunId) {
+	        BillingRun billingRun = billingRunService.findById(billingRunId);
+	        if (billingRun == null) {
+	            return empty();
+	        }
+	        try {
+	            billingRun.setActive(true);
+	            billingRunService.update(billingRun);
+	            return of(billingRun);
+	        } catch (Exception exception) {
+	            throw new BusinessException(exception.getMessage());
+	        }
+		}
+	 
+	 public Optional<BillingRun> disableBillingRun(Long billingRunId) {
+	        BillingRun billingRun = billingRunService.findById(billingRunId);
+	        if (billingRun == null) {
+	            return empty();
+	        }
+	        if (billingRun.getStatus() == VALIDATED || billingRun.getStatus() == CANCELLING || billingRun.getStatus() == CANCELED) {
+	            throw new BadRequestException("The billing run with status " + billingRun.getStatus() + " cannot be disabled");
+	        }
+	        try {
+	        	billingRun.setDisabled(true);
+	            billingRunService.update(billingRun);
+	            return of(billingRun);
+	        } catch (Exception exception) {
+	            throw new BusinessException(exception.getMessage());
+	        }
+		}
 }

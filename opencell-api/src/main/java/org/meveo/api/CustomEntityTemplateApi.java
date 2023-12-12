@@ -102,7 +102,6 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
 
         handleMissingParameters();
-
         if (dto.getStoreAsTable() == null) {
             dto.setStoreAsTable(Boolean.FALSE);
         }
@@ -172,8 +171,8 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             }
         }
         try {
-            roleService.create(new Role(cet.getModifyPermission(), null, true, new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null)));
-            roleService.create(new Role(cet.getReadPermission(), null, true, new Role(paramBean.getProperty("role.readAllCE", "ReadAllCE"), null, true, null)));
+            roleService.create(new Role(cet.getModifyPermission(), cet.getModifyPermission(), true, new Role(paramBean.getProperty("role.modifyAllCE", "ModifyAllCE"), null, true, null)));
+            roleService.create(new Role(cet.getReadPermission(), cet.getReadPermission(), true, new Role(paramBean.getProperty("role.readAllCE", "ReadAllCE"), null, true, null)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

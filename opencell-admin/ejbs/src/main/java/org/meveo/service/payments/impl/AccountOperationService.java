@@ -112,12 +112,14 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         LocalDate collectionDate = accountOperation.getCollectionDate() != null
         		?LocalDate.ofInstant(accountOperation.getCollectionDate().toInstant(), ZoneId.systemDefault())
         				:LocalDate.now();
-        
+
         if ((paymentLocalDate.toEpochDay() <= collectionDate.toEpochDay())) {
             throw new BusinessException("the paymentDate should be greated than the current collection date");
         }
-        if((paymentLocalDate.toEpochDay() - collectionDate.toEpochDay()) > appProvider.getMaximumDelay()) {
-            throw new BusinessException("the paymentDate should not exceed the current collection date by more than " + appProvider.getMaximumDelay());
+
+        int maxDelay = appProvider.getMaximumDelay() == null ? 0 : appProvider.getMaximumDelay();
+        if ((paymentLocalDate.toEpochDay() - collectionDate.toEpochDay()) > maxDelay) {
+            throw new BusinessException("the paymentDate should not exceed the current collection date by more than " + maxDelay);
         }
         
         if(appProvider.getMaximumDeferralPerInvoice() != null && accountOperation.getPaymentDeferralCount() != null) {
@@ -293,8 +295,9 @@ public class AccountOperationService extends PersistenceService<AccountOperation
                     .append(" AND ao.customerAccount.id = pm.customerAccount.id ")
                     .append(" AND pm.paymentType =:paymentMethodIN ")
                     .append(" AND pm.preferred IS TRUE ")
-                    .append(" AND ao.dueDate >=:fromDueDateIN ")
-                    .append(" AND ao.dueDate <:toDueDateIN ");
+                    .append(" AND ao.unMatchingAmount <> 0 ")
+                    .append(" AND ao.collectionDate >=:fromDueDateIN ")
+                    .append(" AND ao.collectionDate <:toDueDateIN ");
 
             if (seller != null) {
                 queryName.append(" AND ao.seller =:sellerIN ");
@@ -681,7 +684,8 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 		Date accoutingOperationDate = null;
 		int customDay = Optional.ofNullable(accountingPeriod.getForceCustomDay()).orElse(0);
 		
-		AccountingPeriodForceEnum option = accountingPeriod.getForceOption();
+		AccountingPeriodForceEnum option = (accountingPeriod.getForceOption() == null)? AccountingPeriodForceEnum.FIRST_DAY : accountingPeriod.getForceOption();
+		
 		switch (option) {
 		case FIRST_DAY:
 			accoutingOperationDate = DateUtils.setDayToDate(dateReference, 1);

@@ -17,19 +17,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.RatingException;
@@ -57,6 +44,18 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.script.revenue.RevenueRecognitionScriptService;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * RecurringChargeInstanceService
@@ -374,6 +373,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             log.debug("Will apply recurring charge {} for missing periods {} - {} {}", recurringChargeInstance.getId(), nextChargeToDate, maxDate, isMaxDateInclusive ? "inclusive" : "exclusive");
             int i = 0;
             RatingResult ratingResult = new RatingResult();
+			Subscription subscription = recurringChargeInstance.getSubscription();
             while (nextChargeToDate != null && i < maxRecurringRatingHistory
                     && ((nextChargeToDate.getTime() <= maxDate.getTime() && isMaxDateInclusive) || (nextChargeToDate.getTime() < maxDate.getTime() && !isMaxDateInclusive))) {
 
@@ -382,7 +382,8 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 ratingResult.add(localRatingResult);
 
                 nextChargeToDate = recurringChargeInstance.getNextChargeDate();
-                i++;
+	            i++;
+				if(subscription.getSubscribedTillDate() != null && subscription.getSubscribedTillDate().equals(nextChargeToDate)) break;
 
             }
             if (!isVirtual && (chargeWasUpdated || !ratingResult.getWalletOperations().isEmpty())) {
@@ -472,7 +473,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * @throws BusinessException Business exception
      * @throws RatingException Failed to rate a charge due to lack of funds, data validation, inconsistency or other rating related failure
      */
-    public RecurringChargeInstance reimburseRecuringCharges(RecurringChargeInstance chargeInstance, String orderNumber, boolean anticipatedTermination) throws BusinessException, RatingException {
+    public RecurringChargeInstance reimburseRecuringCharges(RecurringChargeInstance chargeInstance, String orderNumber, boolean woCancelled) throws BusinessException, RatingException {
 
         if (chargeInstance == null) {
             throw new IncorrectChargeInstanceException("charge instance is null");
@@ -491,7 +492,12 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         log.debug("Will apply reimbursment for charge {} for period {} - {}", chargeInstance.getId(), chargeInstance.getChargeToDateOnTermination(), chargeInstance.getChargedToDate());
 
-        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, !anticipatedTermination ? ChargeApplicationModeEnum.REIMBURSMENT : ChargeApplicationModeEnum.AGREEMENT, false, null, orderNumber, false, false);
+        ChargeApplicationModeEnum chargeApplicationModeEnum = ChargeApplicationModeEnum.REIMBURSMENT;
+        if((chargeInstance.getSubscription().getSubscribedTillDate() != null
+                && chargeInstance.getTerminationDate().after(chargeInstance.getSubscription().getSubscribedTillDate())) || woCancelled) {
+            chargeApplicationModeEnum = ChargeApplicationModeEnum.AGREEMENT;
+        }
+        RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, chargeApplicationModeEnum, false, null, orderNumber, false, false);
 
         if (chargeWasUpdated || !ratingResult.getWalletOperations().isEmpty()) {
             chargeInstance = updateNoCheck(chargeInstance);

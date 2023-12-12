@@ -8268,17 +8268,18 @@
             <column name="uuid" value="RT_Job" />
         </insert>
         <insert tableName="meveo_job_instance">
-            <column name="id" valueNumeric="-7" />
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
             <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="1" />
-            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
             <column name="job_category" value="INVOICING" />
-            <column name="job_template" value="XMLInvoiceGenerationJob" />
-            <column name="code" value="XML_Job" />
+            <column name="job_template" value="XMLEInvoiceGenerationJob" />
+            <column name="code" value="EInvoice_job" />
 
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="XML_Job" />
+            <column name="uuid" value="XMLEInvoiceGeneration_Job" />
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'EInvoice_job')"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-8" />
@@ -8292,6 +8293,34 @@
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
             <column name="uuid" value="PDF_Job" />
+        </insert>
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueNumeric="-7" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="XMLInvoiceGenerationJob" />
+            <column name="code" value="XML_Job" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="XML_Job" />
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'PDF_Job')"/>
+        </insert>
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="1" />
+            <column name="created" valueDate="2015-03-19 00:04:19.913" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="InvoicingJobV2" />
+            <column name="code" value="Invoicing_Job_V2" />
+            <column name="description" value="Invoicing Job V2"/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="Invoicing_Job_V2" />
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'XML_Job')"/>
         </insert>
         <insert tableName="meveo_job_instance">
             <column name="id" valueNumeric="-14" />
@@ -8403,72 +8432,6 @@
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="timerentity_id" valueNumeric="-1" />
             <column name="uuid" value="Invoice_Lines_Job_V2" />
-        </insert>
-       <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="InvoiceLinesJob_billingRun"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Billing Runs"/>
-            <column name="field_type" value="ENTITY"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="versionable" value="0"/>
-            <column name="entity_clazz" value="org.meveo.model.billing.BillingRun"/>
-            <column name="storage_type" value="LIST"/>
-            <column name="allow_edit" value="1"/>
-            <column name="hide_on_new" value="0"/>
-            <column name="inh_as_def_value" value="0"/>
-            <column name="cf_protectable" value="0"/>
-        </insert>
-	    <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_AggregationPerUnitAmount"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="aggregation per unit amount"/>
-            <column name="field_type" value="BOOLEAN"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="value_required" value="0"/>
-            <column name="default_value" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_ILDateAggregationOptions"/>
-            <column name="description" value="date aggregation options"/>
-            <column name="field_type" value="LIST"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="versionable" value="0"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="trigger_end_period_event" value="0"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="allow_edit" value="1"/>
-            <column name="max_value" value="9223372036854775807"/>
-            <column name="hide_on_new" value="0"/>
-            <column name="inh_as_def_value" value="0"/>
-            <column name="cf_protectable" value="0"/>
-        </insert>
-        <insert tableName="meveo_job_instance">
-            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="1" />
-            <column name="created" valueDate="2015-03-19 00:04:19.913" />
-            <column name="job_category" value="INVOICING" />
-            <column name="job_template" value="InvoicingJobV2" />
-            <column name="code" value="Invoicing_Job_V2" />
-            <column name="description" value="Invoicing Job V2"/>
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="timerentity_id" valueNumeric="-1" />
-            <column name="uuid" value="Invoicing_Job_V2" />
         </insert>
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
@@ -8619,101 +8582,6 @@
            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
         </insert> 
 	</changeSet>
-	
-    <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
-
-        <insert tableName="billing_seq_invoice">
-            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="sequence_size" valueNumeric="9" />
-            <column name="code" value="COM" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-        </insert>
-        <insert tableName="billing_seq_invoice">
-            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="sequence_size" valueNumeric="9" />
-            <column name="code" value="ADJ" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-        </insert>
-        <insert tableName="billing_seq_invoice">
-            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="sequence_size" valueNumeric="9" />
-            <column name="code" value="QUOTE" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-        </insert>
-       <insert tableName="billing_seq_invoice">
-           <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
-           <column name="version" valueNumeric="0" />
-           <column name="code" value="ADV" />
-           <column name="description" value="Advanced Payment Invoice sequence" />
-           <column name="sequence_size" valueNumeric="9" />
-           <column name="created" valueDate="2021-02-03 00:00:00.000" />
-           <column name="creator" value="OPENCELL.ADMIN" />
-       </insert>        
-        <insert tableName="billing_invoice_type">
-            <column name="id" valueNumeric="-1" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="code" value="COM" />
-            <column name="description" value="Invoice" />
-            <column name="description_i18n" value='{"FRA":"Facture","ENG":"Invoice"}'/>
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="invoice_sequence_id"
-					valueComputed="(SELECT id from billing_seq_invoice where code = 'COM')" />
-            <column name="occ_template_id" valueNumeric="-25" />
-            <column name="occ_templ_negative_id" value="-40" />
-            <column name="matching_auto" valueNumeric="0" />
-            <column name="uuid" value="InvoiceType-COM" />
-            <column name="vat_payment_option_id" value="1" />
-            <column name="invoice_code_type_id" value="18" />
-            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
-        </insert>
-        <insert tableName="billing_invoice_type">
-            <column name="id" valueNumeric="-2" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="code" value="ADJ" />
-            <column name="description" value="Credit note"/>
-			<column name="description_i18n" value='{"FRA":"Avoir","ENG":"Credit note"}'/>
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="invoice_sequence_id"
-					valueComputed="(SELECT id from billing_seq_invoice where code = 'ADJ')" />
-            <column name="occ_template_id" value="-40" />
-            <column name="matching_auto" valueNumeric="0" />
-            <column name="uuid" value="InvoiceType-ADJ" />
-            <column name="vat_payment_option_id" value="1" />
-            <column name="invoice_code_type_id" value="19" />
-            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
-        </insert>
-        <insert tableName="billing_invoice_type">
-            <column name="id" valueNumeric="-3" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="2016-09-14 00:00:00.000" />
-            <column name="code" value="QUOTE" />
-            <column name="description" value="Quote"/>
-			<column name="description_i18n" value='{"FRA":"Devis","ENG":"Quote"}'/>
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="invoice_sequence_id"
-					valueComputed="(SELECT id from billing_seq_invoice where code = 'QUOTE')" />
-            <column name="matching_auto" valueNumeric="0" />
-            <column name="uuid" value="InvoiceType-QUOTE" />
-            <column name="vat_payment_option_id" value="1" />
-        </insert>
-        <insert tableName="billing_invoice_type_applies_to">
-            <column name="invoice_type_id" value="-1" />
-            <column name="applies_to_id" value="-2" />
-        </insert>
-        <insert tableName="billing_invoice_type_applies_to">
-            <column name="invoice_type_id" value="-2" />
-            <column name="applies_to_id" value="-1" />
-        </insert>
-    </changeSet>
-
 
     <changeSet id="#INTRD-292_20210816" author="HatimOUDAD" />
     <changeSet id="#540_563_20210607" author="TarikFA."/>
@@ -10231,28 +10099,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
-    <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI">
-        <insert tableName="crm_custom_field_tmpl_val">
-            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
-            <column name="listvalues" value="NO_DATE_AGGREGATION"/>
-            <column name="listvalues_key" value="NO_DATE_AGGREGATION"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl_val">
-            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
-            <column name="listvalues" value="MONTH_OF_USAGE_DATE"/>
-            <column name="listvalues_key" value="MONTH_OF_USAGE_DATE"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl_val">
-            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
-            <column name="listvalues" value="WEEK_OF_USAGE_DATE"/>
-            <column name="listvalues_key" value="WEEK_OF_USAGE_DATE"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl_val">
-            <column name="customfieldtemplate_id" valueComputed="(SELECT id from crm_custom_field_tmpl where code = 'JobInstance_InvoiceLinesJob_ILDateAggregationOptions')"/>
-            <column name="listvalues" value="DAY_OF_USAGE_DATE"/>
-            <column name="listvalues_key" value="DAY_OF_USAGE_DATE"/>
-        </insert>
-    </changeSet>
+    <changeSet id="#INTRD-5242__22-02-2022" author="Mohammed_ELAZZOUZI"/>
 
 	<changeSet id="INTRD-4891-25022022" author="Abdelkader.Bouazza"/>
 	<changeSet id="#INTRD-5831_20220325" author="aelmalki" />
@@ -10844,15 +10691,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		</insert>
 	</changeSet>
 
-
-	<changeSet id="#INTRD-10907_20221026" author="EBOURRAS">
-		<insert tableName="billing_invoice_type_applies_to">
-			<column name="invoice_type_id" value="-1"/>
-			<column name="applies_to_id" value="-5"/>
-		</insert>
-	</changeSet>
-
-
 	<changeSet id="#INTRD-11328_20221110" author="aelmalki">
 		<insert tableName="crm_custom_field_tmpl">
 			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
@@ -11115,133 +10953,24 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-13762_20230206" author="aelmalki" />
 
 	<changeSet id="#INTRD-11208_20230131" author="zelmeliani">
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-11" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2B+5" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-1" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-11" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B+5" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
                     <p>Hello, </p>
-                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have a debit of #{customerAccountBalance} #{currencySymbol}.</p>
-                    <p>
-                        Please take the necessary steps to ensure payment of your last(s) invoice(s). <br>
-                    </p>
-                    <p>If you have any additional questions, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-			</column>
-		</insert>
-
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-12" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2B +10" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-1" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
-                    <p>Hello, </p>
-                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccountBalance} #{currencySymbol}).</p>
-                    <p>
-                        Please take contact with us to clear the situation.<br>
-                        If you have already done a payment, you can discard this email.
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-			</column>
-		</insert>
-
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-13" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2B +20" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-1" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
-                    <p>Hello, </p>
-                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccountBalance} #{currencySymbol}).</p>
-                    <p>
-                        Please take contact with us to clear the situation.<br>
-                        If you have already done a payment, you can discard this email.
-                    </p>
-                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
-                    <p>Best regards,</p>
-                ]]>
-			</column>
-		</insert>
-
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-14" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2B +30" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-1" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
-                    <p>Hello, </p>
-                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccountBalance} #{currencySymbol}).</p>
-                    <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
-                    <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
-                    <p>If you have any additional question, please contact our services.</p>
-                    <p>Best regards,</p>
-                ]]>
-			</column>
-		</insert>
-
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-15" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2C +1" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-1" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccountBalance} #{currencySymbol}.</p>
+                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccount balance} #{currencySymbol}.</p>
                     <p>
                         Please take necessary steps to insure payments of your last(s) invoice(s). <br>
                         You
@@ -11249,27 +10978,27 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
                     <p>Best regards,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-16" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2C +5" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-1" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccountBalance} #{currencySymbol}).</p>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-12" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +10" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello, </p>
+                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccount balance} #{currencySymbol}).</p>
                     <p>
                         Please take contact with us to clear the situation.<br>
                         If you have already done a payment, you can discard this email.
@@ -11277,27 +11006,27 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
                     <p>Best regards,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-17" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2C +10" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-1" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccountBalance} #{currencySymbol}).</p>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-13" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +20" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello, </p>
+                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccount balance} #{currencySymbol}).</p>
                     <p>
                         Please take contact with us to clear the situation.<br>
                         If you have already done a payment, you can discard this email.
@@ -11305,241 +11034,351 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
                     <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
                     <p>Best regards,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-18" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2C +15" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-1" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
-                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccountBalance} #{currencySymbol}).</p>
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-14" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +30" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello, </p>
+                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccount balance} #{currencySymbol}).</p>
                     <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
                     <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
                     <p>If you have any additional question, please contact our services.</p>
                     <p>Best regards,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-19" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2B +5fr" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-2" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-15" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +1" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>We are reaching out to you in regards of your current balance that you have with our company. It seems you have debit of #{customerAccount balance} #{currencySymbol}.</p>
+                    <p>
+                        Please take necessary steps to insure payments of your last(s) invoice(s). <br>
+                        You
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-16" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +5" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>We are following up on our previous email regarding your negative balance (that is currently of#{customerAccount balance} #{currencySymbol}).</p>
+                    <p>
+                        Please take contact with us to clear the situation.<br>
+                        If you have already done a payment, you can discard this email.
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-17" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +10" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>It has now been 10 days since our first email regarding your current negative balance. Your current balance is #{customerAccount balance} #{currencySymbol}).</p>
+                    <p>
+                        Please take contact with us to clear the situation.<br>
+                        If you have already done a payment, you can discard this email.
+                    </p>
+                    <p>If you have any additional question, do not hesitate to contact our services or your regular point of contact.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-18" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +15" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-1" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
+                    <p>Hello #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
+                    <p>It seems our previous emails did not allow the expected outcome. Today, your current balance is of#{customerAccount balance} #{currencySymbol}).</p>
+                    <p>As it seems we were not able to clear the situation, the services you have with us have been suspended.</p>
+                    <p>If you have already done a payment, please contact us so that we can re-activate your services.</p>
+                    <p>If you have any additional question, please contact our services.</p>
+                    <p>Best regards,</p>
+                ]]>
+            </column>
+        </insert>
+
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-19" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +5fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
                     <p>Bonjour,</p>
-                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccountBalance} #{currencySymbol}.</p>
+                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccount balance} #{currencySymbol}.</p>
                     <p>Nous vous invitons a faire le nécessaires pour assurer le paiement de votre (vos) dernière(s) facture(s).</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-20" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2B +10fr" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-2" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-20" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +10fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
                     <p>Bonjour,</p>
-                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccountBalance} #{currencySymbol}).</p>
+                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccount balance} #{currencySymbol}).</p>
                     <p>Merci de prendre contact avec nous pour échanger sur la situation.</p>
                     <p>Si vous avez déjà effectué un paiement, veuillez ne pas prendre cet e-mail en considération.</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-21" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2B +20fr" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-2" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-21" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +20fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
                     <p>Bonjour,</p>
-                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccountBalance} #{currencySymbol}).</p>
+                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccount balance} #{currencySymbol}).</p>
                     <p>Merci de prendre contact avec nous pour éclaircir la situation.</p>
                     <p>Si vous avez déjà effectué un paiement, vous pouvez ne pas prendre compte de cet e-mail.</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-22" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2B +30fr" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-2" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-22" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2B +30fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
                     <p>Bonjour,</p>
-                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccountBalance} #{currencySymbol}).</p>
+                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccount balance} #{currencySymbol}).</p>
                     <p>La situation ne s’étant pas régler à l’amiable, l’ensemble des services que vous avez avec nous ont été suspendus.</p>
                     <p>Si vous avez déjà effectué un paiement, veuillez nous contacter afin que nous puissions réactiver vos services.</p>
                     <p>Si vous avez des questions supplémentaires, veuillez contacter nos services.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-23" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2C +1fr" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-2" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-23" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +1fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
                     <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccountBalance} #{currencySymbol}.</p>
+                    <p>Nous vous contactons au sujet de votre solde actuel auprèss de notre société. Il semble que vous ayez une position débitrice d’un montant de #{customerAccount balance} #{currencySymbol}.</p>
                     <p>Nous vous invitons a faire le nécessaires pour assurer le paiement de votre (vos) dernière(s) facture(s).</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-24" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2C +5fr" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-2" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-24" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +5fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
                     <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccountBalance} #{currencySymbol}).</p>
+                    <p>Nous donnons suite à notre précédent e-mail concernant votre solde négatif (actuellement de #{customerAccount balance} #{currencySymbol}).</p>
                     <p>Merci de prendre contact avec nous pour échanger sur la situation.</p>
                     <p>Si vous avez déjà effectué un paiement, veuillez ne pas prendre cet e-mail en considération.</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-25" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2C +10fr" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-2" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-25" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +10fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
                     <p>Bonjour#{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccountBalance} #{currencySymbol}).</p>
+                    <p>Cela fait maintenant 10 jours depuis notre premier e-mail concernant votre solde négatif. Votre solde actuel est de #{customerAccount balance} #{currencySymbol}).</p>
                     <p>Merci de prendre contact avec nous pour éclaircir la situation.</p>
                     <p>Si vous avez déjà effectué un paiement, vous pouvez ne pas prendre compte de cet e-mail.</p>
                     <p>Si vous avez des questions supplémentaires, n'hésitez pas à contacter nos services ou votre point de contact habituel.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-			</column>
-		</insert>
+            </column>
+        </insert>
 
-		<insert tableName="com_message_template">
-			<column name="media" value="DUNNING_MEDIA" />
-			<column name="id" value="-26" />
-			<column name="version" value="0" />
-			<column name="created" valueDate="${db.current.time}" />
-			<column name="code" value="B2C +15fr" />
-			<column name="type" value="DUNNING" />
-			<column name="tag_start" value="#{" />
-			<column name="tag_end" value="}" />
-			<column name="subject" value="" />
-			<column name="is_active" value="1" />
-			<column name="channel" value="EMAIL" />
-			<column name="trading_language_id" value="-2" />
-			<column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
-			<column name="htmlcontent">
-				<![CDATA[
+        <insert tableName="com_message_template">
+            <column name="media" value="DUNNING_MEDIA" />
+            <column name="id" value="-26" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="B2C +15fr" />
+            <column name="type" value="DUNNING" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="" />
+            <column name="is_active" value="1" />
+            <column name="channel" value="EMAIL" />
+            <column name="trading_language_id" value="-2" />
+            <column name="type_dunning_mode" value="CUSTOMER_LEVEL" />
+            <column name="htmlcontent">
+                <![CDATA[
                     <p>Bonjour #{customerAccountLegalEntityTypeCode} #{customerAccountLastName},</p>
-                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccountBalance} #{currencySymbol}).</p>
+                    <p>Il semble que nos e-mails précédents n'aient pas permis d’arriver au résultat escompté. Aujourd'hui, votre solde est de #{customerAccount balance} #{currencySymbol}).</p>
                     <p>La situation ne s’étant pas régler à l’amiable, l’ensemble des services que vous avez avec nous ont été suspendus.</p>
                     <p>Si vous avez déjà effectué un paiement, veuillez nous contacter afin que nous puissions réactiver vos services.</p>
                     <p>Si vous avez des questions supplémentaires, veuillez contacter nos services.</p>
                     <p>Meilleures salutations,</p>
                 ]]>
-			</column>
-		</insert>
-	</changeSet>
+            </column>
+        </insert>
+    </changeSet>
     <changeSet id="#INTRD-13967_20230215" author="houdad"/>
     <changeSet id="#INTRD-13967_20230217" author="houdad"/>
     <changeSet id="#INTRD-13968" author="houdad"/>
@@ -11575,50 +11414,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     </changeSet>
     
     	<changeSet id="#INTRD-5882__23-03-2022" author="Mohammed_ELAZZOUZI">
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="waitingMillis"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Waiting before next launch (ms)"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="0"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:1"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="nbRuns"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Number of parallel execution"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="-1"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:0;fieldGroup:Execution configuration:0;field:0"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="maxInvoiceLinesPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Maximum of maxInvoiceLines generated per transaction"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="0"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-        </insert>
         <insert tableName="crm_custom_field_tmpl">
             <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
             <column name="version" valueNumeric="0" />
@@ -11697,7 +11492,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
         <insert tableName="adm_custom_generic_entity_code">
             <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq"/>
             <column name="entity_class" value="org.meveo.model.billing.BillingAccount"/>
-            <column name="format_el" value="#{'CU-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
+            <column name="format_el" value="#{'BA-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}"/>
             <column name="created" valueDate="${db.current.time}"/>
             <column name="creator" value="applicationInitializer"/>
             <column name="sequence_id"
@@ -11959,70 +11754,6 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
             <column name="version" value="1" />
         </insert>
     </changeSet>
-    
-    <changeSet id="#INTRD-17353__14-07-2023" author="Mohammed_ELAZZOUZI">
-	    <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_BillingAccountPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Process transactions by billing account"/>
-            <column name="field_type" value="BOOLEAN"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="value_required" value="0"/>
-            <column name="default_value" value="1"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:2;fieldGroup:Performances"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="preferred max RTs per transaction"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="1000000"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:3;fieldGroup:Performances"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_MaxLinesPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="preferred max lines per transaction"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="10000"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:4;fieldGroup:Performances"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerLine"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="preferred max RTs per line"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="100000"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:5;fieldGroup:Performances"/>
-        </insert>
-
-    </changeSet>
 
 	<changeSet id="INTRD-15458_2023_04_17" author="ZBariki">
 		<insert tableName="generic_sequence">
@@ -12102,18 +11833,588 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="uuid" value="PriceListStatusJob_Job" />
 		</insert>
 	</changeSet>
-	
-	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
-	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
-	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
-	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari" />
-	<changeSet id="INTRD-5701_20220215" author="HatimOUDAD" />
-	<changeSet id="#INTRD-16482_20230526" author="aeljaouhari" />
-	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
-    <changeSet id="#INTRD-16278_20230606" author="anasseh" />
-    <changeSet id="INTRD-17129_20230627" author="TarikFA." />
-	<changeSet id="INTRD-16743_20230720" author="aelmalki" />
 
+	<changeSet id="#INTRD-16833-20230830_rebuild" author="ZBariki">
+		<insert tableName="meveo_job_instance">
+			<column name="id" valueSequenceNext="meveo_job_instance_seq"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="disabled" valueNumeric="0"/>
+			<column name="created" valueDate="${db.current.time}"/>
+			<column name="job_category" value="INVOICING"/>
+			<column name="job_template" value="BillingRunReportJob"/>
+			<column name="code" value="BILLING_RUN_REPORT_JOB"/>
+			<column name="description" value="Billing run report Job"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="uuid" value="BILLING_RUN_REPORT_JOB"/>
+		</insert>
+	</changeSet>
+    
+    <changeSet id="#INTRD-10574_20221013-job" author="AndriusKarpavicius">    
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2022-12-22 15:13:19.913" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="AuditDataLogAggregationJob" />
+            <column name="code" value="AuditDataLogAggregationJob" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="timerentity_id"
+                    valueComputed="(SELECT id from meveo_timer where code = 'Hourly')" />
+            <column name="uuid" value="AuditDataLogAggregationJob_Job" />
+        </insert>
+    </changeSet> 
+
+    <changeSet id="#INTRD-10574_20230213" author="AndriusKarpavicius">
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.Subscription"/>
+            <column name="entity_fields" value="status,userAccount,subscriptionRenewal,renewed"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.ServiceInstance"/>
+            <column name="entity_fields" value="status,serviceRenewal,renewed"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.Invoice"/>
+            <column name="entity_fields" value="status,xmlDate,pdfDate,emailSentDate,paymentStatus"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.order.Order"/>
+            <column name="entity_fields" value="status"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.AccountOperation"/>
+            <column name="entity_fields" value="collectionDate"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.CustomerAccount"/>
+            <column name="entity_fields" value="customer"/>
+        </insert>
+    
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.PaymentScheduleInstance"/>
+            <column name="entity_fields" value="amount"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.PaymentScheduleInstanceItem"/>
+            <column name="entity_fields" value="requestPaymentDate,amount"/>
+        </insert>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst_item','request_pay_date,amount', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst','amount', null, null, true)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_customer_account','customer_id', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_account_operation','collection_date', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ord_order','status', null, null, true)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_invoice','status,xml_date,pdf_date,email_sent_date,payment_status', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_subscription','status,user_account_id,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_service_instance','status,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
+    </changeSet>
+
+
+    <changeSet id="#INTRD-18352_20230915_data_build" author="TarikFA.">
+        <insert tableName="electronic_invoice_settings">
+            <column name="id" valueSequenceNext="electronic_invoice_settings_seq"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+
+            <column name="force_xml_generation" valueNumeric="1" />
+            <column name="force_pdf_generation" valueNumeric="1" />
+            <column name="force_ubl_generation" valueNumeric="1" />
+            <column name="invoicing_job" value="Invoicing_Job_V2"/>
+            <column name="xml_generation_job" value="XML_Job"/>
+            <column name="pdf_generation_job" value="PDF_Job"/>
+            <column name="ubl_generation_job" value="EInvoice_job"/>
+        </insert>
+    </changeSet>
+	
+	<changeSet id="#INTRD-18587_20230925" author="aelmalki">
+		<sql>
+		<![CDATA[
+			INSERT INTO ${db.schema.adapted}iso_icd(id,version,created,updated,creator,updater,code,scheme_name) VALUES
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0214', 'Tradeplace TradePI Standard'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0215', 'Net service ID'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0216', 'OVTcode'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0217', 'The Netherlands Chamber of Commerce and Industry establishment number'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0218', 'Unified registration number (Latvia)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0219', 'Taxpayer registration code (Latvia)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0220', 'The Register of Natural Persons (Latvia)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0221', 'The registered number of the qualified invoice issuer'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0222', 'Metadata Registry Support'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0223', 'EU based company'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0224', 'FTCTC CODE ROUTAGE'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0225', 'FRCTC ELECTRONIC ADDRESS'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0226', 'FRCTC Particulier'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0227', 'NON - EU based company'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0228', 'Répertoire des Entreprises et des Etablissements (RIDET)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0229', 'T.A.H.I.T.I (traitement automatique hiérarchisé des institutions de Tahiti et des îles)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0230', 'National e-Invoicing Framework');
+			
+			
+			INSERT INTO ${db.schema.adapted}untdid_1001_invoice_code_type(id,version,created,updated,creator,updater,code,en16931_interpretation,name) VALUES
+				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '105', 'Purchase order', 'Purchase order'),
+				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '220', 'Order', 'Order'),
+				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '310', 'Offer/quotation', 'Offer/quotation');
+			
+		]]>
+		</sql>
+    </changeSet>
+
+    <changeSet author="AndriusKarpavicius" id="rebuild-data-invoiceTypes">
+        <insert tableName="billing_seq_invoice">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="code" value="COM" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+        </insert>
+        <insert tableName="billing_seq_invoice">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="code" value="ADJ" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+        </insert>
+        <insert tableName="billing_seq_invoice">
+            <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="sequence_size" valueNumeric="9" />
+            <column name="code" value="QUOTE" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+        </insert>
+       <insert tableName="billing_seq_invoice">
+           <column name="id" valueSequenceNext="bill_seq_invoice_seq" />
+           <column name="version" valueNumeric="0" />
+           <column name="code" value="ADV" />
+           <column name="description" value="Advanced Payment Invoice sequence" />
+           <column name="sequence_size" valueNumeric="9" />
+           <column name="created" valueDate="2021-02-03 00:00:00.000" />
+           <column name="creator" value="OPENCELL.ADMIN" />
+       </insert>
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-1" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="COM" />
+            <column name="description" value="Invoice" />
+            <column name="description_i18n" value='{"FRA":"Facture","ENG":"Invoice"}'/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'COM')" />
+            <column name="occ_template_id" valueNumeric="-25" />
+            <column name="occ_templ_negative_id" value="-40" />
+            <column name="matching_auto" valueNumeric="0" />
+            <column name="uuid" value="InvoiceType-COM" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="invoice_code_type_id" value="18" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
+        </insert>
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-2" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="ADJ" />
+            <column name="description" value="Credit note"/>
+			<column name="description_i18n" value='{"FRA":"Avoir","ENG":"Credit note"}'/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'ADJ')" />
+            <column name="occ_template_id" value="-40" />
+            <column name="matching_auto" valueNumeric="0" />
+            <column name="uuid" value="InvoiceType-ADJ" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="invoice_code_type_id" value="19" />
+            <column name="invoice_subject_code" valueComputed="(SELECT id FROM untdid_4451_invoice_subject_code where code = 'IND')"></column>
+        </insert>
+        <insert tableName="billing_invoice_type">
+            <column name="id" valueNumeric="-3" />
+            <column name="version" valueNumeric="0" />
+            <column name="created" valueDate="2016-09-14 00:00:00.000" />
+            <column name="code" value="QUOTE" />
+            <column name="description" value="Quote"/>
+			<column name="description_i18n" value='{"FRA":"Devis","ENG":"Quote"}'/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="invoice_sequence_id"
+					valueComputed="(SELECT id from billing_seq_invoice where code = 'QUOTE')" />
+            <column name="matching_auto" valueNumeric="0" />
+            <column name="uuid" value="InvoiceType-QUOTE" />
+            <column name="vat_payment_option_id" value="1" />
+            <column name="prefix_el" value="QUOTE_" />
+            <column name="billing_template_name_el" value="quote_new" />
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '310')" />
+            <column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'QUT')" />
+        </insert>
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" value="-1" />
+            <column name="applies_to_id" value="-2" />
+        </insert>
+        <insert tableName="billing_invoice_type_applies_to">
+            <column name="invoice_type_id" value="-2" />
+            <column name="applies_to_id" value="-1" />
+        </insert>
+    </changeSet>
+
+	<changeSet id="#INTRD-10907_20221026" author="EBOURRAS">
+		<insert tableName="billing_invoice_type_applies_to">
+			<column name="invoice_type_id" value="-1"/>
+			<column name="applies_to_id" value="-5"/>
+		</insert>
+	</changeSet>
+	
+	<changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="job_category" value="RATING"/>
+            <column name="job_template" value="MarkWOToRerateJob"/>
+            <column name="code" value="MarkWOToRerateJob"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="uuid" value="MarkWOToRerateJob"/>
+        </insert>
+    </changeSet>
+	
+	<changeSet id="INTRD-18792_INSERT_DEFAULT_PP_FILTERS_CONFIGURATION" author="Mohammed_ElAzzouzi">
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enablePricePlanFilters"/>
+		    <column name="description" value="pricePlanFilters.enablePricePlanFilters"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableOfferTemplate"/>
+		    <column name="description" value="pricePlanFilters.enableOfferTemplate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableStartSubscriptionDate"/>
+		    <column name="description" value="pricePlanFilters.enableStartSubscriptionDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableEndSubscriptionDate"/>
+		    <column name="description" value="pricePlanFilters.enableEndSubscriptionDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableStartRatingDate"/>
+		    <column name="description" value="pricePlanFilters.enableStartRatingDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableEndRatingDate"/>
+		    <column name="description" value="pricePlanFilters.enableEndRatingDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMinQuantity"/>
+		    <column name="description" value="pricePlanFilters.enableMinQuantity"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMaxQuantity"/>
+		    <column name="description" value="pricePlanFilters.enableMaxQuantity"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
+		    <column name="description" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
+		    <column name="description" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria1Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria1Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria2Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria2Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria3Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria3Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteriaEL"/>
+		    <column name="description" value="pricePlanFilters.enableCriteriaEL"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableTradingCurrency"/>
+		    <column name="description" value="pricePlanFilters.enableTradingCurrency"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableTradingCountry"/>
+		    <column name="description" value="pricePlanFilters.enableTradingCountry"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableSeller"/>
+		    <column name="description" value="pricePlanFilters.enableSeller"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityCalendar"/>
+		    <column name="description" value="pricePlanFilters.enableValidityCalendar"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityFrom"/>
+		    <column name="description" value="pricePlanFilters.enableValidityFrom"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityDate"/>
+		    <column name="description" value="pricePlanFilters.enableValidityDate"/>
+		</insert>
+	</changeSet>
+	
+	<changeSet id="#INTRD-19685_20231208" author="AbdellatifBARI">
+		<insert tableName="com_message_template">
+			<column name="media" value="EMAIL" />
+			<column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+			<column name="version" value="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="MASS_RERATE_EMAIL" />
+			<column name="tag_start" value="#{" />
+			<column name="tag_end" value="}" />
+			<column name="subject" value="#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}" />
+			<column name="subject_i18n" value='{"FRA":"#{batchEntityStatus} Marquer à revaloriser le lot de wallet operations #{batchEntityId}","ENG":"#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}"}'/>
+			<column name="htmlcontent">
+				<![CDATA[
+                    Batch "#{batchEntityDescription}" has been processed by job #{jobInstanceCode}<br>Result: #{batchEntityStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal.
+                    ]]>
+			</column>
+			<column name="htmlcontent_i18n">
+				<![CDATA[
+                    {"FRA":"Le lot \"#{batchEntityDescription}\" a été traité par le job #{jobInstanceCode}<br>Résultat: #{batchEntityStatus}<br>Exécution du job #{jobExecutionId}<br>Plus d'information sur le rapport d'exécution du job sur l'écran des wallet operations du Portal.","ENG":"Batch \"#{batchEntityDescription}\" has been processed by job #{jobInstanceCode}<br>Result: #{batchEntityStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal."}
+                ]]>
+			</column>
+		</insert>
+		<insert tableName="generic_sequence">
+			<column name="id" valueNumeric="-4" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="version" valueNumeric="1" />
+			<column name="code" value="batch_entity_sequence" />
+			<column name="description" value="Batch entity sequence" />
+			<column name="sequence_type" value="SEQUENCE" />
+			<column name="sequence_size" valueNumeric="5" />
+			<column name="current_number" valueNumeric="0" />
+		</insert>
+		<insert tableName="adm_custom_generic_entity_code">
+			<column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+			<column name="entity_class" value="org.meveo.model.billing.BatchEntity" />
+			<column name="format_el" value="BATCH-#{mv:formatDate(null,'yy')}#{generatedCode}" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="creator" value="applicationInitializer" />
+			<column name="sequence_id" valueNumeric="-4" />
+		</insert>
+	</changeSet>
+	
 	<changeSet id="INTRD-12827_20230705" author="zelmeliani">
 		<insert tableName="ar_dunning_action">
 			<column name="id" valueNumeric="-81" />
@@ -13040,7 +13341,32 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="type" value="CUSTOMER_LEVEL" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
+	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
+	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
+	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari" />
+	<changeSet id="INTRD-5701_20220215" author="HatimOUDAD" />
+	<changeSet id="#INTRD-16482_20230526" author="aeljaouhari" />
+	<changeSet id="#INTRD-16247_20230605" author="zelmeliani" />
+    <changeSet id="#INTRD-16278_20230606" author="anasseh" />
+    <changeSet id="INTRD-17129_20230627" author="TarikFA." />
+	<changeSet id="INTRD-16743_20230720" author="aelmalki" />
+    <changeSet id="INTRD-17135_20230713" author="TarikFA." />
+	<changeSet id="#INTRD-16833-20230830" author="ZBariki" />
+    <changeSet id="#INTRD-10574_20230214" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-18352_20230915_data" author="TarikFA." />
+	<changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI" />
+    <changeSet id="#INTRD-18858_202301006" author="TARIKFA." />
+    <changeSet id="#INTRD-19070" author="TARIKFA." />
+    <changeSet id="#INTRD-19224_20231101" author="zelmeliani" />
+    <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
+    <changeSet id="#INTRD-19093_20231109" author="aeljaouhari" />
+    <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" dbms="postgresql" />
+	<changeSet id="#INTRD-19685_20231130" author="AbdellatifBARI" />
 
+	
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
         <sql>update databasechangelog set filename='src/main/db_resources/changelog/current/data.xml' where filename='src/main/db_resources/changelog/rebuild/data.xml'</sql>

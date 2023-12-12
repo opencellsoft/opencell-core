@@ -1,6 +1,7 @@
 package org.meveo.api.rest.cpq.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.cpq.TagApi;
@@ -10,9 +11,11 @@ import org.meveo.api.dto.response.cpq.GetTagDtoResponse;
 import org.meveo.api.dto.response.cpq.GetTagTypeDtoResponse;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.cpq.TagRs;
 import org.meveo.api.rest.impl.BaseRs;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class TagRsImpl extends BaseRs implements TagRs {
 
 	@Inject

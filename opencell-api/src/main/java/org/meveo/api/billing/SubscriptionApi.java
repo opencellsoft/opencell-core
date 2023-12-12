@@ -106,7 +106,6 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.Auditable;
 import org.meveo.model.RatingResult;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.audit.AuditChangeTypeEnum;
 import org.meveo.model.billing.AttributeInstance;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -120,6 +119,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductInstance;
+import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -159,7 +159,6 @@ import org.meveo.model.pricelist.PriceList;
 import org.meveo.model.pricelist.PriceListStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SellerService;
-import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.billing.impl.AttributeInstanceService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.ChargeInstanceService;
@@ -312,9 +311,6 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private AttributeInstanceService attributeInstanceService;
-
-    @Inject
-    private AuditableFieldService auditableFieldService;
     
 	@Inject
 	private ContractHierarchyHelper contractHierarchyHelper;
@@ -510,10 +506,6 @@ public class SubscriptionApi extends BaseApi {
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
-        if(postData.isRenewed()) {
-            auditableFieldService.createFieldHistory(subscription, "renewed", AuditChangeTypeEnum.RENEWAL, null, "true" );
-
-        }
         subscription.setRenewed(postData.isRenewed());
         subscription.setPrestation(postData.getCustomerService());
         if(!StringUtils.isBlank(postData.getSubscribedTillDate())) {
@@ -533,14 +525,14 @@ public class SubscriptionApi extends BaseApi {
                 subscription.setMinimumChargeTemplate(minimumChargeTemplate);
             }
         }
-
+	    PaymentMethod paymentMethod = null;
         if (Objects.nonNull(postData.getPaymentMethod())) {
-            PaymentMethod paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
+	        paymentMethod = paymentMethodService.findById(postData.getPaymentMethod().getId());
             if (paymentMethod == null) {
                 throw new EntityNotFoundException("payment method not found!");
             }
-            subscription.setPaymentMethod(paymentMethod);
         }
+	    subscription.setPaymentMethod(paymentMethod);
 
         if (postData.getMinimumAmountEl() != null) {
             subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
@@ -1237,15 +1229,23 @@ public class SubscriptionApi extends BaseApi {
         }
         try {
             ServiceInstance serviceInstance = buildServiceInstanceForOSO(postData, subscription);
-
+            
         	OneShotChargeInstance osho = oneShotChargeInstanceService
                     .instantiateAndApplyOneShotCharge(subscription, serviceInstance, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                             postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(),
                             postData.getCriteria3(), postData.getDescription(), null, oneShotChargeInstance.getCfValues(), true, ChargeApplicationModeEnum.SUBSCRIPTION, isVirtual);
-
-        	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
-        		osho.getWalletOperations().stream().forEach(wo->ratedTransactionService.createRatedTransaction(wo,false));
+        	
+        	if(StringUtils.isNotBlank(postData.getBusinessKey())) {
+        		osho.getWalletOperations().stream().forEach(wo -> {wo.setBusinessKey(postData.getBusinessKey());});
         	}
+        	
+        	if(Boolean.TRUE.equals(postData.getGenerateRTs())) {
+        		osho.getWalletOperations().stream().forEach(wo -> {
+        		    RatedTransaction ratedTransaction = ratedTransactionService.createRatedTransaction(wo, false);
+        		    ratedTransaction.setBusinessKey(wo.getBusinessKey());
+        		});
+        	}
+        	 
         	return osho;
         } catch (RatingException e) {
             log.trace("Failed to apply one shot charge {}: {}", oneShotChargeTemplate.getCode(), e.getRejectionReason());
@@ -2882,7 +2882,7 @@ public class SubscriptionApi extends BaseApi {
             }
 
             if (!offerTemplate.getSellers().isEmpty() && !offerTemplate.getSellers().contains(seller)) {
-                throw new EntityNotAllowedException(Seller.class, Subscription.class, postData.getSeller());
+                throw new EntityNotAllowedException(Seller.class, OfferTemplate.class, postData.getSeller());
             }
         }
         

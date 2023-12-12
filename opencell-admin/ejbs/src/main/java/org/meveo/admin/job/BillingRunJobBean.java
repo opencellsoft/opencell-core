@@ -23,6 +23,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREINVOICED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -125,6 +126,7 @@ public class BillingRunJobBean extends BaseJobBean {
                 billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
                 billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
                 billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+                billingRun.setIgnoreUserAccounts(billingCycle.isIgnoreUserAccounts());
                 billingRun.setProcessDate(new Date());
                 billingRun.setProcessType(billingCycleType);
                 billingRun.setStatus(BillingRunStatusEnum.NEW);
@@ -147,7 +149,15 @@ public class BillingRunJobBean extends BaseJobBean {
                     billingRun.setLastTransactionDate(billingRun.getProcessDate());
                 }
 
-                billingRun.setIncrementalInvoiceLines(billingCycle.getIncrementalInvoiceLines());
+                billingRun.setDisableAggregation(billingCycle.isDisableAggregation());
+                billingRun.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
+                billingRun.setIncrementalInvoiceLines(billingCycle.isIncrementalInvoiceLines());
+                billingRun.setAggregateUnitAmounts(billingCycle.isAggregateUnitAmounts());
+                billingRun.setDateAggregation(billingCycle.getDateAggregation());
+                billingRun.setDiscountAggregation(billingCycle.getDiscountAggregation());
+                billingRun.setIgnoreOrders(billingCycle.isIgnoreOrders());
+                billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+                billingRun.setAdditionalAggregationFields(new ArrayList<>(billingCycle.getAdditionalAggregationFields()));
 
                 billingRunService.create(billingRun);
                 result.registerSucces();

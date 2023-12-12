@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.Response;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
 import org.meveo.apiv2.article.*;
 import org.meveo.apiv2.article.resource.AccountingArticleResource;
@@ -26,6 +28,7 @@ import org.meveo.model.article.AccountingArticle;
 import org.meveo.model.billing.UntdidAllowanceCode;
 import org.meveo.service.billing.impl.UntdidAllowanceCodeService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AccountingArticleResourceImpl implements AccountingArticleResource {
 
     @Inject private AccountingArticleApiService accountingArticleApiService;

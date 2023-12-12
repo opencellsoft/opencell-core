@@ -5,6 +5,7 @@ import static org.meveo.model.pricelist.PriceListStatusEnum.ACTIVE;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import org.meveo.service.base.BusinessService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Stateless
 public class PriceListService extends BusinessService<PriceList> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PriceListService.class);

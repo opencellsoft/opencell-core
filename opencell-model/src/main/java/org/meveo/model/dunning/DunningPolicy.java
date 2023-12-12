@@ -20,6 +20,7 @@ import java.util.List;
         @NamedQuery(name = "DunningPolicy.findByName", query = "SELECT dp FROM DunningPolicy dp where dp.policyName=:policyName"),
         @NamedQuery(name = "DunningPolicy.listPoliciesByIsActive", query = "SELECT DISTINCT dp FROM DunningPolicy dp left join fetch dp.dunningLevels dpl left join fetch dpl.dunningLevel dl where dp.isActivePolicy=:active"),
         @NamedQuery(name = "DunningPolicy.DeactivateDunningPolicies", query = "UPDATE DunningPolicy dp SET dp.isActivePolicy=false WHERE dp.id IN (:ids)"),
+        @NamedQuery(name = "DunningPolicy.checkIfPriorityAlreadyTaken", query = "SELECT dp FROM DunningPolicy dp where dp.policyPriority=:priority"),
         @NamedQuery(name = "DunningPolicy.activateByDunningMode", query = "UPDATE DunningPolicy SET isActivePolicy = TRUE WHERE type = :dunningMode"),
         @NamedQuery(name = "DunningPolicy.deactivateByDunningMode", query = "UPDATE DunningPolicy SET isActivePolicy = FALSE WHERE type != :dunningMode")
 })

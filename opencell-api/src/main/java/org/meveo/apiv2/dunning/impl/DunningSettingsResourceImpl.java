@@ -1,10 +1,12 @@
 package org.meveo.apiv2.dunning.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.ImmutableDunningSettings;
 import org.meveo.apiv2.dunning.resource.DunningSettingResource;
 import org.meveo.apiv2.dunning.service.DunningSettingsApiService;
@@ -13,6 +15,7 @@ import org.meveo.service.payments.impl.DunningLevelService;
 import org.meveo.service.payments.impl.DunningPolicyService;
 import org.meveo.service.payments.impl.DunningTemplateService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningSettingsResourceImpl implements DunningSettingResource {
 
 	@Inject

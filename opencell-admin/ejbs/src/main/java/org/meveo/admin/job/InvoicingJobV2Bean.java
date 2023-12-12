@@ -10,6 +10,7 @@ import static org.meveo.model.billing.BillingRunStatusEnum.DRAFT_INVOICES;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.INVOICE_LINES_CREATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.NEW;
+import static org.meveo.model.billing.BillingRunStatusEnum.OPEN;
 import static org.meveo.model.billing.BillingRunStatusEnum.POSTVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.PREVALIDATED;
 import static org.meveo.model.billing.BillingRunStatusEnum.REJECTED;
@@ -34,6 +35,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.admin.job.utils.BillinRunApplicationElFilterUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.BillingProcessTypesEnum;
@@ -44,13 +46,12 @@ import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.jobs.JobSpeedEnum;
 import org.meveo.model.scripts.ScriptInstance;
-import org.meveo.service.billing.impl.BillingRunExtensionService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoicesToNumberInfo;
 import org.meveo.service.billing.impl.ServiceSingleton;
+import org.meveo.service.job.JobInstanceService;
 
 @Stateless
 public class InvoicingJobV2Bean extends BaseJobBean {
@@ -70,7 +71,8 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     private IteratorBasedJobProcessing iteratorBasedJobProcessing;
 
     @Inject
-    private BillingRunExtensionService billingRunExtensionService;
+    private JobInstanceService jobInstanceService;
+
     
     private static BigDecimal amountTax = ZERO;
     private static BigDecimal amountWithTax = ZERO;
@@ -88,10 +90,15 @@ public class InvoicingJobV2Bean extends BaseJobBean {
                 filters.put("status", INVOICE_LINES_CREATED);
             } else {
                 filters.put("inList id", billingRunIds);
+                filters.put("ne status", OPEN);
             }
+            filters.put("disabled", false);
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration(filters);
             paginationConfiguration.setFetchFields(Arrays.asList("billingCycle", "billingCycle.billingRunValidationScript"));
-            List<BillingRun> billingRuns = billingRunService.list(paginationConfiguration);
+
+            paginationConfiguration.setLimit(jobInstanceService.getJobItemsLimit(jobInstance));
+            List<BillingRun> billingRuns = BillinRunApplicationElFilterUtils.filterByApplicationEL(
+                    billingRunService.list(paginationConfiguration), jobInstance);
             if (billingRuns.isEmpty()) {
                 List<String> errors = List.of("No valid billing run with status=INVOICE_LINES_CREATED found");
                 result.setErrors(errors);
@@ -202,7 +209,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
 		
         billingRunService.update(billingRun);
         billingRunService.updateBillingRunStatistics(billingRun);
-        billingRunService.updateBillingRunJobExecution(billingRun, result);
+        billingRunService.updateBillingRunJobExecution(billingRun.getId(), result);
 
     }
 
@@ -255,14 +262,14 @@ public class InvoicingJobV2Bean extends BaseJobBean {
             // Assign invoice numbers
             BiConsumer<Long, JobExecutionResultImpl> task =
                     (invoiceId, jobResult) -> invoiceService.assignInvoiceNumberAndRecalculateDates(invoiceId, invoicesToNumberInfo);
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.VERY_FAST, true);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, true);
 
             List<Long> baIds = invoiceService.getBillingAccountIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(), invoicesToNumberInfo.getInvoiceDate());
 
             // Increment next invoice date of a billing account
             task = (baId, jobResult) -> invoiceService.incrementBAInvoiceDate(billingRun, baId);
 
-            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+            iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(baIds), task, null, null, nbRuns, waitingMillis, false, false);
             
             if(billingRun.getGenerateAO()) {
             	task = (invoiceId, jobResult) -> {
@@ -272,7 +279,7 @@ public class InvoicingJobV2Bean extends BaseJobBean {
     					throw new BusinessException(String.format("Error while trying to generate Account Operation for BR: %s, Invoice: %s", billingRun.getId(), invoiceId));
     				}
     			};
-    			iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, JobSpeedEnum.FAST, false);
+    			iteratorBasedJobProcessing.processItems(jobExecutionResult, new SynchronizedIterator<>(invoiceIds), task, null, null, nbRuns, waitingMillis, false, false);
             }
         }
     }

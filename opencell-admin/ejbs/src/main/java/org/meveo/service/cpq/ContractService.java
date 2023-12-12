@@ -173,39 +173,34 @@ public class ContractService extends BusinessService<Contract>  {
 		return this.getContractByAccount(Arrays.asList(customer.getId()), billingAccount, customerAccount,Arrays.asList(seller.getId()), bareWalletOperation, null);
 	}
 
-	public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount,List<Long> sellersId, WalletOperation bareWalletOperation, Date operationDate) {
-		try {
-			Date updateOD = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : operationDate;
-			if(operationDate != null) {
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(operationDate);
-				calendar.set(Calendar.HOUR_OF_DAY, 0);
-				calendar.set(Calendar.MINUTE, 0);
-				calendar.set(Calendar.SECOND, 0);
-				calendar.set(Calendar.MILLISECOND, 0);
-				updateOD = calendar.getTime();
+    public List<Contract> getContractByAccount(List<Long> customersID, BillingAccount billingAccount, CustomerAccount customerAccount, List<Long> sellersId, WalletOperation bareWalletOperation, Date operationDate) {
+        try {
+            Date updateOD = bareWalletOperation != null ? bareWalletOperation.getOperationDate() : operationDate;
+            if (operationDate != null) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(operationDate);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                updateOD = calendar.getTime();
 
-			}
-			List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts")
-					.setParameter("customerIds", customersID).setParameter("billingAccountId", billingAccount.getId())
-					.setParameter("customerAccountId",customerAccount.getId())
-					.setParameter("operationDate", updateOD)
-					.setParameter("sellerIds",sellersId).getResultList();
+            }
+            List<Contract> contracts = getEntityManager().createNamedQuery("Contract.findByAccounts", Contract.class).setParameter("customerIds", customersID).setParameter("billingAccountId", billingAccount.getId())
+                .setParameter("customerAccountId", customerAccount.getId()).setParameter("operationDate", updateOD).setParameter("sellerIds", sellersId).getResultList();
 
-
-			return contracts.stream()
-					.filter(c -> {
-						try {
-							return StringUtils.isBlank(c.getApplicationEl()) || ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c);
-						} catch (Exception e) {
-							throw new BusinessException("Error evaluating the contract’s application EL [contract_id="+c.getId()+",  “"+c.getApplicationEl()+"“]: "+e.getMessage(), e);
-						}
-					})
-					.collect(Collectors.toList());
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+            return contracts.stream().filter(c -> {
+                try {
+                    return (c.getSeller() != null || c.getCustomer() != null || c.getCustomerAccount() != null || c.getBillingAccount() != null) && (StringUtils.isBlank(c.getApplicationEl())
+                            || (!StringUtils.isBlank(c.getApplicationEl()) && ValueExpressionWrapper.evaluateExpression(c.getApplicationEl(), Boolean.class, bareWalletOperation, c)));
+                } catch (Exception e) {
+                    throw new BusinessException("Error evaluating the contract’s application EL [contract_id=" + c.getId() + ",  “" + c.getApplicationEl() + "“]: " + e.getMessage(), e);
+                }
+            }).collect(Collectors.toList());
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
 
 	public Contract lookupSuitableContract(List<Customer> customers, List<Contract> contracts, boolean withRules) {

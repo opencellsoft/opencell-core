@@ -20,6 +20,7 @@ package org.meveo.service.payments.impl;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.*;
 import static org.meveo.model.payments.OperationCategoryEnum.CREDIT;
 
 import java.math.BigDecimal;
@@ -30,7 +31,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
@@ -59,7 +59,9 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstanceItem;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
@@ -90,6 +92,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     private static final String INVOICE_TYPE_SECURITY_DEPOSIT = "SECURITY_DEPOSIT";
     private static final String XCH_LOSS = "XCH_LOSS";
     private static final String XCH_GAIN = "XCH_GAIN";
+    private static final String CAN_SD = "CAN_SD";
 
     @Inject
     private CustomerAccountService customerAccountService;
@@ -126,6 +129,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     private UnMatchingAmountService unMatchingAmountService;
     @Inject
     private OCCTemplateService occTemplateService;
+
+    @Inject
+    private PaymentHistoryService paymentHistoryService;
 
     private static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_PATTERN);
@@ -496,7 +502,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         paymentPlanService.toComplete(listOcc.stream()
                 .filter(accountOperation -> PPL_INSTALLMENT.equals(accountOperation.getCode()) && MatchingStatusEnum.L == accountOperation.getMatchingStatus())
                 .map(AccountOperation::getId)
-                .collect(Collectors.toList()));
+                .collect(toList()));
 
         // generate matchingCode for related AOs
         aosToGenerateMatchingCode.forEach(accountOperation -> journalEntryService.assignMatchingCodeToJournalEntries(accountOperation, null));
@@ -579,7 +585,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 			SecurityDeposit securityDeposit = osd.get();
 			SecurityDepositTemplate securityDepositTemplate = osd.map(SecurityDeposit::getTemplate).get();
 			// Check that max Amount is not reached
-            // For existing sd without currentBalance : avoir NPE
+            // For existing sd without currentBalance : avoid NPE
             if (securityDeposit.getCurrentBalance() == null) {
                 securityDeposit.setCurrentBalance(ZERO);
             }
@@ -597,9 +603,14 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 					securityDeposit.setStatus(SecurityDepositStatusEnum.HOLD);
 				}
 			}
-			// Create SD Transaction
-            securityDepositAOPs.forEach(sdAop ->
-                    securityDepositService.createSecurityDepositTransaction(securityDeposit, amountToMatch, SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, sdAop));
+			// Create SD Transaction if SecurityDeposit is not Canceled
+            securityDepositAOPs.forEach(sdAop -> {
+                        if (!sdAop.getCode().equalsIgnoreCase(CAN_SD)) {
+                            securityDepositService.createSecurityDepositTransaction(securityDeposit, amountToMatch,
+                                    SecurityDepositOperationEnum.CREDIT_SECURITY_DEPOSIT, OperationCategoryEnum.CREDIT, sdAop);
+                        }
+                    }
+            );
 
 		}
 	}
@@ -799,6 +810,39 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
         log.info("matchOperations  balance: {}", balance);
 
+        AccountOperation payment = listOcc.stream()
+                .filter(accountOperation -> accountOperation instanceof Payment
+                        || accountOperation instanceof OtherCreditAndCharge)
+                .findFirst()
+                .orElse(null);
+		
+        if (payment != null && payment.getReference() != null) {
+			PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(payment.getReference());
+			if (paymentHistory != null) {
+				List<Long> aoIdsToPay = operationIds.stream().filter(aoId -> !aoId.equals(payment.getId())).collect(toList());
+				if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+					List<AccountOperation> aoToPay = new ArrayList<>();
+					for (Long aoId : aoIdsToPay) {
+						aoToPay.add(accountOperationService.findById(aoId));
+					}
+					for (AccountOperation ao : aoToPay) {
+						if (ao != null) {
+							if (ao.getPaymentHistories() == null) {
+								ao.setPaymentHistories(new ArrayList<>());
+							}
+							ao.getPaymentHistories().add(paymentHistory);
+
+							if (paymentHistory.getListAoPaid() == null) {
+								paymentHistory.setListAoPaid(new ArrayList<>());
+							}
+							paymentHistory.getListAoPaid().add(ao);
+						}
+					}
+				}
+			}
+		}
+
+
         if (balance.compareTo(ZERO) == 0) {
             matching(listOcc, matchedAmount, null, matchingTypeEnum);
             matchingReturnObject.setOk(true);
@@ -909,12 +953,40 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         if (cptOccDebit == 0) {
             throw new BusinessException("matchingService.noDebitOps");
         }
-        BigDecimal balance = amount.subtract(amoutCredit);
-        balance = balance.abs();
+            BigDecimal balance = amount.subtract(amoutCredit);
+            balance = balance.abs();
 
 
-        log.info("matchOperations  balance: {}", balance);
+            log.info("matchOperations  balance: {}", balance);
 
+            AccountOperation payment = listOcc.stream()
+                    .filter(accountOperation -> accountOperation instanceof Payment
+                            || accountOperation instanceof OtherCreditAndCharge)
+                    .findFirst()
+                    .orElse(null);
+            PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(payment.getReference());
+            if (payment != null && paymentHistory != null) {
+                List<Long> aoIdsToPay = operationIds.stream().filter(aoId -> !aoId.equals(payment.getId())).collect(toList());
+                if (paymentHistory.getListAoPaid() == null || paymentHistory.getListAoPaid().isEmpty()) {
+                    List<AccountOperation> aoToPay = new ArrayList<>();
+                    for (Long aoId : aoIdsToPay) {
+                        aoToPay.add(accountOperationService.findById(aoId));
+                    }
+                    for (AccountOperation ao : aoToPay) {
+                        if (ao != null) {
+                            if (ao.getPaymentHistories() == null) {
+                                ao.setPaymentHistories(new ArrayList<>());
+                            }
+                            ao.getPaymentHistories().add(paymentHistory);
+
+                            if (paymentHistory.getListAoPaid() == null) {
+                                paymentHistory.setListAoPaid(new ArrayList<>());
+                            }
+                            paymentHistory.getListAoPaid().add(ao);
+                        }
+                    }
+                }
+            }
         if (balance.compareTo(ZERO) == 0) {
             matching(listOcc, amount, null, matchingTypeEnum);
             matchingReturnObject.setOk(true);

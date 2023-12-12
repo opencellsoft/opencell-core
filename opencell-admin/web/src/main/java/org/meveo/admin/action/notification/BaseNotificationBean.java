@@ -43,6 +43,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.InboundRequest;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.model.order.Order;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.EDR;
 
@@ -156,6 +157,8 @@ public abstract class BaseNotificationBean<T extends Notification> extends Updat
             }else if (clazzStr.equals(CpqQuote.class.getName())) {
             	events.add(NotificationEventTypeEnum.STATUS_UPDATED);
             	events.add(NotificationEventTypeEnum.PDF_GENERATED);
+            } else if (clazzStr.equals(Order.class.getName())) {
+                events.add(NotificationEventTypeEnum.STATUS_UPDATED);
             }
         } else if (hasNotificableEntity(clazz)) {
             // No longer is being used

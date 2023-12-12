@@ -1,16 +1,9 @@
 package org.meveo.model.cpq.contract;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.EnableBusinessCFEntity;
-import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.cpq.Product;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,14 +17,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
+import org.meveo.model.article.AccountingArticle;
+import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Product;
 
 /**
  * @author Tarik FAKHOURI
@@ -46,9 +48,10 @@ import java.util.Set;
 @NamedQueries({
 	@NamedQuery(name = "ContractItem.getApplicableContracts", query = "select c from ContractItem c left join c.targetAccountingArticles article where  c.contract.id=:contractId "
 			+ " and (c.offerTemplate is null or c.offerTemplate.id=:offerId) "
-			+ " and (c.product is null or c.product.id=:productId) "
+			+ " and (:productId is null or c.product is null or c.product.id=:productId) "
 			+ " and (c.chargeTemplate is null or c.chargeTemplate.id=:chargeTemplateId) "
-			+ " and ((c.targetAccountingArticles is empty and c.chargeTemplate is not null) or article.id =:accountingArticleId)" )})
+			+ " and ((c.targetAccountingArticles is empty and c.chargeTemplate is not null) or article.id =:accountingArticleId)",
+			hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true"), @QueryHint(name = "org.hibernate.readOnly", value = "true") } )})
 	
 public class ContractItem extends EnableBusinessCFEntity {
 
@@ -116,6 +119,9 @@ public class ContractItem extends EnableBusinessCFEntity {
 	@Column(name = "rate_type", length = 50)
 	private ContractRateTypeEnum contractRateType = ContractRateTypeEnum.PERCENTAGE;
 	
+	/**
+	 * Shall discount be created as a separate WO
+	 */
 	@Type(type = "numeric_boolean")
 	@Column(name = "separate_discount")
 	private boolean separateDiscount = false;
@@ -269,10 +275,16 @@ public class ContractItem extends EnableBusinessCFEntity {
 		this.applicationEl = applicationEl;
 	}
 
+	/**
+	 * @return Shall discount be created as a separate WO
+	 */
 	public boolean isSeparateDiscount() {
 		return separateDiscount;
 	}
 
+    /**
+     * @param separateDiscount Shall discount be created as a separate WO
+     */
 	public void setSeparateDiscount(boolean separateDiscount) {
 		this.separateDiscount = separateDiscount;
 	}

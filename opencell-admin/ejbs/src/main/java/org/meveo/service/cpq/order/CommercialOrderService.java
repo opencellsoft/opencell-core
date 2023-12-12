@@ -24,6 +24,7 @@ import javax.persistence.TypedQuery;
 import org.hibernate.Hibernate;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.cpq.xml.Offer;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.AdvancementRateIncreased;
@@ -53,6 +54,9 @@ import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.commercial.ProductActionTypeEnum;
 import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.DiscountPlanInstanceService;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
@@ -60,8 +64,11 @@ import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.ServiceSingleton;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.DiscountPlanService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.cpq.AttributeService;
 import org.meveo.service.cpq.ProductService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 
 /**
  * @author Tarik FA.
@@ -92,6 +99,15 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 
 	@Inject
 	private ProductService productService;
+
+	@Inject
+	private CustomerAccountService customerAccountService;
+
+	@Inject
+	private OfferTemplateService offerTemplateService;
+
+	@Inject
+	private OrderProductService orderProductService;
 	
 	public CommercialOrder findByOrderNumer(String orderNumber) throws  BusinessException{
 		QueryBuilder queryBuilder = new QueryBuilder(CommercialOrder.class, "co");
@@ -141,7 +157,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 			if(o.getProducts().isEmpty()) return false;
 			for(OrderProduct quoteProduct: o.getProducts()) {
 				if(quoteProduct.getProductVersion() != null) {
-					var product = quoteProduct.getProductVersion().getProduct();
+					var product = productService.refreshOrRetrieve(quoteProduct.getProductVersion().getProduct());
 					for(ProductChargeTemplateMapping charge: product.getProductCharges()) {
 						if(charge.getChargeTemplate() != null) {
 							ChargeTemplate templateCharge = (ChargeTemplate) Hibernate.unproxy(charge.getChargeTemplate());
@@ -154,6 +170,8 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 						}else
 							return true;
 					}
+
+					return true;
 				}   
 			}
 			return false;
@@ -200,13 +218,28 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				}
 				subscription.setEndAgreementDate(null);
 				subscription.setRenewed(true);
-				subscription.setPaymentMethod(order.getBillingAccount().getCustomerAccount().getPaymentMethods().get(0));
+				CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(order.getBillingAccount().getCustomerAccount());
+				subscription.setPaymentMethod(customerAccount.getPaymentMethods().get(0));
 				subscription.setOrder(order);
 				subscription.setOrderOffer(offer);
 				subscription.setContract((offer.getContract() != null)? offer.getContract() : order.getContract());
-				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal() : null);
+				OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(offer.getOfferTemplate());
+				subscription.setSubscriptionRenewal(offerTemplate != null ? offerTemplate.getSubscriptionRenewal().copy() : null);
 				subscription.setSalesPersonName(order.getSalesPersonName());
 				subscription.setPriceList(order.getPriceList());
+				if(offer.getTerminationDate() != null) {
+					subscription.setRenewed(false);
+					subscription.setTerminationDate(offer.getTerminationDate());
+					subscription.setSubscribedTillDate(offer.getTerminationDate());
+					if(offer.getTerminationReason() != null && subscription.getSubscriptionRenewal() != null) {
+						SubscriptionRenewal renewal =  subscription.getSubscriptionRenewal();
+						renewal.setTerminationReason(offer.getTerminationReason());
+						renewal.setInitialTermType(SubscriptionRenewal.InitialTermTypeEnum.FIXED);
+						renewal.setAutoRenew(false);
+						renewal.setEndOfTermAction(SubscriptionRenewal.EndOfTermActionEnum.TERMINATE);
+						
+					}
+				}
 				subscriptionService.create(subscription);
 				if(offer.getDiscountPlan()!=null) {
 					discountPlans.add(offer.getDiscountPlan());
@@ -400,7 +433,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 	}
 	
 	public ServiceInstance processProductWithDiscount(Subscription subscription, OrderProduct orderProduct) {
-		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProduct.getOrderAttributes(), orderProduct, null);
+		var serviceInstance = processProduct(subscription, orderProduct.getProductVersion().getProduct(), orderProduct.getQuantity(), orderProductService.refreshOrRetrieve(orderProduct).getOrderAttributes(), orderProduct, null);
 		serviceInstance.setQuoteProduct(orderProduct.getQuoteProduct());
 		if(orderProduct.getDiscountPlan() != null) {
 			DiscountPlanInstance dpi = new DiscountPlanInstance();
@@ -502,6 +535,7 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 					break;
 				}
 			}
+			attributeService.validAttribute(productVersionAttribute, attributeInstance);
 			serviceInstance.addAttributeInstance(attributeInstance);
 			
 		}

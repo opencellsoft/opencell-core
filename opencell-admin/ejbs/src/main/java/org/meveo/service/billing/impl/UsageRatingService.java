@@ -22,7 +22,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,6 @@ import org.meveo.admin.exception.CommunicateToRemoteInstanceException;
 import org.meveo.admin.exception.CounterInstantiationException;
 import org.meveo.admin.exception.InvalidELException;
 import org.meveo.admin.exception.NoChargeException;
-import org.meveo.admin.exception.NoPricePlanException;
 import org.meveo.admin.exception.RatingException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.MethodCallingUtils;
@@ -56,11 +54,9 @@ import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.cpq.CpqQuote;
-import org.meveo.model.cpq.enums.AttributeTypeEnum;
 import org.meveo.model.quote.QuoteVersion;
 import org.meveo.model.rating.CDR;
 import org.meveo.model.rating.CDRStatusEnum;
@@ -109,9 +105,6 @@ public class UsageRatingService extends RatingService implements Serializable {
     @Rejected
     private Event<Serializable> rejectedEdrProducer;
         
-    @Inject
-    private UserAccountService userAccountService;
-
     /**
      * Decrease a usage charge counter by EDR quantity. A new counter period matching EDR event date will be instantiated if does not exist yet.
      *
@@ -390,11 +383,7 @@ public class UsageRatingService extends RatingService implements Serializable {
 
                 // Just to load all subscription service instances with their attributes to avoid querying service instances and their attributes one by one. 
                 // Done once per subscription (in same tx) - a fix when EDR batch to rate is based on same subscription, or when EDR triggers other EDRs 
-                if (!isSubscriptionInitialized) {
-                    List<ServiceInstance> subscriptionServices = getEntityManager().createNamedQuery("ServiceInstance.findBySubscriptionIdLoadAttributes", ServiceInstance.class).setParameter("subscriptionId", subscriptionId)
-                        .getResultList();
-                    UserAccount userAccount = userAccountService.findById(edr.getSubscription().getUserAccount().getId(), Arrays.asList("wallet"));
-                }
+                loadEntitiesRelatedToSubscription(edr.getSubscription(), !isSubscriptionInitialized);
                     
                 // This covers a virtual rating case when estimating usage from a quote. Subscription in that case was not persisted.
             } else if (edr.getSubscription().getServiceInstances() != null) {
@@ -452,6 +441,11 @@ public class UsageRatingService extends RatingService implements Serializable {
 
             edr.changeStatus(EDRStatusEnum.RATED);
             edr.setRejectReason(null);
+            
+            WalletOperation walletOperation = ratingResult.getWalletOperations().stream().filter(e -> e.getEdr().equals(edr)).findFirst().orElse(null);
+            if (walletOperation != null) {
+            	edr.setBusinessKey(walletOperation.getBusinessKey());
+            }
 
             // If not virtual, persist triggered EDRs and created Wallet operations
             if (!isVirtual && currentRatingDepth == 0) {
@@ -462,6 +456,7 @@ public class UsageRatingService extends RatingService implements Serializable {
                 }
 
                 for (WalletOperation wo : ratingResult.getWalletOperations()) {
+	                checkDiscountedWalletOpertion(wo, ratingResult.getWalletOperations());
                     walletOperationService.chargeWalletOperation(wo);
                 }
             }
@@ -536,7 +531,6 @@ public class UsageRatingService extends RatingService implements Serializable {
                     if (filter4 == null || filter4.equals(edr.getParameter4())) {
                         String filterExpression = chargeTemplate.getFilterExpression();
                         if (filterExpression == null || matchExpression(chargeInstance, filterExpression, edr)) {
-
                             // Check if there is any attribute with value FALSE, indicating that service instance is not active
                             if (anyFalseAttributeMatch(chargeInstance)) {
                                 return false;

@@ -184,13 +184,11 @@ import org.meveo.model.tax.TaxClass;
         @NamedQuery(name = "RatedTransaction.markAsProcessed", query = "UPDATE RatedTransaction rt set rt.status='BILLED' WHERE rt.id in (:listOfIds)"),
         @NamedQuery(name = "RatedTransaction.sumTotalInvoiceableByRtIdInBatch", query = "SELECT new org.meveo.admin.async.AmountsToInvoice(r.billingAccount.id, sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)) FROM RatedTransaction r WHERE r.status='OPEN' AND r.id in (:ids) group by r.billingAccount.id"),
         @NamedQuery(name = "RatedTransaction.BillingAccountByRTIds", query = "SELECT distinct rt.billingAccount FROM RatedTransaction rt WHERE rt.id in (:ids)"),
-        @NamedQuery(name = "RatedTransaction.linkRTWithInvoiceLine", query = "UPDATE RatedTransaction rt set rt.status='BILLED', rt.invoiceLine.id = :il, rt.billingRun.id = :billingRunId WHERE rt.status='OPEN' AND rt.id in :ids"),
+        @NamedQuery(name = "RatedTransaction.linkRTWithInvoiceLine", query = "UPDATE RatedTransaction rt set rt.status='BILLED', rt.invoiceLine.id = :il, rt.billingRun.id = :billingRunId WHERE rt.id in :ids"),
         @NamedQuery(name = "RatedTransaction.linkRTWithInvoice", query = "UPDATE RatedTransaction rt set rt.invoice = :invoice, rt.billingRun = :billingRun, rt.status = 'BILLED', rt.updated = :now WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoiceLines", query = "UPDATE RatedTransaction rt set rt.invoiceLine = null, rt.status = 'OPEN' WHERE rt.invoiceLine.id in :ids"),
         @NamedQuery(name = "RatedTransaction.detachFromInvoices", query = "UPDATE RatedTransaction r SET r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceLine=null, r.invoiceAgregateF=null WHERE r.invoiceLine.id in (select il.id from InvoiceLine il where il.invoice.id IN (:ids)) "),
         @NamedQuery(name = "RatedTransaction.reopenRatedTransactions", query = "update RatedTransaction r set r.status='OPEN', r.updated = :now, r.billingRun= null, r.invoice=null, r.invoiceAgregateF=null, r.invoiceLine=null where r.id IN (:rtIds)"),
-        @NamedQuery(name = "RatedTransaction.updatePendingDuplicate", query = "update RatedTransaction r set r.pendingDuplicates= r.pendingDuplicates + :pendingDuplicates, r.pendingDuplicatesToNegate= r.pendingDuplicatesToNegate + :pendingDuplicatesToNegate where r.id in (:rtI)"),
-        @NamedQuery(name = "RatedTransaction.findPendingOrNegateDuplicated", query = "Select r from RatedTransaction r where r.pendingDuplicates > 0 or r.pendingDuplicatesToNegate > 0"),
         @NamedQuery(name = "RatedTransaction.cancelRatedTransactionsByBR", query = "update RatedTransaction rt set rt.status = 'CANCELED', rt.updated = CURRENT_TIMESTAMP ,rt.invoiceLine = null, rt.invoice = null where rt.billingRun.id = :billingRunId"),
         @NamedQuery(name = "RatedTransaction.findForAppyInvoicingRuleByIds", query = "SELECT rt FROM RatedTransaction rt WHERE rt.id in (:ids) AND  rt.status = 'OPEN' and rt.rulesContract is not null"),
         @NamedQuery(name = "RatedTransaction.updateStatusDiscountedRT", query = "UPDATE RatedTransaction rt " +
@@ -199,9 +197,17 @@ import org.meveo.model.tax.TaxClass;
                 "WHERE rt.invoiceLine.status != 'BILLED' AND rt.discountedRatedTransaction =: id"),
         @NamedQuery(name = "RatedTransaction.cancelAggregatedRTByInvoiceLine", query = "UPDATE RatedTransaction rt SET rt.invoiceLine = null, rt.status = org.meveo.model.billing.RatedTransactionStatusEnum.OPEN, rt.updated = :now WHERE rt.status = org.meveo.model.billing.RatedTransactionStatusEnum.BILLED AND rt.invoiceLine.id IN ( SELECT rt.invoiceLine.id from RatedTransaction rt where rt.id in (SELECT wo.id FROM WalletOperation wo WHERE wo.id IN :woIds))"),
         @NamedQuery(name = "RatedTransaction.getMissingAccountingArticleInputs", query =
-    	"select new org.meveo.model.billing.AccountingArticleAssignementItem(ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id, (string_agg(cast(ci.id as text),','))) "
-    		+ " FROM RatedTransaction rt left join rt.chargeInstance ci WHERE rt.status = 'OPEN' and rt.accountingArticle is null group by ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id")
-        })
+    	"select new org.meveo.model.billing.AccountingArticleAssignmentItem(ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id, (string_agg(cast(ci.id as text),','))) "
+    		+ " FROM RatedTransaction rt left join rt.chargeInstance ci WHERE rt.status = 'OPEN' and rt.accountingArticle is null group by ci.chargeTemplate.id, rt.offerTemplate.id, rt.serviceInstance.id"),
+        @NamedQuery(name = "RatedTransaction.findBillingRunReportDetails", query = "SELECT COUNT(rt), COUNT(rt.billingAccount), COUNT(rt.subscription), COUNT(rt.chargeInstance), SUM(rt.amountWithoutTax), ci.chargeType FROM RatedTransaction rt LEFT JOIN rt.chargeInstance ci WHERE rt.id in (:ids) AND rt.status = 'OPEN' GROUP BY ci.chargeType"),
+        @NamedQuery(name = "RatedTransaction.findBillingRunReportBilledDetails", query = "SELECT COUNT(rt), COUNT(rt.billingAccount), COUNT(rt.subscription), COUNT(rt.chargeInstance), SUM(rt.amountWithoutTax), ci.chargeType FROM RatedTransaction rt LEFT JOIN rt.chargeInstance ci WHERE rt.id in (:ids) GROUP BY ci.chargeType"),
+        @NamedQuery(name = "RatedTransaction.findAmountsPerBillingAccountBilledDetails", query = "SELECT rt.billingAccount.id, SUM(rt.amountWithoutTax) AS ba_amount, COUNT(rt.id) FROM RatedTransaction rt WHERE rt.id in (:ids) GROUP BY rt.billingAccount.id ORDER BY ba_amount DESC"),
+        @NamedQuery(name = "RatedTransaction.findAmountsPerOfferBilledDetails", query = "SELECT rt.offerTemplate.id, SUM(rt.amountWithoutTax) AS offer_amount, COUNT(rt.id) FROM RatedTransaction rt WHERE rt.id in (:ids) GROUP BY rt.offerTemplate.id ORDER BY offer_amount DESC"),
+        @NamedQuery(name = "RatedTransaction.findAmountsPerSubscriptionBilledDetails", query = "SELECT rt.subscription.id, SUM(rt.amountWithoutTax) AS subscription_amount, COUNT(rt.id) FROM RatedTransaction rt WHERE rt.id in (:ids) GROUP BY rt.subscription.id ORDER BY subscription_amount DESC"),
+        @NamedQuery(name = "RatedTransaction.findAmountsPerArticleBilledDetails", query = "SELECT rt.accountingArticle.id, SUM(rt.amountWithoutTax) AS article_amount, COUNT(rt.id) FROM RatedTransaction rt WHERE rt.id in (:ids) GROUP BY rt.accountingArticle.id ORDER BY article_amount DESC"),
+        @NamedQuery(name = "RatedTransaction.findAmountsPerProductBilledDetails", query = "SELECT rt.serviceInstance.productVersion.product.id, SUM(rt.amountWithoutTax) AS product_amount, COUNT(rt.id) FROM RatedTransaction rt WHERE rt.id in (:ids) GROUP BY rt.serviceInstance.productVersion.product.id ORDER BY product_amount DESC"),
+        @NamedQuery(name = "RatedTransaction.findReportInitialDataDetails", query = "SELECT COUNT(DISTINCT rt), COUNT(DISTINCT rt.billingAccount), COUNT(DISTINCT rt.subscription), COUNT(DISTINCT rt.chargeInstance) FROM RatedTransaction rt WHERE rt.id in (:ids)")
+})
 
 @NamedNativeQueries({
         @NamedNativeQuery(name = "RatedTransaction.massUpdateWithDiscountedRT", query = "update {h-schema}billing_rated_transaction rt set discounted_ratedtransaction_id=discountedWO.rated_transaction_id , updated=now() from {h-schema}billing_wallet_operation discountWO, {h-schema}billing_wallet_operation discountedWO where discountWO.rated_transaction_id=rt.id and discountWO.discounted_wallet_operation_id=discountedWO.id and rt.status='OPEN' and rt.discounted_ratedtransaction_id is null and discountWO.id>=:minId and discountWO.id<=:maxId"),
@@ -209,6 +215,8 @@ import org.meveo.model.tax.TaxClass;
 
         @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTable", query = "update {h-schema}billing_rated_transaction rt set status='BILLED', updated=now(), aggregate_id_f=pending.aggregate_id_f, billing_run_id=pending.billing_run_id, invoice_id=pending.invoice_id from {h-schema}billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
         @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceInfoFromPendingTableOracle", query = "UPDATE (SELECT rt.status, rt.updated, rt.aggregate_id_f rt_aggregate_id_f, rt.billing_run_id rt_billing_run_id, rt.invoice_id rt_invoice_id, pending.aggregate_id_f pending_aggregate_id_f, pending.billing_run_id pending_billing_run_id, pending.invoice_id pending_invoice_id FROM {h-schema}billing_rated_transaction rt, {h-schema}billing_rated_transaction_pending pending WHERE rt.status = 'OPEN' AND rt.id = pending.id) SET status = 'BILLED', updated = now (), rt_aggregate_id_f = pending_aggregate_id_f, rt_billing_run_id = pending_billing_run_id, rt_invoice_id = pending_invoice_id"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceLineInfoFromPendingTable", query = "update {h-schema}billing_rated_transaction rt set status='BILLED', updated=now(), invoice_line_id=pending.invoice_line_id, billing_run_id=pending.billing_run_id from {h-schema}billing_rated_transaction_pending pending where status='OPEN' and rt.id=pending.id"),
+        @NamedNativeQuery(name = "RatedTransaction.massUpdateWithInvoiceLineInfoFromPendingTableOracle", query = "UPDATE (SELECT rt.status, rt.updated, rt.invoice_line_id rt_invoice_line_id, rt.billing_run_id rt_billing_run_id, pending.invoice_line_id pending_invoice_line_id, pending.billing_run_id pending_billing_run_id FROM {h-schema}billing_rated_transaction rt, {h-schema}billing_rated_transaction_pending pending WHERE rt.status = 'OPEN' AND rt.id = pending.id) SET status = 'BILLED', updated = now (), rt_billing_run_id = pending_billing_run_id, rt_invoice_line_id = pending_invoice_line_id"),
         @NamedNativeQuery(name = "RatedTransaction.deletePendingTable", query = "delete from {h-schema}billing_rated_transaction_pending") })
 
 public class RatedTransaction extends BaseEntity implements ISearchable, ICustomFieldEntity, IInvoiceable {
@@ -612,6 +620,9 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
     @JoinColumn(name = "discount_plan_id")
     private DiscountPlan discountPlan;    
     
+    /**
+     * What Rated transaction the current Rated transaction, that represents a discount amount, is related to - Points to an original Rated transaction with a full amount
+     */
     @Column(name = "discounted_ratedtransaction_id")
     private Long discountedRatedTransaction;
     
@@ -671,11 +682,8 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
   	@Column(name = "sequence")
   	private Integer sequence;
 
-    @Column(name = "pending_duplicates")
-    private Integer pendingDuplicates = 0;
-
-    @Column(name = "pending_duplicates_to_negate")
-    private Integer pendingDuplicatesToNegate = 0;
+    @Column(name = "business_key")
+    private String businessKey;
     
     public RatedTransaction() {
         super();
@@ -835,6 +843,14 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountedAmount = walletOperation.getDiscountedAmount();
         this.sequence = walletOperation.getSequence();
         this.rulesContract = walletOperation.getRulesContract();
+        this.useSpecificPriceConversion = walletOperation.isUseSpecificPriceConversion();
+        this.transactionalUnitAmountTax = walletOperation.getTransactionalUnitAmountTax();
+        this.transactionalUnitAmountWithoutTax = walletOperation.getTransactionalUnitAmountWithoutTax();
+        this.transactionalUnitAmountTax = walletOperation.getTransactionalUnitAmountTax();
+        this.transactionalAmountTax = walletOperation.getTransactionalAmountTax();
+        this.transactionalAmountWithoutTax = walletOperation.getTransactionalAmountWithoutTax();
+        this.transactionalAmountWithTax = walletOperation.getTransactionalAmountWithTax();
+        this.businessKey = walletOperation.getBusinessKey();
     }
 
 
@@ -892,8 +908,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
         this.discountedAmount = rateTransactionToDuplicate.getDiscountedAmount();
         this.sequence = rateTransactionToDuplicate.getSequence();
         this.rulesContract = rateTransactionToDuplicate.getRulesContract();
-        this.pendingDuplicates = 0;
-        this.pendingDuplicatesToNegate = 0;
+        this.businessKey = rateTransactionToDuplicate.getBusinessKey();
     }
     
     public WalletInstance getWallet() {
@@ -1850,19 +1865,12 @@ public class RatedTransaction extends BaseEntity implements ISearchable, ICustom
 		this.tradingCurrency = tradingCurrency;
 	}
 
-    public Integer getPendingDuplicates() {
-        return pendingDuplicates;
-    }
+	public String getBusinessKey() {
+		return businessKey;
+	}
 
-    public void setPendingDuplicates(Integer pendingDuplicates) {
-        this.pendingDuplicates = pendingDuplicates;
-    }
-
-    public Integer getPendingDuplicatesToNegate() {
-        return pendingDuplicatesToNegate;
-    }
-
-    public void setPendingDuplicatesToNegate(Integer pendingDuplicatesToNegate) {
-        this.pendingDuplicatesToNegate = pendingDuplicatesToNegate;
-    }
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}
+    
 }

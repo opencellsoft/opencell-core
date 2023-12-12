@@ -1,6 +1,7 @@
 package org.meveo.apiv2.settings.openOrderSetting.impl;
 
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.settings.OpenOrderSettingInput;
 import org.meveo.apiv2.settings.openOrderSetting.OpenOrderSettingResource;
 import org.meveo.model.securityDeposit.FinanceSettings;
@@ -9,11 +10,13 @@ import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.settings.impl.OpenOrderSettingService;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class OpenOrderSettingResourceImpl implements OpenOrderSettingResource {
 
     @Inject

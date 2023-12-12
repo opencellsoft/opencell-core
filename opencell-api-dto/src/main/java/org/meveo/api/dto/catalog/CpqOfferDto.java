@@ -31,9 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EnableBusinessDto;
-import org.meveo.api.dto.cpq.AttributeDTO;
 import org.meveo.api.dto.cpq.OfferProductsDto;
-import org.meveo.api.dto.cpq.OfferTemplateAttributeDTO;
+import org.meveo.api.dto.cpq.ProductVersionAttributeDTO;
 import org.meveo.api.dto.cpq.TagDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -78,7 +77,7 @@ public class CpqOfferDto extends EnableBusinessDto {
     /** The offerAttributes. */
     @XmlElementWrapper(name = "attributes")
     @XmlElement(name = "attributes")
-    private List<OfferTemplateAttributeDTO> attributes;
+    private List<ProductVersionAttributeDTO> attributes;
     
     
     /** The valid from. */
@@ -122,7 +121,7 @@ public class CpqOfferDto extends EnableBusinessDto {
 		if(entity.getOfferAttributes() != null && !entity.getOfferAttributes().isEmpty()) {
        	 this.attributes = entity.getOfferAttributes()
                     .stream()
-                    .map(OfferTemplateAttributeDTO::new)
+                    .map(ProductVersionAttributeDTO::new)
                     .collect(Collectors.toList());
         }
     }
@@ -310,11 +309,11 @@ public class CpqOfferDto extends EnableBusinessDto {
 		this.customFields = customFields;
 	}
 
-	public List<OfferTemplateAttributeDTO> getAttributes() {
+	public List<ProductVersionAttributeDTO> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<OfferTemplateAttributeDTO> attributes) {
+	public void setAttributes(List<ProductVersionAttributeDTO> attributes) {
 		this.attributes = attributes;
 	}
 

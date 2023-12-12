@@ -18,6 +18,7 @@
 package org.meveo.model.jobs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -151,11 +152,11 @@ public class JobInstance extends EnableBusinessCFEntity {
     private boolean stopOnError = false;
 
     /**
-     * Job execution speed. Defines how often job execution history gets updated.
+     * How often (in seconds) the job progress should be stored to DB
      */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "job_speed", nullable = false)
-    private JobSpeedEnum jobSpeed = JobSpeedEnum.NORMAL;
+    @Column(name = "status_report_freq", nullable = false)
+    @NotNull
+    private int jobStatusReportFrequency = 60;
 
     /** Code of provider, that job belongs to. */
     @Transient
@@ -419,7 +420,7 @@ public class JobInstance extends EnableBusinessCFEntity {
      * @param runTimeParameters Runtime parameters to append
      */
     public void addRunTimeValues(Map<String, Object> runTimeParameters) {
-        this.runTimeValues = runTimeValues;
+        this.runTimeValues.putAll(runTimeParameters);
     }
 
     /**
@@ -440,6 +441,19 @@ public class JobInstance extends EnableBusinessCFEntity {
             return null;
         }
         return this.runTimeValues.get(key);
+    }
+
+    /**
+     * Set the runtime value
+     * 
+     * @param key The key
+     * @param value The value
+     */
+    public void setParamValue(String key, Object value) {
+        if (this.runTimeValues == null) {
+            this.runTimeValues = new HashMap<String, Object>();
+        }
+        this.runTimeValues.put(key, value);
     }
 
     /**
@@ -475,20 +489,6 @@ public class JobInstance extends EnableBusinessCFEntity {
     }
 
     /**
-     * @return Job execution speed. Defines how often job execution history gets updated.
-     */
-    public JobSpeedEnum getJobSpeed() {
-        return jobSpeed;
-    }
-
-    /**
-     * @param jobSpeed Job execution speed. Defines how often job execution history gets updated.
-     */
-    public void setJobSpeed(JobSpeedEnum jobSpeed) {
-        this.jobSpeed = jobSpeed;
-    }
-
-    /**
      * @return the queryScheduler
      */
     public QueryScheduler getQueryScheduler() {
@@ -500,5 +500,19 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public void setQueryScheduler(QueryScheduler queryScheduler) {
         this.queryScheduler = queryScheduler;
+    }
+
+    /**
+     * @return How often (in seconds) the job progress should be stored to DB
+     */
+    public int getJobStatusReportFrequency() {
+        return jobStatusReportFrequency;
+    }
+
+    /**
+     * @param jobStatusReportFrequency How often (in seconds) the job progress should be stored to DB
+     */
+    public void setJobStatusReportFrequency(int jobStatusReportFrequency) {
+        this.jobStatusReportFrequency = jobStatusReportFrequency;
     }
 }

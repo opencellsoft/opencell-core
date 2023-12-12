@@ -141,23 +141,8 @@
 <!-- 					</f:facet> -->
 <!-- 				</p:cellEditor> -->
 			</p:column>
-			<p:column exportable="true" toggleable="false">
-				<f:facet name="header">
-					<h:outputText value="#{messages['pricePlanMatrix.eventCode']}" />
-				</f:facet>
-				<p:cellEditor>
-					<f:facet name="output">
-						<h:outputText value="#{entity.eventCode}" />
-					</f:facet>
-					<f:facet name="input">
-						<h:selectOneMenu value="#{entity.eventCode}" style="width:75%"
-							required="true">
-							<f:selectItems value="#{chargeTemplateBean.listAll()}" var="item"
-								itemLabel="#{item.code}" itemValue="#{item.code}" />
-							<hftl:objectConverter />
-						</h:selectOneMenu>
-					</f:facet>
-				</p:cellEditor>
+			<p:column headerText="#{messages['pricePlanMatrix.eventCode']}" >
+				<h:outputText value="#{pricePlanMatrixListBean.getPricePlanEventCode(entity)}" />
 			</p:column>
 			<p:column exportable="true" toggleable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[4]}">
 				<f:facet name="header">

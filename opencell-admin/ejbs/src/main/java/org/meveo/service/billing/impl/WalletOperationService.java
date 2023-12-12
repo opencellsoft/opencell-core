@@ -18,6 +18,7 @@
 package org.meveo.service.billing.impl;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.meveo.commons.utils.NumberUtils.round;
 
 import java.math.BigDecimal;
@@ -36,12 +37,14 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import com.google.common.collect.Lists;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.admin.job.ReRatingJob;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
@@ -57,6 +60,7 @@ import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ReratingTargetEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
@@ -81,7 +85,6 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.ChargeTemplateService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
-import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.RecurringChargeTemplateService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -133,9 +136,6 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
 
     @Inject
     private RecurringChargeTemplateService recurringChargeTemplateService;
-    
-    @Inject
-    private OneShotChargeTemplateService oneShotChargeTemplateService;
     
     /**
      *
@@ -457,8 +457,32 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         return nrOfWosToRerate;
     }
 
-    public List<Long> listToRerate() {
-        return getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class).getResultList();
+    /**
+     * Gets wallet operations list to rerate
+     *
+     * @param reratingTarget Rerating target
+     * @param targetBatches  Target batchs
+     * @param nbToRetrieve   Number of wallet operations to retrieve
+     * @return The wallet operations list to rerate
+     */
+    public List<Long> listToRerate(String reratingTarget, List<Long> targetBatches, int nbToRetrieve) {
+        // null | ALL
+        TypedQuery<Long> query = getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class);
+        if (ReratingTargetEnum.NO_BATCH.name().equals(reratingTarget)) {
+            query = getEntityManager().createNamedQuery("WalletOperation.listToRerateNoBatch", Long.class);
+        } else if (ReratingTargetEnum.WITH_BATCH.name().equals(reratingTarget)) {
+            if (CollectionUtils.isNotEmpty(targetBatches)) {
+                query = getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
+                        .setParameter("targetBatches", targetBatches)
+                        .setParameter("targetJob", ReRatingJob.class.getSimpleName());
+            } else {
+                query = getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class);
+            }
+        }
+        if (nbToRetrieve > 0) {
+            return query.setMaxResults(nbToRetrieve).getResultList();
+        }
+        return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
@@ -718,8 +742,10 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                     wallet != null ? wallet.getUserAccount() : null, wallet != null ? wallet.getUserAccount().getBillingAccount() : null);
             }
             Integer sortIndex = RatingService.getSortIndex(wo);
-            wo.setSortIndex(sortIndex);
-            create(wo);
+            wo.setSortIndex(sortIndex);        
+        	wo.setBusinessKey(dto.getBusinessKey());
+
+        	create(wo);
         }
     }
 
@@ -1039,4 +1065,5 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
                 .setParameter("walletOperationIds", walletOperationsIds)
                 .getResultList();
     }
+
 }

@@ -8400,6 +8400,22 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+
+    <changeSet id="#INTRD-10574_20221013-job" author="AndriusKarpavicius">    
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="2022-12-22 15:13:19.913" />
+            <column name="job_category" value="UTILS" />
+            <column name="job_template" value="AuditDataLogAggregationJob" />
+            <column name="code" value="AuditDataLogAggregationJob" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="timerentity_id"
+                    valueComputed="(SELECT id from meveo_timer where code = 'Hourly')" />
+            <column name="uuid" value="AuditDataLogAggregationJob_Job" />
+        </insert>
+    </changeSet>
 	<changeSet id="#INTRD-11328_20221110" author="aelmalki">
 		<insert tableName="crm_custom_field_tmpl">
 			<column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
@@ -16841,6 +16857,89 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 		</update>
 	</changeSet>
 
+
+    <changeSet id="#INTRD-10574_20230213" author="AndriusKarpavicius">
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.Subscription"/>
+            <column name="entity_fields" value="status,userAccount,subscriptionRenewal,renewed"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.ServiceInstance"/>
+            <column name="entity_fields" value="status,serviceRenewal,renewed"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.billing.Invoice"/>
+            <column name="entity_fields" value="status,xmlDate,pdfDate,emailSentDate,paymentStatus"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.order.Order"/>
+            <column name="entity_fields" value="status"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.AccountOperation"/>
+            <column name="entity_fields" value="collectionDate"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.CustomerAccount"/>
+            <column name="entity_fields" value="customer"/>
+        </insert>
+    
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.PaymentScheduleInstance"/>
+            <column name="entity_fields" value="amount"/>
+        </insert>
+        <insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.payments.PaymentScheduleInstanceItem"/>
+            <column name="entity_fields" value="requestPaymentDate,amount"/>
+        </insert>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst_item','request_pay_date,amount', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_payment_schedule_inst','amount', null, null, true)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_customer_account','customer_id', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ar_account_operation','collection_date', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('ord_order','status', null, null, true)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_invoice','status,xml_date,pdf_date,email_sent_date,payment_status', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_subscription','status,user_account_id,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
+        <sql>call proc_recreate_audit_data_trigger('billing_service_instance','status,renewed,auto_renew,auto_renew_date,days_notify_renew,end_of_term_action,auto_termin_reason_id,init_active_unit,init_active,calendar_init_active_id,match_end_aggr_date,renew_for_unit,renew_for,calendar_renew_for_id,initial_term_type,renewal_term_type', null, null, false)</sql>
+    </changeSet>
+
+    <changeSet id="#INTRD-10574_20230214" author="AndriusKarpavicius">
+        <delete tableName="meveo_job_instance">
+            <where>code = 'APIv2PermissionsSyncJob'</where>
+        </delete>
+    </changeSet>
+
     <changeSet id="#INTRD-11208_20230131" author="zelmeliani">
         <insert tableName="com_message_template">
             <column name="media" value="DUNNING_MEDIA" />
@@ -20913,70 +21012,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where> code = 'OC_MASS_IMPORT_NOTIFICATION'</where>
         </update>
     </changeSet>
-    
-    <changeSet id="#INTRD-17353__14-07-2023" author="Mohammed_ELAZZOUZI">
-	    <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_BillingAccountPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="Process transactions by billing account"/>
-            <column name="field_type" value="BOOLEAN"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="value_required" value="0"/>
-            <column name="default_value" value="1"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:2;fieldGroup:Performances"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="preferred max RTs per transaction"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="1000000"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:3;fieldGroup:Performances"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_MaxLinesPerTransaction"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="preferred max lines per transaction"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="10000"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:4;fieldGroup:Performances"/>
-        </insert>
-        <insert tableName="crm_custom_field_tmpl">
-            <column name="id" valueSequenceNext="crm_custom_fld_tmp_seq" />
-            <column name="version" valueNumeric="0" />
-            <column name="disabled" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="code" value="JobInstance_InvoiceLinesJob_MaxRTsPerLine"/>
-            <column name="applies_to" value="JobInstance_InvoiceLinesJob"/>
-            <column name="description" value="preferred max RTs per line"/>
-            <column name="field_type" value="LONG"/>
-            <column name="storage_type" value="SINGLE"/>
-            <column name="default_value" valueNumeric="100000"/>
-            <column name="value_required" value="0"/>
-            <column name="creator" value="applicationInitializer"/>
-            <column name="gui_position" value="tab:Configuration:5;fieldGroup:Performances"/>
-        </insert>
-
-    </changeSet>
 
 	<changeSet id="#INTRD-16296_20230517" author="aeljaouhari">
 		<update tableName="billing_invoice_type">
@@ -21220,7 +21255,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>code='org.meveo.service.script.demo.CustomGatewayPaymentScript'</where>
         </update>
 	</changeSet>
-
+	
 	<changeSet id="#INTRD-16859_20230626" author="aeljaouhari">
 		<update tableName="meveo_job_instance">
             <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportCustomerAccountJob')" />
@@ -21238,7 +21273,7 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportUserAccountJob')" />
             <where>code='massImportBillingAccountJob'</where>
         </update>
-
+        
         <update tableName="meveo_job_instance">
             <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportServiceInstanceJob')" />
             <where>code='massImportSubscriptionJob'</where>
@@ -21251,13 +21286,13 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'massImportAccessPoint')" />
             <where>code='massImportAttributeInstance'</where>
         </update>
-
+        
         <update tableName="adm_notification">
 			<column name="disabled" value="1" />
 			<where>code='OC_MASS_IMPORT_NOTIFICATION'</where>
 		</update>
 	</changeSet>
-
+    
     <changeSet id="INTRD-17129_20230627" author="TarikFA.">
         <update tableName="adm_custom_generic_entity_code">
             <column name="entity_class" value="org.meveo.model.cpq.offer.QuoteOffer" />
@@ -21272,36 +21307,830 @@ public class CustomGatewayPaymentScript extends PaymentScript{
             <where>entity_class='AccountingScheme'</where>
         </update>
     </changeSet>
-    
-    	<changeSet id="INTRD-16743_20230720" author="aelmalki">
+
+	<changeSet id="INTRD-16743_20230720" author="aelmalki">
         <update tableName="ar_account_operation">
             <column name="code" value="ADJ_REF" />
             <where>code='INV_CRN'</where>
         </update>
     </changeSet>
-	
+
 	<changeSet id="INTRD-17572_20230721-ADJ" author="aelmalki" failOnError="false">
         <insert tableName="billing_invoice_type_applies_to">
             <column name="invoice_type_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'ADJ')" />
 			<column name="applies_to_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'COM')" />
         </insert>
     </changeSet>
-	
+
 	<changeSet id="INTRD-17572_20230721-ADJ-REF" author="aelmalki" failOnError="false">
         <insert tableName="billing_invoice_type_applies_to">
             <column name="invoice_type_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'ADJ_REF')" />
 			<column name="applies_to_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'COM')" />
         </insert>
     </changeSet>
-	
+
 	<changeSet id="INTRD-17572_20230721-ADJ_INV" author="aelmalki" failOnError="false">
         <insert tableName="billing_invoice_type_applies_to">
             <column name="invoice_type_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'ADJ_INV')" />
 			<column name="applies_to_id" valueComputed="(SELECT id FROM billing_invoice_type WHERE code = 'COM')" />
         </insert>
     </changeSet>
-    
 
+    <changeSet id="INTRD-17135_20230713" author="TarikFA.">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="job_category" value="INVOICING" />
+            <column name="job_template" value="XMLEInvoiceGenerationJob" />
+            <column name="code" value="EInvoice_job" />
+
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="timerentity_id" valueNumeric="-1" />
+            <column name="uuid" value="XMLEInvoiceGeneration_Job" />
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'PDF_Job')"/>
+        </insert>
+        <update tableName="meveo_job_instance">
+            <column name="following_job_id" valueComputed="(SELECT id from meveo_job_instance where code = 'EInvoice_job')"/>
+            <where>code = 'XML_Job'</where>
+        </update>
+    </changeSet>
+	
+	<changeSet id="INTRD-12463_20230821" author="aelmalki">
+        <update tableName="billing_invoice_configuration">
+			<column name="default_advanced_payment_article_id" valueComputed="(SELECT id FROM billing_accounting_article WHERE code = 'ADV-STD')" />
+		</update>
+    </changeSet>
+    
+    <changeSet id="INTRD-18097_20230830" author="houdad">
+	    <update tableName="cat_charge_template">
+	    <column name="parameter1_translated_description" value='{
+	        "ENG": "Parameter 1",
+	        "FRA": "Paramètre 1"
+	    }'/>
+	    <where>parameter1_translated_description IS NULL</where>
+		</update>
+	
+		<update tableName="cat_charge_template">
+		    <column name="parameter2_translated_description" value='{
+		        "ENG": "Parameter 2",
+		        "FRA": "Paramètre 2"
+		    }'/>
+		    <where>parameter2_translated_description IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter3_translated_description" value='{
+		        "ENG": "Parameter 3",
+		        "FRA": "Paramètre 3"
+		    }'/>
+		    <where>parameter3_translated_description IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter_extra_translated_description" value='{
+		        "ENG": "Parameter Extra",
+		        "FRA": "Paramètre Extra"
+		    }'/>
+		    <where>parameter_extra_translated_description IS NULL</where>
+		</update>
+		<update tableName="cat_charge_template">
+	    <column name="parameter1_format" value="TEXT"/>
+	    <where>parameter1_format IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter2_format" value="TEXT"/>
+		    <where>parameter2_format IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter3_format" value="TEXT"/>
+		    <where>parameter3_format IS NULL</where>
+		</update>
+		
+		<update tableName="cat_charge_template">
+		    <column name="parameter_extra_format" value="TEXT"/>
+		    <where>parameter_extra_format IS NULL</where>
+		</update>
+		
+    </changeSet>
+
+    <changeSet id="#INTRD-16833-20230830" author="ZBariki">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="job_category" value="INVOICING"/>
+            <column name="job_template" value="BillingRunReportJob"/>
+            <column name="code" value="BILLING_RUN_REPORT_JOB"/>
+            <column name="description" value="Billing run report Job"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="uuid" value="BILLING_RUN_REPORT_JOB"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="#INTRD-18352_20230915_data" author="TarikFA.">
+        <insert tableName="electronic_invoice_settings">
+            <column name="id" valueSequenceNext="electronic_invoice_settings_seq"/>
+            <column name="version" valueNumeric="1"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="creator" value="OPENCELL.ADMIN" />
+
+            <column name="force_xml_generation" valueNumeric="0" />
+            <column name="force_pdf_generation" valueNumeric="0" />
+            <column name="force_ubl_generation" valueNumeric="0" />
+            <column name="invoicing_job" value="InvoicingJob"/>
+            <column name="xml_generation_job" value="XMLGenrationJob"/>
+            <column name="pdf_generation_job" value="PDFGenrationJob"/>
+            <column name="ubl_generation_job" value="UBLGenerationJob"/>
+        </insert>
+    </changeSet>
+	
+	<changeSet id="#INTRD-18587_20230925" author="aelmalki">
+		<sql>
+		<![CDATA[
+			INSERT INTO ${db.schema.adapted}iso_icd(id,version,created,updated,creator,updater,code,scheme_name) VALUES
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0214', 'Tradeplace TradePI Standard'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0215', 'Net service ID'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0216', 'OVTcode'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0217', 'The Netherlands Chamber of Commerce and Industry establishment number'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0218', 'Unified registration number (Latvia)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0219', 'Taxpayer registration code (Latvia)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0220', 'The Register of Natural Persons (Latvia)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0221', 'The registered number of the qualified invoice issuer'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0222', 'Metadata Registry Support'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0223', 'EU based company'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0224', 'FTCTC CODE ROUTAGE'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0225', 'FRCTC ELECTRONIC ADDRESS'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0226', 'FRCTC Particulier'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0227', 'NON - EU based company'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0228', 'Répertoire des Entreprises et des Etablissements (RIDET)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0229', 'T.A.H.I.T.I (traitement automatique hiérarchisé des institutions de Tahiti et des îles)'),
+				((SELECT nextval('iso_icd_seq')), 0, now(), NULL, 'opencell.admin', NULL, '0230', 'National e-Invoicing Framework');
+			
+			
+			INSERT INTO ${db.schema.adapted}untdid_1001_invoice_code_type(id,version,created,updated,creator,updater,code,en16931_interpretation,name) VALUES
+				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '105', 'Purchase order', 'Purchase order'),
+				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '220', 'Order', 'Order'),
+				((SELECT nextval('untdid_1001_invoice_code_type_seq')), 0, now(), NULL, 'opencell.admin', NULL, '310', 'Offer/quotation', 'Offer/quotation');
+			
+		]]>
+		</sql>
+    </changeSet>
+	
+	<changeSet id="INTRD-18673-20230927" author="aelmalki">
+		<update tableName="billing_accounting_article">
+			<column name="allowance_code" valueComputed="(SELECT id FROM untdid_5189_allowance_code WHERE code='95')" />
+			<where>code IN ('DISC-STD', 'PROD-STD')</where>
+		</update>
+	</changeSet>
+	
+	<changeSet id="#INTRD-18527_20231002" author="aeljaouhari">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueNumeric="-7" />
+			<column name="version" valueNumeric="0" />
+			<column name="created" valueDate="${db.current.time}" />
+			<column name="code" value="UBL_GENERATION" />
+			<column name="description" value="E-invoicing UBL generation" />
+			<column name="description_i18n" value='{"FR":"Génération UBL pour e-facturation","EN":"E-invoicing UBL generation"}' />
+		</insert>
+	</changeSet>
+
+    <changeSet id="#INTRD-18708_20231028" author="AbdellatifBARI">
+        <update tableName="meveo_script_instance">
+            <column name="script">
+                <![CDATA[
+package org.meveo.service.script;
+
+import org.joda.time.DateTime;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.UserApi;
+import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.job.JobApi;
+import org.meveo.model.communication.email.EmailTemplate;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.communication.impl.EmailSender;
+import org.meveo.service.communication.impl.EmailTemplateService;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.meveo.commons.utils.ParamBean;
+
+import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
+
+public class ImportJobNotification extends Script {
+    private static final String USER_CODE = "user";
+    private static final String FROM_EMAIL = ParamBean.getInstance().getProperty("email.sender", "no_reply@opencellsoft.com");
+
+    private static final String MASS_IMPORT_SUCCESS_EMAIL = "MASS_IMPORT_SUCCESS_EMAIL";
+    private static final String MASS_IMPORT_FAILURE_EMAIL = "MASS_IMPORT_FAILURE_EMAIL";
+    private static final String MASS_IMPORT_ISSUES_EMAIL = "MASS_IMPORT_ISSUES_EMAIL";
+
+    private static final String CUSTOMER_JOB_CODE = "massImportCustomerJob";
+    private static final String CUSTOMER_ACCOUNT_JOB_CODE = "massImportCustomerAccountJob";
+    private static final String PAYMENT_METHOD_JOB_CODE = "massImportPaymentMethodJob";
+    private static final String BILLING_ACCOUNT_JOB_CODE = "massImportBillingAccountJob";
+    private static final String USER_ACCOUNT_JOB_CODE = "massImportUserAccountJob";
+
+    private static final String SUBSCRIPTION_JOB_CODE = "massImportSubscriptionJob";
+    private static final String SERVICE_INSTANCE_JOB_CODE = "massImportServiceInstanceJob";
+    private static final String ATTRIBUTE_INTSNACE_JOB_CODE = "massImportAttributeInstance";
+    private static final String ACCESS_POINT_JOB_CODE = "massImportAccessPoint";
+
+    private final transient JobApi jobApi = (JobApi) getServiceInterface(JobApi.class.getSimpleName());
+    private final transient UserApi userApi = (UserApi) getServiceInterface(UserApi.class.getSimpleName());
+
+    private final transient EmailSender emailSender = (EmailSender) getServiceInterface(EmailSender.class.getSimpleName());
+    private final transient EmailTemplateService emailTemplateService = (EmailTemplateService) getServiceInterface(EmailTemplateService.class.getSimpleName());
+
+    @Override
+    public void execute(Map<String, Object> methodContext) throws BusinessException {
+        try {
+            @SuppressWarnings("unchecked")
+            String category = (String) methodContext.get("category");
+            JobExecutionResultImpl jobExecutionResult = (JobExecutionResultImpl) methodContext.get("entityOrEvent");
+            JobResultStatusEnum jobStatus = getJobResultStatus(jobExecutionResult);
+            String userName = null;
+            if (jobExecutionResult.getJobInstance().getCfValues() != null && jobExecutionResult.getJobInstance().getCfValues().getValues() != null) {
+                userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+            }
+
+            if (category == null || !category.equals("customer") || userName == null) return;
+            executeNextJob(jobExecutionResult);
+
+            // if there are no rows to process, we don't send a notification
+            if(jobExecutionResult.getNbItemsToProcess() == 0) return;
+
+            String subject;
+            String contentHtml;
+            Map<Object, Object> params = new HashMap<>();
+            EmailTemplate emailTemplate;
+
+
+            String jobCode = jobExecutionResult.getJobInstance().getCode();
+            params.put("entityName", EntityNameEnum.valueOf(jobCode).entity);
+            switch (jobStatus) {
+                case SUCCESS:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_SUCCESS_EMAIL);
+                    DateTime startDateTime = new DateTime(jobExecutionResult.getStartDate());
+                    params.put("date", startDateTime.toLocalDate());
+                    params.put("time", startDateTime.toLocalTime());
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                case FAILURE:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_FAILURE_EMAIL);
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+                default:
+                    emailTemplate = emailTemplateService.findByCode(MASS_IMPORT_ISSUES_EMAIL);
+                    contentHtml = evaluateExpression(emailTemplate.getHtmlContent(), params, String.class);
+                    subject = evaluateExpression(emailTemplate.getSubject(), params, String.class);
+                    break;
+            }
+
+            List<String> toEmails = List.of(userApi.find(userName).getEmail());
+            emailSender.send(FROM_EMAIL, null, toEmails, subject, null, contentHtml);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeNextJob(JobExecutionResultImpl jobExecutionResult) {
+        String nextJobCode;
+        switch (jobExecutionResult.getJobInstance().getCode()) {
+            case CUSTOMER_JOB_CODE:
+                nextJobCode = CUSTOMER_ACCOUNT_JOB_CODE;
+                break;
+            case CUSTOMER_ACCOUNT_JOB_CODE:
+                nextJobCode = PAYMENT_METHOD_JOB_CODE;
+                break;
+            case PAYMENT_METHOD_JOB_CODE:
+                nextJobCode = BILLING_ACCOUNT_JOB_CODE;
+                break;
+            case BILLING_ACCOUNT_JOB_CODE:
+                nextJobCode = USER_ACCOUNT_JOB_CODE;
+                break;
+            case SUBSCRIPTION_JOB_CODE:
+                nextJobCode = SERVICE_INSTANCE_JOB_CODE;
+                break;
+            case SERVICE_INSTANCE_JOB_CODE:
+                nextJobCode = ATTRIBUTE_INTSNACE_JOB_CODE;
+                break;
+            case ATTRIBUTE_INTSNACE_JOB_CODE:
+                nextJobCode = ACCESS_POINT_JOB_CODE;
+                break;
+            default:
+                return;
+        }
+        JobInstanceInfoDto jobInstanceInfoDto = new JobInstanceInfoDto();
+        jobInstanceInfoDto.setCode(nextJobCode);
+        CustomFieldsDto customFields = new CustomFieldsDto();
+        CustomFieldDto customFieldDto = new CustomFieldDto();
+        customFieldDto.setCode(USER_CODE);
+        String userName = null;
+            if (jobExecutionResult.getJobInstance().getCfValues() != null && jobExecutionResult.getJobInstance().getCfValues().getValues() != null) {
+                userName = (String) jobExecutionResult.getJobInstance().getCfValues().getValues().get(USER_CODE);
+            }
+        customFieldDto.setStringValue(userName);
+        customFields.setCustomField(List.of(customFieldDto));
+        jobInstanceInfoDto.setCustomFields(customFields);
+
+        jobApi.executeJob(jobInstanceInfoDto);
+    }
+
+    private JobResultStatusEnum getJobResultStatus(JobExecutionResultImpl jobExecutionResult) {
+        if(jobExecutionResult.getNbItemsToProcess() == 0)
+            return JobResultStatusEnum.NULL;
+        else if (jobExecutionResult.getNbItemsProcessedWithError() + 1 == jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.FAILURE;
+        else if(jobExecutionResult.getNbItemsCorrectlyProcessed() < jobExecutionResult.getNbItemsToProcess())
+            return JobResultStatusEnum.PARTIAL_SUCCESS;
+        else return JobResultStatusEnum.SUCCESS;
+    }
+
+    private enum JobResultStatusEnum {
+        SUCCESS,
+        FAILURE,
+        PARTIAL_SUCCESS,
+        NULL
+    }
+
+    private enum EntityNameEnum {
+        massImportCustomerJob("Customer"),
+        massImportCustomerAccountJob("CustomerAccount"),
+        massImportPaymentMethodJob("PaymentMethod"),
+        massImportBillingAccountJob("BillingAccount"),
+        massImportUserAccountJob("UserAccount"),
+        massImportSubscriptionJob("Subscription"),
+        massImportServiceInstanceJob("ServiceInstance"),
+        massImportAttributeInstance("AttributeInstance"),
+        massImportAccessPoint("AccessPoint");
+
+        String entity;
+
+        EntityNameEnum(String entity) {
+            this.entity = entity;
+        }
+
+    }
+}
+				]]>
+            </column>
+            <where>code='org.meveo.service.script.ImportJobNotification'</where>
+        </update>
+    </changeSet>
+    <changeSet id="#INTRD-18858_202301006" author="TARIKFA.">
+        <sql dbms="postgresql">
+            update electronic_invoice_settings set invoicing_job =(select code from meveo_job_instance where job_template = 'InvoicingJobV2' LIMIT 1)
+        </sql>
+        <sql dbms="oracle">
+            update electronic_invoice_settings set invoicing_job =(select code from meveo_job_instance where job_template = 'InvoicingJobV2' and ROWNUM = 1)
+        </sql>
+    </changeSet>
+    
+    <changeSet id="#INTRD-19070" author="TARIKFA.">
+        <update tableName="electronic_invoice_settings">
+            <column name="force_xml_generation" valueNumeric="1" />
+            <column name="force_pdf_generation" valueNumeric="1" />
+            <column name="force_ubl_generation" valueNumeric="1" />
+        </update>
+    </changeSet>
+
+	<changeSet id="#INTRD-19224_20231101" author="zelmeliani">
+        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -1 and dunning_level_id = -1</sql>
+        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -1 and dunning_level_id = -2</sql>
+        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -1 and dunning_level_id = -3</sql>
+        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -1 and dunning_level_id = -4</sql>
+        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -2 and dunning_level_id = -5</sql>
+        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -2 and dunning_level_id = -6</sql>
+        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -2 and dunning_level_id = -7</sql>
+        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -2 and dunning_level_id = -8</sql>
+        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -10 and dunning_level_id = -10</sql>
+        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -10 and dunning_level_id = -20</sql>
+        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -10 and dunning_level_id = -30</sql>
+        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -10 and dunning_level_id = -40</sql>
+        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -20 and dunning_level_id = -50</sql>
+        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -20 and dunning_level_id = -60</sql>
+        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -20 and dunning_level_id = -70</sql>
+        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -20 and dunning_level_id = -80</sql>
+	</changeSet>
+	
+	<changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid">
+		<update tableName="adm_custom_generic_entity_code">
+            <column name="format_el" value="#{'BA-'.concat((mv:formatDate(null, 'YY'))).concat(generatedCode)}" />
+            <where>entity_class='org.meveo.model.billing.BillingAccount' and format_el='#{''CU-''.concat((mv:formatDate(null, ''YY''))).concat(generatedCode)}'</where>
+        </update>
+    </changeSet>
+	
+	<changeSet id="#INTRD-19093_20231109" author="aeljaouhari">
+		<delete tableName="meveo_job_instance">
+			<where>code = 'APIv2PermissionsSyncJob'</where>
+		</delete>
+	</changeSet>
+
+	<changeSet id="#INTRD-18995_20231107" author="zelmeliani">
+		<update tableName="crm_seller">
+            <column name="trading_country_id" valueComputed="(select id from billing_trading_country where code = 'US')" />
+			<column name="legal_entity_type_id" valueComputed="(select id from adm_title where code = 'SAS')" />
+			<column name="vat_no" value="89810129411"/>
+			<column name="registration_no" value="89810129411"/>
+			<column name="address_city" value="New York"/>
+			<column name="address_zipcode" value="10001"/>
+			<column name="address_1" value="High level suite"/>
+			<column name="address_2" value="Appt 3327"/>
+            <where>code = 'MAIN_SELLER'</where>
+        </update>
+
+		<update tableName="billing_invoice_type">
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '220')" />
+			<column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'ORI')" />
+			<column name="prefix_el" value="COMMERCIAL_ORDER_"/>
+			<column name="billing_template_name_el" value="commercial_order_new"/>
+            <where>code = 'COMMERCIAL_ORDER'</where>
+        </update>
+
+		<update tableName="billing_invoice_type">
+            <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '310')" />
+			<column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'QUT')" />
+			<column name="prefix_el" value="QUOTE_"/>
+			<column name="billing_template_name_el" value="quote_new"/>
+            <where>code = 'QUOTE'</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="#INTRD-9066_20231009" author="AbdellatifBARI">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="disabled" valueNumeric="0"/>
+            <column name="created" valueDate="${db.current.time}"/>
+            <column name="job_category" value="RATING"/>
+            <column name="job_template" value="MarkWOToRerateJob"/>
+            <column name="code" value="MarkWOToRerateJob"/>
+            <column name="creator" value="applicationInitializer"/>
+            <column name="uuid" value="MarkWOToRerateJob"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" dbms="postgresql">
+        <sql dbms="postgresql" endDelimiter="$$" splitStatements="false">
+        <![CDATA[
+            DO $$
+        DECLARE
+            field_name		text;
+            fs_id			integer;
+            record_settings	record;
+            BEGIN
+            FOR record_settings IN
+            SELECT id, jsonb_object_keys(entities_with_huge_volume) as field_name
+            FROM finance_settings
+                     LOOP
+                fs_id	    := record_settings.id;
+            field_name  := record_settings.field_name;
+                IF not exists (select 1 from finance_settings where entities_with_huge_volume->field_name->'hugeLists' is not null and id = fs_id)
+                THEN
+            update finance_settings
+            set entities_with_huge_volume = jsonb_set(entities_with_huge_volume, ARRAY[field_name], jsonb_build_object('entityClass', field_name, 'hugeLists', entities_with_huge_volume->field_name))
+            where id = fs_id;
+            END IF;
+            END LOOP;
+            END $$;]]>
+        </sql>
+    </changeSet>
+    
+    <changeSet id="INTRD-18792_INSERT_DEFAULT_PP_FILTERS_CONFIGURATION" author="Mohammed_ElAzzouzi">
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enablePricePlanFilters"/>
+		    <column name="description" value="pricePlanFilters.enablePricePlanFilters"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableOfferTemplate"/>
+		    <column name="description" value="pricePlanFilters.enableOfferTemplate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableStartSubscriptionDate"/>
+		    <column name="description" value="pricePlanFilters.enableStartSubscriptionDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableEndSubscriptionDate"/>
+		    <column name="description" value="pricePlanFilters.enableEndSubscriptionDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableStartRatingDate"/>
+		    <column name="description" value="pricePlanFilters.enableStartRatingDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableEndRatingDate"/>
+		    <column name="description" value="pricePlanFilters.enableEndRatingDate"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMinQuantity"/>
+		    <column name="description" value="pricePlanFilters.enableMinQuantity"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMaxQuantity"/>
+		    <column name="description" value="pricePlanFilters.enableMaxQuantity"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
+		    <column name="description" value="pricePlanFilters.enableMinSubscriptionAgeInMonth"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
+		    <column name="description" value="pricePlanFilters.enableMaxSubscriptionAgeInMonth"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria1Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria1Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria2Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria2Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteria3Value"/>
+		    <column name="description" value="pricePlanFilters.enableCriteria3Value"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableCriteriaEL"/>
+		    <column name="description" value="pricePlanFilters.enableCriteriaEL"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableTradingCurrency"/>
+		    <column name="description" value="pricePlanFilters.enableTradingCurrency"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableTradingCountry"/>
+		    <column name="description" value="pricePlanFilters.enableTradingCountry"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableSeller"/>
+		    <column name="description" value="pricePlanFilters.enableSeller"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityCalendar"/>
+		    <column name="description" value="pricePlanFilters.enableValidityCalendar"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityFrom"/>
+		    <column name="description" value="pricePlanFilters.enableValidityFrom"/>
+		</insert>
+		<insert tableName="advanced_settings">
+		    <column name="id" valueSequenceNext="advanced_settings_seq"/>
+		    <column name="version" value="0"/>
+		    <column name="disabled" valueNumeric="0"/>
+		    <column name="created" valueComputed="${db.current.time}"/>
+		    <column name="category" value="performance"/>
+		    <column name="property_group" value="pricePlanFilters"/>
+		    <column name="property_type" value="java.lang.Boolean"/>
+		    <column name="property_value" value="false"/>
+		    <column name="creator" value="applicationInitializer"/>
+		    <column name="code" value="pricePlanFilters.enableValidityDate"/>
+		    <column name="description" value="pricePlanFilters.enableValidityDate"/>
+		</insert>
+	</changeSet>
+
+	<changeSet id="#INTRD-19685_20231130" author="AbdellatifBARI">
+        <insert tableName="com_message_template">
+            <column name="media" value="EMAIL" />
+            <column name="id" valueSequenceNext="com_msg_tmpl_seq" />
+            <column name="version" value="0" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="code" value="MASS_RERATE_EMAIL" />
+            <column name="tag_start" value="#{" />
+            <column name="tag_end" value="}" />
+            <column name="subject" value="#{batchStatus} Mark to rerate wallet operations batch #{jobInstanceCode}" />
+            <column name="subject_i18n" value='{"FRA":"#{batchStatus} Marquer à revaloriser le lot de wallet operations #{jobInstanceCode}","ENG":"#{batchStatus} Mark to rerate wallet operations batch #{jobInstanceCode}"}'/>
+            <column name="htmlcontent">
+                <![CDATA[
+                    Batch "#{batchDescription}" has been processed by job #{jobInstanceCode}<br>Result: #{batchStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal.
+                    ]]>
+            </column>
+            <column name="htmlcontent_i18n">
+                <![CDATA[
+                    {"FRA":"Le lot \"#{batchDescription}\" a été traité par le job #{jobInstanceCode}<br>Résultat: #{batchStatus}<br>Exécution du job #{jobExecutionId}<br>Plus d'information sur le rapport d'exécution du job sur l'écran des wallet operations du Portal.","ENG":"Batch \"#{batchDescription}\" has been processed by job #{jobInstanceCode}<br>Result: #{batchStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal."}
+                ]]>
+            </column>
+        </insert>
+    </changeSet>
+    
+    <changeSet id="#INTRD-19685_20231208" author="AbdellatifBARI">
+    	<update tableName="com_message_template">
+    		<column name="subject">#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}</column>
+    		<column name="subject_i18n">{"FRA":"#{batchEntityStatus} Marquer à revaloriser le lot de wallet operations #{batchEntityId}","ENG":"#{batchEntityStatus} Mark to rerate wallet operations batch #{batchEntityId}"}</column>
+    		<column name="htmlcontent">
+                <![CDATA[
+                    Batch "#{batchEntityDescription}" has been processed by job #{jobInstanceCode}<br>Result: #{batchEntityStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal.
+                    ]]>
+            </column>
+            <column name="htmlcontent_i18n">
+                <![CDATA[
+                    {"FRA":"Le lot \"#{batchEntityDescription}\" a été traité par le job #{jobInstanceCode}<br>Résultat: #{batchEntityStatus}<br>Exécution du job #{jobExecutionId}<br>Plus d'information sur le rapport d'exécution du job sur l'écran des wallet operations du Portal.","ENG":"Batch \"#{batchEntityDescription}\" has been processed by job #{jobInstanceCode}<br>Result: #{batchEntityStatus}<br>Job execution #{jobExecutionId}<br>More information available on job execution report on the wallet operation screen in Portal."}
+                ]]>
+            </column>
+    		<where>code='MASS_RERATE_EMAIL'</where>
+    	</update>
+        <insert tableName="generic_sequence">
+            <column name="id" valueNumeric="-4" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="version" valueNumeric="1" />
+            <column name="code" value="batch_entity_sequence" />
+            <column name="description" value="Batch entity sequence" />
+            <column name="sequence_type" value="SEQUENCE" />
+            <column name="sequence_size" valueNumeric="5" />
+            <column name="current_number" valueNumeric="0" />
+        </insert>
+        <insert tableName="adm_custom_generic_entity_code">
+            <column name="id" valueSequenceNext="adm_custom_generic_entity_code_seq" />
+            <column name="entity_class" value="org.meveo.model.billing.BatchEntity" />
+            <column name="format_el" value="BATCH-#{mv:formatDate(null,'yy')}#{generatedCode}" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="sequence_id" valueNumeric="-4" />
+        </insert>
+    </changeSet>
+    
     <changeSet id="INTRD-12827_20230705" author="zelmeliani">
         <insert tableName="ar_dunning_action">
             <column name="id" valueNumeric="-81" />

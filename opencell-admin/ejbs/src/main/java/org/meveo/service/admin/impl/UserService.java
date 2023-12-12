@@ -18,6 +18,7 @@
 package org.meveo.service.admin.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,14 +69,20 @@ public class UserService extends PersistenceService<User> {
     public User update(User user) throws ElementNotFoundException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
         keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
-        return super.update(user);
+        if(user.getId() != null) {
+            return super.update(user);
+        } else {
+            return user;
+        }
     }
 
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
     public void updateUserWithAttributes(User user, Map<String, String> attributes) throws ElementNotFoundException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
-        keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), attributes);
-        super.update(user);
+        keycloakAdminClientService.updateUser(user.getUserName().toUpperCase(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), attributes);
+        if(user.getId() != null) {
+            super.update(user);
+        }
     }
 
     @Override
@@ -107,12 +114,13 @@ public class UserService extends PersistenceService<User> {
     public User findByUsername(String username, boolean extendedInfo, boolean syncWithKC) {
         String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
 
+        log.info("lUserManagementSource {}", lUserManagementSource);
         User lUser = null;
 
         if(lUserManagementSource.equals("OC")) {
             lUser = getUserFromDatabase(username);
 
-            if (lUser != null) {
+            if (lUser != null && extendedInfo) {
                 this.fillKeycloakUserInfo(lUser);
             }
         } else  {
@@ -122,7 +130,7 @@ public class UserService extends PersistenceService<User> {
         return lUser;
     }
 
-    private User getUserFromDatabase(String pUserName) {
+    public User getUserFromDatabase(String pUserName) {
         User lUser = null;
         try {
             lUser = getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", pUserName.toLowerCase()).getSingleResult();
@@ -233,21 +241,19 @@ public class UserService extends PersistenceService<User> {
      */
     @Override
     public User findById(Long id, boolean extendedInfo) {
-        if(id==null) {
+        if(id == null) {
             return null;
         }
-        User user=findById(id);
-         if (user == null) {
+
+        User user = findById(id);
+        if (user == null) {
              return null;
-         }
-        User kcUser = keycloakAdminClientService.findUser(user.getUserName(), extendedInfo);
-        if (kcUser == null) {
-            return null;
         }
-        user.setEmail(kcUser.getEmail());
-        user.setName(kcUser.getName());
-        user.setRoles(kcUser.getRoles());
-        user.setUserLevel(kcUser.getUserLevel());
+
+        if(extendedInfo) {
+            this.fillKeycloakUserInfo(user);
+        }
+
         return user;
     }
 
@@ -263,7 +269,7 @@ public class UserService extends PersistenceService<User> {
             user = getEntityManager().createNamedQuery("User.getByUsername", User.class).setParameter("username", kcUser.getUserName().toLowerCase()).getSingleResult();
         } catch (NoResultException ex) {
             user = new User();
-            // Set fields, even they are transient, so they can be used in a notification if any is fired uppon user creation
+            // Set fields, even they are transient, so they can be used in a notification if any is fired upon user creation
             user.setEmail(kcUser.getEmail());
             user.setName(kcUser.getName());
             user.setRoles(kcUser.getRoles());
@@ -287,8 +293,6 @@ public class UserService extends PersistenceService<User> {
     private void fillKeycloakUserInfo(User user) {
         User kcUser = keycloakAdminClientService.findUser(user.getUserName(), true);
         if (kcUser != null) {
-            user.setEmail(kcUser.getEmail());
-            user.setName(kcUser.getName());
             user.setRoles(kcUser.getRoles());
             user.setUserLevel(kcUser.getUserLevel());
         }
@@ -319,5 +323,21 @@ public class UserService extends PersistenceService<User> {
         if(pKeycloakUser.getUuid() == null && pDbUser.getUuid() != null && !pDbUser.getUuid().isEmpty()) {
             pKeycloakUser.setUuid(pDbUser.getUuid());
         }
+    }
+
+    public String getUserAttributeValue(String username, String attributeName) {
+        UserRepresentation userRepresentation = getUserRepresentationByUsername(username);
+        if (userRepresentation != null) {
+            Map<String, List<String>> keycloakAttributes = userRepresentation.getAttributes();
+
+            if (keycloakAttributes != null && !keycloakAttributes.isEmpty()) {
+                for (Map.Entry<String, List<String>> entry : keycloakAttributes.entrySet()) {
+                    if (entry.getKey().equalsIgnoreCase(attributeName)) {
+                        return String.join(", ", entry.getValue());
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

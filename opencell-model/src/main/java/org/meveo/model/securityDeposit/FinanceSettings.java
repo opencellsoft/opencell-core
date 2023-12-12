@@ -1,6 +1,8 @@
 package org.meveo.model.securityDeposit;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
@@ -49,21 +51,44 @@ public class FinanceSettings extends BusinessEntity {
     @Type(type = "numeric_boolean")
     @Column(name = "enable_billing_redirection_rules")
     private boolean enableBillingRedirectionRules = false;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "discount_advanced_mode")
     private boolean discountAdvancedMode = false;
-    
+
     @Type(type = "numeric_boolean")
     @Column(name = "enable_price_list")
     private boolean enablePriceList = false;
-	
+
 	@Column(name = "article_selection_mode")
 	@Enumerated(EnumType.STRING)
 	private ArticleSelectionModeEnum articleSelectionMode = ArticleSelectionModeEnum.AFTER_PRICING;
 
+	@Type(type = "json")
+    @Column(name = "entities_with_huge_volume", columnDefinition = "jsonb")
+    private Map<String, HugeEntity> entitiesWithHugeVolume;
+
+    @Column(name = "nb_partitions_keep")
+    private Integer nbPartitionsToKeep;
+
+   @Column(name = "wo_partition_range_months")
+   private Integer woPartitionPeriod;
+
+    @Column(name = "rt_partition_range_months")
+    private Integer rtPartitionPeriod;
+
+    @Column(name = "edr_partition_range_months")
+    private Integer edrPartitionPeriod;
+
     @Embedded
     private AuxiliaryAccounting auxiliaryAccounting;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "billing_run_process_warning")
+    private boolean billingRunProcessWarning;
+    
+    @Column(name = "synchronous_mass_action_limit")
+    private Integer synchronousMassActionLimit = 10000;
 
     public FinanceSettings() {
         super();
@@ -156,12 +181,68 @@ public class FinanceSettings extends BusinessEntity {
 	public void setEnablePriceList(boolean enablePriceList) {
 		this.enablePriceList = enablePriceList;
 	}
-	
+
 	public ArticleSelectionModeEnum getArticleSelectionMode() {
 		return articleSelectionMode;
 	}
-	
+
 	public void setArticleSelectionMode(ArticleSelectionModeEnum articleSelectionMode) {
 		this.articleSelectionMode = articleSelectionMode;
 	}
+
+	public Map<String, HugeEntity> getEntitiesWithHugeVolume() {
+		return entitiesWithHugeVolume;
+	}
+
+	public void setEntitiesWithHugeVolume(Map<String, HugeEntity> entitiesWithHugeVolume) {
+		this.entitiesWithHugeVolume = entitiesWithHugeVolume;
+	}
+
+    public boolean isBillingRunProcessWarning() {
+        return billingRunProcessWarning;
+    }
+
+    public void setBillingRunProcessWarning(boolean billingRunProcessWarning) {
+        this.billingRunProcessWarning = billingRunProcessWarning;
+    }
+
+    public Integer getNbPartitionsToKeep() {
+        return nbPartitionsToKeep;
+    }
+
+    public void setNbPartitionsToKeep(Integer nbPartitionsToKeep) {
+        this.nbPartitionsToKeep = nbPartitionsToKeep;
+    }
+
+	public Integer getSynchronousMassActionLimit() {
+		return synchronousMassActionLimit;
+	}
+
+	public void setSynchronousMassActionLimit(Integer synchronousMassActionLimit) {
+		this.synchronousMassActionLimit = synchronousMassActionLimit;
+	}
+
+    public Integer getWoPartitionPeriod() {
+        return woPartitionPeriod;
+    }
+
+    public void setWoPartitionPeriod(Integer woPartitionPeriod) {
+        this.woPartitionPeriod = woPartitionPeriod;
+    }
+
+    public Integer getRtPartitionPeriod() {
+        return rtPartitionPeriod;
+    }
+
+    public void setRtPartitionPeriod(Integer rtPartitionPeriod) {
+        this.rtPartitionPeriod = rtPartitionPeriod;
+    }
+
+    public Integer getEdrPartitionPeriod() {
+        return edrPartitionPeriod;
+    }
+
+    public void setEdrPartitionPeriod(Integer edrPartitionPeriod) {
+        this.edrPartitionPeriod = edrPartitionPeriod;
+    }
 }

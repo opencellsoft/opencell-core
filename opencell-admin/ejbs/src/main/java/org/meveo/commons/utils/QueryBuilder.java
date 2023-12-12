@@ -274,7 +274,7 @@ public class QueryBuilder {
 	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType) {
 		this.clazz = clazz;
 		this.joinType = joinType != null ? joinType : JoinType.INNER;
-		initQueryBuilder(getInitQuery(clazz, alias, doFetch, fetchFields), alias);
+		initQueryBuilder(getInitQuery(clazz, alias, null, doFetch, fetchFields), alias);
 	}
 	
 	public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, JoinType joinType) {
@@ -296,13 +296,14 @@ public class QueryBuilder {
 
     /**
      * Contructor
-     *
+     * 
      * @param clazz Class for which query is created.
      * @param alias Alias of a main table.
+     * @param doFetch Apply fetch to left join fetchFields?
      * @param fetchFields Additional (list/map type) fields to fetch
-     * @param joinType
+     * @param joinType Join type (Inner, left, right) to apply to related entities
      * @param filterOperator Operator to build where statement
-     * @param distinct
+     * @param distinct Is this a distinct select query
      * @param prependSelect : should add select block on the start or not
      */
     public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator, boolean distinct, boolean prependSelect) {
@@ -310,7 +311,7 @@ public class QueryBuilder {
         this.joinType=joinType;
         this.filterOperator=filterOperator;
         this.prependSelect = prependSelect;
-        initQueryBuilder(getInitQuery(clazz, alias, doFetch,  fetchFields), alias);
+        initQueryBuilder(getInitQuery(clazz, alias, null, doFetch,  fetchFields), alias);
     }
 
 	/**
@@ -318,15 +319,20 @@ public class QueryBuilder {
 	 * 
 	 * @param clazz Class for which query is created.
      * @param alias Alias of a main table.
+     * @param selectFields Fields to return by query. If ommited - a full entity will be returned
+     * @param doFetch Apply fetch to left join fetchFields?
      * @param fetchFields Additional (list/map type) fields to fetch
-	 * @param joinType
+	 * @param joinType Join type (Inner, left, right) to apply to related entities
 	 * @param filterOperator Operator to build where statement
+     * @param distinct Is this a distinct select query
+     * @param prependSelect : should add select block on the start or not
 	 */
-	public QueryBuilder(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator, boolean distinct) {
+	public QueryBuilder(Class<?> clazz, String alias, String selectFields, boolean doFetch, List<String> fetchFields, JoinType joinType, FilterOperatorEnum filterOperator, boolean distinct, boolean prependSelect) {
 		this.distinct = distinct;
 		this.joinType=joinType;
 		this.filterOperator=filterOperator;
-		initQueryBuilder(getInitQuery(clazz, alias, doFetch,  fetchFields), alias);
+        this.prependSelect = prependSelect;
+        initQueryBuilder(getInitQuery(clazz, alias, selectFields, doFetch, fetchFields), alias);
 	}
 
 	/**
@@ -352,7 +358,7 @@ public class QueryBuilder {
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
     	this.clazz = clazz;
-    	initQueryBuilder(getInitQuery(clazz, alias, true, fetchFields), alias);
+    	initQueryBuilder(getInitQuery(clazz, alias, null, true, fetchFields), alias);
     }
 
     /**
@@ -403,10 +409,12 @@ public class QueryBuilder {
     /**
      * @param clazz name of class
      * @param alias alias for entity
+     * @param selectFields Fields to return by query. If ommited - a full entity will be returned
+     * @param doFetch Apply fetch to left join fetchFields?
      * @param fetchFields list of field need to be fetched.
      * @return SQL query.
      */
-    private String getInitQuery(Class<?> clazz, String alias, boolean doFetch, List<String> fetchFields) {
+    private String getInitQuery(Class<?> clazz, String alias, String selectFields, boolean doFetch, List<String> fetchFields) {
     	this.alias=alias;
     	this.clazz=clazz;
     	List<String> select = new ArrayList<>();
@@ -415,7 +423,7 @@ public class QueryBuilder {
         if(prependSelect) {
             query = new StringBuilder("select " + (distinct ? "distinct " : "" ) + alias+ " from " + clazz.getName() + " " + alias);
         } else {
-            query = new StringBuilder("from " + clazz.getName() + " " + alias);
+            query = new StringBuilder((selectFields != null ? "select " + selectFields + " " : "") + "from " + clazz.getName() + " " + alias);
         }
         if (fetchFields != null && !fetchFields.isEmpty()) {
             for (String fetchField : fetchFields) {
@@ -514,7 +522,7 @@ public class QueryBuilder {
         if (value instanceof String) {
             String filterString = (String) value;
             Stream.of(fields)
-                    .forEach(f -> addCriterionWildcard(tableNameAlias + "." + f, filterString, true));
+                    .forEach(f -> addCriterionWildcard(!f.contains(FROM_JSON_FUNCTION) ? tableNameAlias+"."+f : f, filterString, true));
         }
         endOrClause();
     }
@@ -522,8 +530,8 @@ public class QueryBuilder {
     public void addSearchWildcardOrFilters(String tableNameAlias, String[] fields, Object value) {
         startOrClause();
         Stream.of(fields).forEach(field -> {
-        	String concatenatedFields = tableNameAlias+"."+field;
-        	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
+        	String concatenatedFields = !field.contains(FROM_JSON_FUNCTION) ? tableNameAlias+"."+field : field;
+            concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
             addSqlCriterion(concatenatedFields + " like :" + param, param, "%" + value + "%");
         });
@@ -535,7 +543,7 @@ public class QueryBuilder {
         String valueStr = "%" + String.valueOf(value).toLowerCase() + "%";
         startOrClause();
         Stream.of(fields).forEach(field -> {
-        	String concatenatedFields = tableNameAlias+"."+field;
+        	String concatenatedFields = !field.contains(FROM_JSON_FUNCTION) ? tableNameAlias+"."+field : field;
         	concatenatedFields = createExplicitInnerJoins(concatenatedFields);
             String param = convertFieldToParam(tableNameAlias + "." + field);
             addSqlCriterion("lower(" + concatenatedFields + ") like :" + param, param, valueStr);
@@ -1045,7 +1053,9 @@ public class QueryBuilder {
 
         Date start = calFrom.getTime();
 
-        String startDateParameterName = "start" + field.replace(".", "");
+        String param = convertFieldToParam(field);
+
+        String startDateParameterName = "start" + param;
 
         if (isFieldValueOptional) {
             return addSqlCriterion("(" + field + " IS NULL or " + field + ">=:" + startDateParameterName + ")", startDateParameterName, start);
@@ -1079,7 +1089,9 @@ public class QueryBuilder {
 
         Date end = calTo.getTime();
 
-        String endDateParameterName = "end" + field.replace(".", "");
+        String param = convertFieldToParam(field);
+
+        String endDateParameterName = "end" + param;
         if (optional) {
             return addSqlCriterion("(" + field + " IS NULL or " + field + "<:" + endDateParameterName + ")", endDateParameterName, end);
         } else {
@@ -1095,16 +1107,7 @@ public class QueryBuilder {
 
         q.append(q.indexOf("ORDER BY") > 0 ? ", " : " ORDER BY ");
 
-        if (clazz != null) {
-            Field field = ReflectionUtils.getField(clazz, orderColumn.substring(orderColumn.indexOf(".") + 1));
-            if (field != null && field.getType().isAssignableFrom(String.class)) {
-                q.append(" LOWER(CAST(" + orderColumn + " AS string))");
-            } else {
-                q.append(orderColumn);
-            }
-        } else {
-            q.append(orderColumn);
-        }
+        q.append(orderColumn);
 
         if (ascending) {
             q.append(" ASC ");
@@ -1255,7 +1258,13 @@ public class QueryBuilder {
             if(value instanceof String) {
                 value = DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN);
             }
-            addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
+
+            if(value instanceof Date) {
+                addCriterionDateRangeToTruncatedToDay(concatenatedFields, (Date) value, inclusive, isFieldValueOptional);
+            } else {
+                addCriterionDateRangeToTruncatedToDay(concatenatedFields, DateUtils.parseDateWithPattern(value.toString(), DateUtils.DATE_PATTERN), inclusive, isFieldValueOptional);
+            }
+
         }
         return this;
     }
@@ -1321,7 +1330,9 @@ public class QueryBuilder {
         String paramName = convertFieldToParam(field);
 
         if (value instanceof String) {
-            addSqlCriterion("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, value);
+            List<String> values = new ArrayList<String>(Arrays.asList(((String) value).toLowerCase().replaceAll("'", "").split(",")));
+            addSqlCriterion("lower(" + field + ")" + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, values);
+
 
         } else if (value instanceof Collection) {
 
@@ -1367,14 +1378,7 @@ public class QueryBuilder {
     public QueryBuilder addValueIsEqualToField(String concatenatedFields, Object value, boolean isNot, boolean isFieldValueOptional) {
 
         // extract fieldname to handle joins
-        if(concatenatedFields.contains(FROM_JSON_FUNCTION)) {
-            int beginIndex = concatenatedFields.indexOf(FROM_JSON_FUNCTION) + FROM_JSON_FUNCTION.length() - 2;
-            var extractedField = concatenatedFields.substring(beginIndex, concatenatedFields.indexOf(",", beginIndex));
-            String explicitInnerJoins = createExplicitInnerJoins(extractedField);
-            concatenatedFields = concatenatedFields.replace(extractedField, explicitInnerJoins);
-        } else {
-            concatenatedFields = createExplicitInnerJoins(concatenatedFields);
-        }
+        concatenatedFields = createExplicitInnerJoins(concatenatedFields);
 
         // Search by equals/not equals to a string value
         if (value instanceof String) {
@@ -1413,6 +1417,18 @@ public class QueryBuilder {
     }
 
     private String createExplicitInnerJoins(String concatenatedFields) {
+        if(concatenatedFields.contains(FROM_JSON_FUNCTION)) {
+            int beginIndex = concatenatedFields.indexOf(FROM_JSON_FUNCTION) + FROM_JSON_FUNCTION.length() - 2;
+            var extractedField = concatenatedFields.substring(beginIndex, concatenatedFields.indexOf(",", beginIndex));
+            String explicitInnerJoins = calculateExplicitInnerJoins(extractedField);
+            concatenatedFields = concatenatedFields.replace(extractedField, explicitInnerJoins);
+        } else {
+            concatenatedFields = calculateExplicitInnerJoins(concatenatedFields);
+        }
+        return concatenatedFields;
+    }
+
+    private String calculateExplicitInnerJoins(String concatenatedFields) {
         if(concatenatedFields.contains(FROM_JSON_FUNCTION)){
             return concatenatedFields;
         }
@@ -1421,14 +1437,29 @@ public class QueryBuilder {
             concatenatedFields = concatenatedFields.substring(alias.length());
         }
         String[] fields = concatenatedFields.split("\\.");
+
+        var tmpFields = new ArrayList<>(List.of(fields));
+        boolean isFilterById = false;
+        if(tmpFields.size() > 1 && "id".equals(fields[fields.length -1])) {
+            tmpFields.remove(tmpFields.size() - 1);
+            isFilterById = true;
+        }
+
         if(innerJoins.get(concatenatedFields) != null){
             concatenatedFields = innerJoins.get(concatenatedFields).getJoinAlias();
-        }else if(fields.length > 1){
-            JoinWrapper joinWrapper = parse(concatenatedFields);
+        }else if(tmpFields.size() > 1){
+            JoinWrapper joinWrapper = parse(String.join(".", tmpFields));
             innerJoins.put(concatenatedFields, joinWrapper);
             concatenatedFields = joinWrapper.getJoinAlias();
-        } else if(fields.length == 1){
-            return this.alias + "." + concatenatedFields;
+            if(isFilterById) {
+                concatenatedFields = concatenatedFields + ".id";
+            }
+        } else if(tmpFields.size() == 1){
+            String result = this.alias + "." + String.join(".", tmpFields);
+            if(isFilterById) {
+                result = result + ".id";
+            }
+            return result;
         }
         return concatenatedFields;
     }
@@ -1725,7 +1756,7 @@ public class QueryBuilder {
             			field =field.substring(field.lastIndexOf(".")+1);
             		}
             	}
-				addOrderCriterion(((currentAlias != null) ? (currentAlias + ".") : "") + field, ascending);
+				addOrderCriterion(((currentAlias != null && !field.contains(FROM_JSON_FUNCTION)) ? (currentAlias + ".") : "") + field, ascending);
             }
         }
         joinAlias=new TreeSet<String>();

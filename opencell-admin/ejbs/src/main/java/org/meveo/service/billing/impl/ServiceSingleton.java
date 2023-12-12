@@ -34,6 +34,7 @@ import org.meveo.model.billing.InvoiceSequence;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.billing.UntdidVatPaymentOption;
 import org.meveo.model.cpq.CpqQuote;
 import org.meveo.model.cpq.commercial.CommercialOrder;
 import org.meveo.model.crm.Customer;
@@ -60,6 +61,7 @@ import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
+import javax.ejb.AccessTimeout;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -154,6 +156,9 @@ public class ServiceSingleton {
     private JobExecutionService jobExecutionService;
     @Inject
     private JobInstanceService jobInstanceService;
+	
+	@Inject
+	private UntdidVatPaymentOptionService untdidVatPaymentOptionService;
 
     @Inject
     private FinanceSettingsService financeSettingsService;
@@ -326,7 +331,7 @@ public class ServiceSingleton {
         String occTemplateCode = null;
         try {
             occTemplateCode = (String) customFieldInstanceService.getOrCreateCFValueFromParamValue(occCode, occCodeDefaultValue, appProvider, true);
-            log.debug("occTemplateCode:" + occTemplateCode);
+            log.debug("occTemplateCode:{}" , occTemplateCode);
             occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         } catch (Exception e) {
             log.error("error while getting occ template ", e);
@@ -340,10 +345,15 @@ public class ServiceSingleton {
             occTemplate.setOccCategory(operationCategory);
             oCCTemplateService.create(occTemplate);
         }
-
+	    // untdidVatPaymentOption
         invoiceType = new InvoiceType();
         invoiceType.setCode(invoiceTypeCode);
         invoiceType.setOccTemplate(occTemplate);
+	    UntdidVatPaymentOption untdidVatPaymentOption = untdidVatPaymentOptionService.findTheOldOne();
+		if(untdidVatPaymentOption == null) {
+			throw new EntityDoesNotExistsException("No Vat payment is present");
+		}
+	    invoiceType.setUntdidVatPaymentOption(untdidVatPaymentOption);
         invoiceTypeService.create(invoiceType);
         return invoiceType;
     }
@@ -419,6 +429,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @AccessTimeout(value=30000)
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumberVirtual(Invoice invoice) throws BusinessException {
@@ -432,6 +443,7 @@ public class ServiceSingleton {
      * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
+    @AccessTimeout(value=30000)    
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice assignInvoiceNumber(Invoice invoice) throws BusinessException {

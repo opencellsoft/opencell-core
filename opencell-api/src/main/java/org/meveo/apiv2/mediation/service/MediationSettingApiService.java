@@ -1,20 +1,16 @@
 package org.meveo.apiv2.mediation.service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
@@ -22,14 +18,12 @@ import org.meveo.apiv2.ordering.services.ApiService;
 import org.meveo.model.mediation.EdrVersioningRule;
 import org.meveo.model.mediation.MediationSetting;
 import org.meveo.service.mediation.EdrVersioningRuleService;
-import org.meveo.service.mediation.MediationsettingService;
-
-import software.amazon.awssdk.utils.StringUtils;
+import org.meveo.service.mediation.MediationSettingService;
 
 public class MediationSettingApiService implements ApiService<MediationSetting>{
 
 	@Inject
-	private MediationsettingService mediationsettingService;
+	private MediationSettingService mediationsettingService;
 	@Inject
 	private EdrVersioningRuleService edrVersioningRuleService;
 

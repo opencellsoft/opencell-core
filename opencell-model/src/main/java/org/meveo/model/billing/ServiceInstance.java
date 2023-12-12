@@ -73,6 +73,8 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.ServiceCharge;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.cpq.Attribute;
+import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.ProductVersion;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
@@ -108,7 +110,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "ServiceInstance.getServicesWithMinAmountByBA", query = "select s from ServiceInstance s where s.minimumAmountEl is not null  AND s.status = org.meveo.model.billing.InstanceStatusEnum.ACTIVE AND s.subscription.userAccount.billingAccount=:billingAccount"),
         @NamedQuery(name = "ServiceInstance.findByServiceCodeAndSubscriptionId", query = "select s from ServiceInstance s where s.code = :code and s.subscription.id = :subscriptionId"),
         @NamedQuery(name = "ServiceInstance.findBySubscriptionIdLoadAttributes", query = "select distinct(s) from ServiceInstance s left join fetch s.attributeInstances sai where s.subscription.id = :subscriptionId"),
-        @NamedQuery(name = "ServiceInstance.findByIdAndFetchProduct", query = "select s from ServiceInstance s left join fetch s.productVersion pv left join fetch pv.product p left join fetch p.modelChildren left join fetch s.attributeInstances ai left join fetch ai.attribute where s.id = :id "),
+        @NamedQuery(name = "ServiceInstance.findByIdAndFetchProduct", query = "select s from ServiceInstance s left join fetch s.attributeInstances ai where s.id = :id "),
         @NamedQuery(name = "ServiceInstance.getPendingToActivate", query = "select s.id from ServiceInstance s where s.subscription.status in (:subscriptionStatuses) AND s.subscriptionDate is not null and s.subscriptionDate<:date and s.status in (:statuses)"),
 })
 public class ServiceInstance extends BusinessCFEntity implements IInvoicingMinimumApplicable,IWFEntity, ICounterEntity, IDiscountable  {
@@ -291,7 +293,8 @@ public class ServiceInstance extends BusinessCFEntity implements IInvoicingMinim
     @Column(name = "subscribed_till_date")
     private Date subscribedTillDate;
 
-    /** Was subscription renewed. */
+    /** Was service renewed. */
+    @AuditTarget(type = AuditChangeTypeEnum.RENEWAL, history = true, notif = true)
     @Type(type = "numeric_boolean")
     @Column(name = "renewed")
     private boolean renewed;
@@ -1341,5 +1344,18 @@ public class ServiceInstance extends BusinessCFEntity implements IInvoicingMinim
     	}
     	return subscription.getSeller();
     }
-    
+
+    @SuppressWarnings("rawtypes")
+    public Map<String, Object> extractAttributes() {
+        Map<String, Object> attributes = new HashMap<>();
+        List<AttributeValue> attributeValues = getAttributeInstances().stream().map(ai -> (AttributeValue) ai).collect(Collectors.toList());
+        for (AttributeValue attributeValue : attributeValues) {
+            Attribute attribute = attributeValue.getAttribute();
+            Object value = attribute.getAttributeType().getValue(attributeValue);
+            if (value != null) {
+                attributes.put(attributeValue.getAttribute().getCode(), value);
+            }
+        }
+        return attributes;
+    }
 }

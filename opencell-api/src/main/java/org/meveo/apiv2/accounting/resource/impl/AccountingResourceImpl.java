@@ -8,6 +8,7 @@ import static javax.ws.rs.core.Response.serverError;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.accounting.AuxiliaryAccount;
 import org.meveo.apiv2.accounting.ImmutableAuxiliaryAccount;
 import org.meveo.apiv2.accounting.resource.AccountingResource;
@@ -22,19 +23,14 @@ import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 import org.meveo.service.validation.ValidationByNumberCountryService;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import java.util.Map;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import javax.xml.ws.soap.*;
-
+@Interceptors({ WsRestApiInterceptor.class })
 public class AccountingResourceImpl implements AccountingResource {
 
     @Inject
@@ -73,23 +69,20 @@ public class AccountingResourceImpl implements AccountingResource {
     
     @Override
     public Response getValByValNbContryCode(String vatNumber, String countryCode) {
-        boolean valueValideNodeBoolean = false; 
-        
+        boolean valueValideNodeBoolean = false;
+
         try {
-            valueValideNodeBoolean = validationByNumberCountryService.getValByValNbCountryCode(vatNumber, countryCode); 
+            valueValideNodeBoolean = validationByNumberCountryService.getValByValNbCountryCode(vatNumber, countryCode);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
-        
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
         if (valueValideNodeBoolean) {
-            return Response.ok(result).build();
+            return Response.ok(new ActionStatus(ActionStatusEnum.SUCCESS, "")).build();
+        } else {
+            return Response.ok(new ActionStatus(ActionStatusEnum.FAIL, "Invalid VAT")).build();
         }
-	    
-        return serverError()
-                .entity(new ActionStatus(ActionStatusEnum.FAIL, "invalid vat"))
-                .build();
-    }   
+    }
 
     private AuxiliaryAccount buildResponse(CustomerAccount customerAccount, Map<String, String> accountingResult) {
         Resource customerAccountResource = ImmutableResource.builder()

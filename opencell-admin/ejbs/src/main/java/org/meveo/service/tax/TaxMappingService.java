@@ -18,16 +18,6 @@
 
 package org.meveo.service.tax;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.FlushModeType;
-import javax.persistence.NoResultException;
-
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
@@ -58,6 +48,15 @@ import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.article.AccountingArticleService;
 import org.meveo.service.catalog.impl.TaxService;
 import org.meveo.service.script.billing.TaxScriptService;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.FlushModeType;
+import javax.persistence.NoResultException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tax mapping service implementation.
@@ -285,40 +284,62 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
         Date date = walletOperation.getOperationDate();
-        TaxClass taxClass = chargeInstance.getTaxClassResolved();
+        TaxClass taxClass = getTaxClassFromChargeInstance(chargeInstance);
 
         try {
-            if (IS_DETERMINE_TAX_CLASS_FROM_AA) {
-            	 AccountingArticle accountingArticle=walletOperation.getAccountingArticle();
-            	 if(accountingArticle==null) {
-            		 accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, walletOperation);
-            	 }
-                if (accountingArticle != null) {
-                    taxClass = accountingArticle.getTaxClass();
-                    chargeInstance.setTaxClassResolved(taxClass);
-                }
-            }
-            if (taxClass == null) {
-                if (chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
+	        setTaxClassFromAccountingArticle(walletOperation, chargeInstance);
+            if (taxClass == null && chargeInstance != null) {
+				taxClass = chargeInstance.getTaxClassResolved();
+                if (taxClass == null && chargeInstance.getChargeTemplate().getTaxClassEl() != null) {
                     taxClass = evaluateTaxClassExpression(chargeInstance.getChargeTemplate().getTaxClassEl(), chargeInstance);
                 }
-                if (taxClass == null) {
-                    taxClass = chargeInstance.getChargeTemplate().getTaxClass();
+				if(taxClass == null ){
+	                taxClass = chargeInstance.getChargeTemplate().getTaxClass();
                 }
                 chargeInstance.setTaxClassResolved(taxClass);
             }
+			
         } catch (InvalidELException e) {
             throw new NoTaxException(e);
         }
-	    
-	    TaxInfo taxInfo =  determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, walletOperation, true, false, null);
-	    if(taxInfo != null){
-		    walletOperation.setTaxClass(taxInfo.taxClass);
-		    walletOperation.setTax(taxInfo.tax);
-		    walletOperation.setTaxPercent(taxInfo.tax.getPercent());
+	    if(taxClass == null && chargeInstance == null) {
+		    throw new InvalidELException("No tax found for charge : " + walletOperation.getCode());
 	    }
+	    TaxInfo taxInfo =  determineTax(taxClass, chargeInstance.getSeller(), chargeInstance.getUserAccount().getBillingAccount(), chargeInstance.getUserAccount(), date, walletOperation, true, false, null);
+	    setTaxForWallet(taxInfo, walletOperation);
 	    return taxInfo;
     }
+	
+	private void setTaxClassFromAccountingArticle(WalletOperation walletOperation, ChargeInstance chargeInstance) {
+		if (IS_DETERMINE_TAX_CLASS_FROM_AA) {
+			AccountingArticle accountingArticle=walletOperation.getAccountingArticle();
+			if(accountingArticle==null) {
+				accountingArticle = accountingArticleService.getAccountingArticleByChargeInstance(chargeInstance, walletOperation);
+			}
+			if (accountingArticle != null) {
+				TaxClass taxClass = accountingArticle.getTaxClass();
+				setTaxClassResolved(chargeInstance , taxClass);
+			}
+		}
+	}
+	
+	private TaxClass getTaxClassFromChargeInstance(ChargeInstance chargeInstance) {
+		return chargeInstance != null ? chargeInstance.getTaxClassResolved() : null;
+	}
+	
+	private void setTaxClassResolved(ChargeInstance chargeInstance, TaxClass taxClass){
+		if(chargeInstance != null) {
+			chargeInstance.setTaxClassResolved(taxClass);
+		}
+	}
+	
+	private void setTaxForWallet(TaxInfo taxInfo, WalletOperation walletOperation) {
+		if(taxInfo != null){
+			walletOperation.setTaxClass(taxInfo.taxClass);
+			walletOperation.setTax(taxInfo.tax);
+			walletOperation.setTaxPercent(taxInfo.tax.getPercent());
+		}
+	}
 
     /**
      * Determine applicable tax for a given charge template. Considers when Billing Account is exonerated.
@@ -386,6 +407,8 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
                 TaxCategory taxCategory = getTaxCategory(billingAccount);
                 taxInfo.taxCategory = taxCategory;
+                
+                date = DateUtils.truncateTime(date);
 
                 TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date, walletoperation);
 
@@ -394,11 +417,9 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
 
                 } else if (taxMapping.getTaxScript() != null) {
 
-                    if (taxScriptService.isApplicable(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date, walletoperation)) {
-                        List<Tax> taxes = taxScriptService.computeTaxes(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date, walletoperation);
-                        if (taxes != null && !taxes.isEmpty()) {
-                            tax = taxes.get(0);
-                        }
+                    List<Tax> taxes = taxScriptService.computeTaxesIfApplicable(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date, walletoperation);
+                    if (taxes != null && !taxes.isEmpty()) {
+                        tax = taxes.get(0);
                     }
                 }
 

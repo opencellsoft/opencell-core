@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.event.qualifier.Processed;
 import org.meveo.event.qualifier.Started;
 import org.meveo.model.audit.ChangeOriginEnum;
@@ -70,7 +71,7 @@ public abstract class Job {
     public static final String CFT_PREFIX = "JobInstance";
 
     /**
-     * Custom field for a Number of simultaneous threads that job executes
+     * Custom field for a Number of simultaneous data processing threads that job executes
      */
     public static final String CF_NB_RUNS = "nbRuns";
 
@@ -83,6 +84,11 @@ public abstract class Job {
      * Custom field for a number of items to process simultaneously in one transaction as a batch. If batch fails, items will be processed one by one.
      */
     public static final String CF_BATCH_SIZE = "batchSize";
+
+    /**
+     * Custom field for a number of threads to publish data for cluster wide processing
+     */
+    public static final String CF_NB_PUBLISHERS = "nbPublishers";
     
     /**
      * Custom field for a applyBilingRules.
@@ -93,7 +99,7 @@ public abstract class Job {
      * Custom field for a sorting option
      */
     public static final String CF_SORTING_OPTION = "sortingOption";
-    
+
     /**
      * What initiated/launched Job
      */
@@ -147,9 +153,6 @@ public abstract class Job {
     @Resource(lookup = "java:jboss/ee/concurrency/executor/default")
     ManagedExecutorService executor;
 
-    @Inject
-    private AuditOrigin auditOrigin;
-
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -164,8 +167,7 @@ public abstract class Job {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public JobExecutionResultStatusEnum execute(JobInstance jobInstance, JobExecutionResultImpl executionResult, JobLauncherEnum jobLauncher) throws BusinessException {
 
-        auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
-        auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
+        AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.JOB, jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
 
         JobRunningStatusEnum jobRunningStatus = jobExecutionService.markJobAsRunning(jobInstance, jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE,
             executionResult != null ? executionResult.getId() : null, null);
@@ -177,7 +179,7 @@ public abstract class Job {
                 Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
 
             if (executionResult == null) {
-                executionResult = new JobExecutionResultImpl(jobInstance, jobLauncher != null ? jobLauncher : JobLauncherEnum.TRIGGER);
+                executionResult = new JobExecutionResultImpl(jobInstance, jobLauncher != null ? jobLauncher : JobLauncherEnum.TRIGGER, EjbUtils.getCurrentClusterNode());
                 jobExecutionResultService.persistResult(executionResult);
             }
 
@@ -304,6 +306,7 @@ public abstract class Job {
     /**
      * @return job category enum
      */
+    @SuppressWarnings("rawtypes")
     public abstract JobCategoryEnum getJobCategory();
 
     /**
@@ -351,10 +354,11 @@ public abstract class Job {
      * @param jobInstance Job instance definition
      * @return Entity class
      */
+    @SuppressWarnings("rawtypes")
     public Class getTargetEntityClass(JobInstance jobInstance) {
         return null;
     }
-
+    
     /*
      * those methods will be used later for asynchronous jobs
      * 

@@ -19,10 +19,12 @@
 package org.meveo.api.rest.crm.impl;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.api.crm.AddressBookApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.response.crm.GetAddressBookResponseDto;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.crm.AddressBookRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.communication.contact.Contact;
@@ -31,6 +33,7 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.intcrm.impl.ContactService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AddressBookRsImpl extends BaseRs implements AddressBookRs {
 
 	@Inject

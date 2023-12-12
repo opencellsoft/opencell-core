@@ -17,10 +17,7 @@
  */
 package org.meveo.model;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.ChangeOriginEnum;
-import org.meveo.security.MeveoUser;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +28,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.meveo.model.audit.AuditChangeTypeEnum;
+import org.meveo.model.audit.ChangeOriginEnum;
 
 /**
  * Tracks Field change history
@@ -42,7 +42,7 @@ import java.util.Date;
 @Entity
 @Table(name = "audit_field_changes_history")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "audit_field_changes_history_seq"),})
+        @org.hibernate.annotations.Parameter(name = "sequence_name", value = "audit_field_changes_history_seq"), })
 public class AuditableField extends BaseEntity {
 
     private static final long serialVersionUID = -7263546632393279781L;
@@ -54,7 +54,6 @@ public class AuditableField extends BaseEntity {
     @Size(max = 255)
     @NotNull
     private String entityClass;
-
 
     /**
      * Auditable entity id
@@ -77,14 +76,12 @@ public class AuditableField extends BaseEntity {
     @Column(name = "change_type")
     private AuditChangeTypeEnum changeType = AuditChangeTypeEnum.OTHER;
 
-
     /**
      * Field change origin
      */
     @Enumerated(EnumType.STRING)
     @Column(name = "change_origin")
     private ChangeOriginEnum changeOrigin = ChangeOriginEnum.OTHER;
-
 
     /**
      * Field change origin name
@@ -96,17 +93,16 @@ public class AuditableField extends BaseEntity {
     /**
      * Previous state of field
      */
-    @Column(name = "previous_state", length = 255)
-    @Size(max = 255)
+    @Column(name = "previous_state", length = 700)
+    @Size(max = 700)
     private String previousState;
 
     /**
      * Current state of field
      */
-    @Column(name = "current_state", length = 255)
-    @Size(max = 255)
+    @Column(name = "current_state", length = 700)
+    @Size(max = 700)
     private String currentState;
-
 
     /**
      * Record/entity creation timestamp
@@ -120,7 +116,6 @@ public class AuditableField extends BaseEntity {
      */
     @Column(name = "actor", updatable = false, length = 200)
     private String actor;
-
 
     public AuditableField() {
     }
@@ -316,5 +311,10 @@ public class AuditableField extends BaseEntity {
         }
         AuditableField other = (AuditableField) obj;
         return getId().equals(other.getId());
+    }
+
+    @Override
+    public String toString() {
+        return "AuditableField [entityClass=" + entityClass + ", entityId=" + entityId + ", name=" + name + ", previousState=" + previousState + ", currentState=" + currentState + "]";
     }
 }

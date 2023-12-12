@@ -1,127 +1,201 @@
 package org.meveo.admin.job;
 
-import org.meveo.model.billing.BillingCycle;
+import static org.meveo.model.billing.BillingEntityTypeEnum.BILLINGACCOUNT;
+import static org.meveo.model.billing.DateAggregationOption.NO_DATE_AGGREGATION;
+
 import org.meveo.model.billing.BillingEntityTypeEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.DateAggregationOption;
+import org.meveo.model.billing.DiscountAggregationModeEnum;
+
+import java.util.List;
 
 public class AggregationConfiguration {
 
-	/**
-	 * Is application running in B2B or B2C mode.
-	 */
-	private boolean enterprise;
+    /**
+     * Is application running in B2B or B2C mode.
+     */
+    private boolean enterprise;
 
-	private DateAggregationOption dateAggregationOption = DateAggregationOption.MONTH_OF_USAGE_DATE;
+    /**
+     * Do not aggregate RTs to ILs at all
+     */
+    private boolean disableAggregation;
 
-	private boolean aggregationPerUnitAmount;
-	
+    /**
+     * Aggregate by date option
+     */
+    private DateAggregationOption dateAggregationOption = DateAggregationOption.MONTH_OF_USAGE_DATE;
+
+    /**
+     * Aggregate per unit amount
+     */
+    private boolean aggregationPerUnitAmount;
+
+    /**
+     * Aggregate based on accounting article label instead of RT description
+     */
     private boolean useAccountingArticleLabel = false;
-    
+
+    /**
+     * If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
     private boolean ignoreSubscriptions = true;
-    
+
+    /**
+     * If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
     private boolean ignoreOrders = true;
 
-	private BillingEntityTypeEnum type = BillingEntityTypeEnum.BILLINGACCOUNT;
+    private boolean ignoreUserAccounts = true;
 
-	public boolean isUseAccountingArticleLabel() {
-		return useAccountingArticleLabel;
-	}
+    /**
+     * Aggregation mode of Discount type Rated Transactions
+     */
+    private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
 
-	public void setUseAccountingArticleLabel(boolean useAccountingArticleLabel) {
-		this.useAccountingArticleLabel = useAccountingArticleLabel;
-	}
+    private BillingEntityTypeEnum type = BILLINGACCOUNT;
 
-	public boolean isIgnoreSubscriptions() {
-		return ignoreSubscriptions;
-	}
+    private List<String> additionalAggregation;
 
-	public void setIgnoreSubscriptions(boolean ignoreSubscriptions) {
-		this.ignoreSubscriptions = ignoreSubscriptions;
-	}
+    /**
+     * @return Do not aggregate RTs to ILs at all
+     */
+    public boolean isDisableAggregation() {
+        return disableAggregation;
+    }
 
-	public boolean isIgnoreOrders() {
-		return ignoreOrders;
-	}
+    /**
+     * @return Aggregate based on accounting article label instead of RT description
+     */
+    public boolean isUseAccountingArticleLabel() {
+        return useAccountingArticleLabel;
+    }
 
-	public void setIgnoreOrders(boolean ignoreOrders) {
-		this.ignoreOrders = ignoreOrders;
-	}
+    /**
+     * @param useAccountingArticleLabel Aggregate based on accounting article label instead of RT description
+     */
+    public void setUseAccountingArticleLabel(boolean useAccountingArticleLabel) {
+        this.useAccountingArticleLabel = useAccountingArticleLabel;
+    }
 
-	public AggregationConfiguration(boolean enterprise) {
-		this.enterprise = enterprise;
-	}
+    /**
+     * @return If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
+    public boolean isIgnoreSubscriptions() {
+        return ignoreSubscriptions;
+    }
 
-	public AggregationConfiguration(boolean enterprise, boolean AggregationPerUnitAmount, DateAggregationOption dateAggregationOption) {
-		this.enterprise = enterprise;
-		this.aggregationPerUnitAmount = AggregationPerUnitAmount;
-		this.dateAggregationOption = dateAggregationOption;
-	}
-	
-	public AggregationConfiguration(BillingCycle billingCycle) {
-		this.dateAggregationOption = billingCycle.getDateAggregation()!=null? billingCycle.getDateAggregation() : DateAggregationOption.NO_DATE_AGGREGATION;
-		this.aggregationPerUnitAmount= billingCycle.isAggregateUnitAmounts();
-		this.useAccountingArticleLabel = billingCycle.isUseAccountingArticleLabel() ;
-		this.ignoreSubscriptions = billingCycle.isIgnoreSubscriptions();
-		this.ignoreOrders = billingCycle.isIgnoreOrders();
-		this.type=billingCycle.getType();
-	}
-	
-	public AggregationConfiguration(BillingRun billingRun) {
-		this.dateAggregationOption = billingRun.getDateAggregation()!=null? billingRun.getDateAggregation() : DateAggregationOption.NO_DATE_AGGREGATION;
-		this.aggregationPerUnitAmount= billingRun.isAggregateUnitAmounts();
-		this.useAccountingArticleLabel = billingRun.isUseAccountingArticleLabel() ;
-		this.ignoreSubscriptions = billingRun.isIgnoreSubscriptions();
-		this.ignoreOrders = billingRun.isIgnoreOrders();
-		this.type=billingRun.getBillingCycle().getType();
-	}
+    /**
+     * @param ignoreSubscriptions If TRUE, aggregation will ignore subscription field (multiple subscriptions will be aggregated together)
+     */
+    public void setIgnoreSubscriptions(boolean ignoreSubscriptions) {
+        this.ignoreSubscriptions = ignoreSubscriptions;
+    }
 
+    /**
+     * @return If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
+    public boolean isIgnoreOrders() {
+        return ignoreOrders;
+    }
 
-	public boolean isEnterprise() {
-		return enterprise;
-	}
+    /**
+     * @param ignoreOrders If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)
+     */
+    public void setIgnoreOrders(boolean ignoreOrders) {
+        this.ignoreOrders = ignoreOrders;
+    }
 
-	public void setEnterprise(boolean enterprise) {
-		this.enterprise = enterprise;
-	}
-
-	/**
-	 * @return the dateAggregationOptions
-	 */
-	public DateAggregationOption getDateAggregationOption() {
-		return dateAggregationOption;
+	public boolean isIgnoreUserAccounts() {
+		return ignoreUserAccounts;
 	}
 
-	/**
-	 * @param dateAggregationOptions the dateAggregationOptions to set
-	 */
-	public void setDateAggregationOption(DateAggregationOption dateAggregationOption) {
-		this.dateAggregationOption = dateAggregationOption;
+	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
 	}
 
-	/**
-	 * @return the AggregationPerUnitAmount
-	 */
-	public boolean isAggregationPerUnitAmount() {
-		return aggregationPerUnitAmount;
-	}
+    /**
+     * @return Aggregation mode of Discount type Rated Transactions
+     */
+    public DiscountAggregationModeEnum getDiscountAggregation() {
+        return discountAggregation;
+    }
 
-	/**
-	 * @param AggregationPerUnitAmount the AggregationPerUnitAmount to set
-	 */
-	public void setAggregationPerUnitAmount(boolean AggregationPerUnitAmount) {
-		this.aggregationPerUnitAmount = AggregationPerUnitAmount;
-	}
+    public AggregationConfiguration(boolean enterprise) {
+        this.enterprise = enterprise;
+    }
 
-	public BillingEntityTypeEnum getType() {
-		// TODO Auto-generated method stub
-		return type ;
-	}
+    public AggregationConfiguration(boolean enterprise, boolean AggregationPerUnitAmount, DateAggregationOption dateAggregationOption) {
+        this.enterprise = enterprise;
+        this.aggregationPerUnitAmount = AggregationPerUnitAmount;
+        this.dateAggregationOption = dateAggregationOption;
+    }
 
-	@Override
-	public String toString() {
-		return "AggregationConfiguration [enterprise : " + enterprise + ", dateAggregationOption : " + dateAggregationOption
-				+ ", aggregationPerUnitAmount : " + aggregationPerUnitAmount + ", useAccountingArticleLabel : " + useAccountingArticleLabel
-				+ ", ignoreSubscriptions : " + ignoreSubscriptions + ", ignoreOrders : " + ignoreOrders  + ", BillingEntityTypeEnum : " + type + "]";
-	}
+    public AggregationConfiguration(BillingRun billingRun) {
+        this.dateAggregationOption = billingRun.getDateAggregation() != null ? billingRun.getDateAggregation() : NO_DATE_AGGREGATION;
+        this.aggregationPerUnitAmount = billingRun.isAggregateUnitAmounts();
+        this.useAccountingArticleLabel = billingRun.isUseAccountingArticleLabel();
+        this.ignoreSubscriptions = billingRun.isIgnoreSubscriptions();
+        this.ignoreOrders = billingRun.isIgnoreOrders();
+        this.ignoreUserAccounts = billingRun.isIgnoreUserAccounts();
+        this.discountAggregation = billingRun.getDiscountAggregation();
+        this.disableAggregation = billingRun.isDisableAggregation();
+        this.type = (billingRun.getBillingCycle() != null) ? billingRun.getBillingCycle().getType() : BILLINGACCOUNT;
+        this.additionalAggregation = billingRun.getAdditionalAggregationFields();
+    }
+
+    public boolean isEnterprise() {
+        return enterprise;
+    }
+
+    public void setEnterprise(boolean enterprise) {
+        this.enterprise = enterprise;
+    }
+
+    /**
+     * @return the dateAggregationOptions
+     */
+    public DateAggregationOption getDateAggregationOption() {
+        return dateAggregationOption;
+    }
+
+    /**
+     * @param dateAggregationOption the dateAggregationOptions to set
+     */
+    public void setDateAggregationOption(DateAggregationOption dateAggregationOption) {
+        this.dateAggregationOption = dateAggregationOption;
+    }
+
+    /**
+     * @return Aggregate per unit amount
+     */
+    public boolean isAggregationPerUnitAmount() {
+        return aggregationPerUnitAmount;
+    }
+
+    /**
+     * @param AggregationPerUnitAmount Aggregate per unit amount
+     */
+    public void setAggregationPerUnitAmount(boolean AggregationPerUnitAmount) {
+        this.aggregationPerUnitAmount = AggregationPerUnitAmount;
+    }
+
+    public BillingEntityTypeEnum getType() {
+        return type;
+    }
+
+    public List<String> getAdditionalAggregation() {
+        return additionalAggregation;
+    }
+
+    public void setAdditionalAggregation(List<String> additionalAggregation) {
+        this.additionalAggregation = additionalAggregation;
+    }
+
+    @Override
+    public String toString() {
+        return "AggregationConfiguration [enterprise : " + enterprise + ", dateAggregationOption : " + dateAggregationOption + ", aggregationPerUnitAmount : " + aggregationPerUnitAmount + ", useAccountingArticleLabel : "
+                + useAccountingArticleLabel + ", ignoreSubscriptions : " + ignoreSubscriptions + ", ignoreOrders : " + ignoreOrders + ", BillingEntityTypeEnum : " + type + "]";
+    }
 }

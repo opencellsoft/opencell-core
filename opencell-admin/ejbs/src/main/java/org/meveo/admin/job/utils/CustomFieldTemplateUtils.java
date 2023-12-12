@@ -11,20 +11,21 @@ public class CustomFieldTemplateUtils {
 
     /**
      * Build a custom field definition
-     * 
-     * @param code Custom field code
-     * @param description Description
-     * @param fieldType Field type
-     * @param guiPosition GUI position
+     *
+     * @param code         Custom field code
+     * @param description  Description
+     * @param fieldType    Field type
+     * @param guiPosition  GUI position
      * @param defaultValue Default value
      * @param valueRequire Is value required
-     * @param storageType Storage type
-     * @param entityClazz Entity class
-     * @param appliesTo Applies to value
+     * @param storageType  Storage type
+     * @param entityClazz  Entity class
+     * @param appliesTo    Applies to value
+     * @param maxValue     Max value
      * @return A custom field template
      */
-    public static CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum fieldType, String guiPosition, String defaultValue, boolean valueRequire, CustomFieldStorageTypeEnum storageType,
-            String entityClazz, String appliesTo) {
+    public static CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum fieldType, String guiPosition, String defaultValue,
+                                              boolean valueRequire, CustomFieldStorageTypeEnum storageType, String entityClazz, String appliesTo, Long maxValue) {
         CustomFieldTemplate cft = new CustomFieldTemplate();
         cft.setCode(code);
         cft.setAppliesTo(appliesTo);
@@ -42,6 +43,70 @@ public class CustomFieldTemplateUtils {
         if (entityClazz != null) {
             cft.setEntityClazz(entityClazz);
         }
+        if (maxValue != null) {
+            cft.setMaxValue(maxValue);
+        }
         return cft;
+    }
+
+    /**
+     * Build a custom field definition
+     *
+     * @param code         Custom field code
+     * @param description  Description
+     * @param fieldType    Field type
+     * @param guiPosition  GUI position
+     * @param defaultValue Default value
+     * @param valueRequire Is value required
+     * @param appliesTo    Applies to value
+     * @return A custom field template
+     */
+    public static CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum fieldType, String guiPosition, String defaultValue,
+                                              boolean valueRequire, String appliesTo) {
+        return buildCF(code, description, fieldType, guiPosition, defaultValue, valueRequire, null, null, appliesTo, null);
+    }
+
+    /**
+     * Build a custom field definition
+     *
+     * @param code         Custom field code
+     * @param description  Description
+     * @param fieldType    Field type
+     * @param guiPosition  GUI position
+     * @param defaultValue Default value
+     * @param appliesTo    Applies to value
+     * @return A custom field template
+     */
+    public static CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum fieldType, String guiPosition, String defaultValue, String appliesTo) {
+        return buildCF(code, description, fieldType, guiPosition, defaultValue, false, null, null, appliesTo, null);
+    }
+
+    /**
+     * Build a custom field definition
+     *
+     * @param code        Custom field code
+     * @param description Description
+     * @param fieldType   Field type
+     * @param guiPosition GUI position
+     * @param appliesTo   Applies to value
+     * @return A custom field template
+     */
+    public static CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum fieldType, String guiPosition, String appliesTo) {
+        return buildCF(code, description, fieldType, guiPosition, null, false, null, null, appliesTo, null);
+    }
+
+    /**
+     * Build a custom field definition
+     *
+     * @param code        Custom field code
+     * @param description Description
+     * @param fieldType   Field type
+     * @param guiPosition GUI position
+     * @param appliesTo   Applies to value
+     * @param maxValue    Max value
+     * @return A custom field template
+     */
+    public static CustomFieldTemplate buildCF(String code, String description, CustomFieldTypeEnum fieldType, String guiPosition, String appliesTo, Long maxValue) {
+        return buildCF(code, description, fieldType, guiPosition, null, false, null, null, appliesTo, maxValue);
     }
 }

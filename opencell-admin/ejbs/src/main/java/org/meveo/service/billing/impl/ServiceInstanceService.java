@@ -44,8 +44,6 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.RatingResult;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ChargeApplicationModeEnum;
 import org.meveo.model.billing.ChargeInstance;
@@ -83,11 +81,11 @@ import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.payments.PaymentScheduleTemplate;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.DiscountPlanService;
-import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.cpq.ProductService;
 import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.payments.impl.PaymentScheduleInstanceService;
 import org.meveo.service.payments.impl.PaymentScheduleTemplateService;
@@ -136,7 +134,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * ServiceTemplateService
      */
     @Inject
-    ServiceTemplateService serviceTemplateService;
+    private OfferTemplateService offerTemplateService;
 
     /**
      * PaymentScheduleInstanceService
@@ -156,9 +154,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     private OrderHistoryService orderHistoryService;
 
     @Inject
-    private AuditableFieldService auditableFieldService;
-    
-    @Inject
     private CounterInstanceService counterInstanceService;
 
     @Inject
@@ -172,6 +167,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     @Inject
     private RatedTransactionService ratedTransactionService;
+
+
+    @Inject
+    private ProductService productService;
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
@@ -281,7 +280,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     private boolean checkProductAssociatedWithOffer(ServiceInstance serviceInstance) {
 
-        OfferTemplate offer = serviceInstance.getSubscription().getOffer();
+        OfferTemplate offer = offerTemplateService.findById(serviceInstance.getSubscription().getOffer().getId());
         if (!offer.haveProduct(serviceInstance.getCode())) {
             throw new ValidationException("Service " + serviceInstance.getCode() + " is not associated with Offer");
         }
@@ -441,6 +440,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         subscription.getServiceInstances().add(serviceInstance);
 
+        product = productService.refreshOrRetrieve(product);
         instanciateCharges(serviceInstance, product, subscriptionAmount, terminationAmount, isVirtual);
         
         if(CollectionUtils.isNotEmpty(product.getDiscountList())) {
@@ -681,7 +681,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                         .createNamedQuery("WalletOperation.findWalletOperationByChargeInstance")
                         .setParameter("chargeInstanceId", recurringChargeInstance.getId())
                         .setParameter("subscriptionId", recurringChargeInstance.getSubscription().getId())
+		                .setParameter("dateToCharge", recurringChargeInstance.getNextChargeDate())
                         .getResultList();
+
                 if (walletOperations != null && !walletOperations.isEmpty()) {
                     walletOperationService.getEntityManager()
                             .createNamedQuery("WalletOperation.setStatusToCanceledById")
@@ -690,6 +692,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                             .executeUpdate();
                     walletOperationService.getEntityManager()
                             .createNamedQuery("RatedTransaction.cancelByWOIds")
+                            .setParameter("now", new Date())
+                            .setParameter("woIds", walletOperations)
+                            .executeUpdate();
+                    walletOperationService.getEntityManager()
+                            .createNamedQuery("InvoiceLine.cancelInvoiceLineByWoIds")
                             .setParameter("now", new Date())
                             .setParameter("woIds", walletOperations)
                             .executeUpdate();
@@ -734,9 +741,8 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
             } else if (applyReimbursment && chargeToDateOnTermination.before(chargedToDate)) {
 
-                boolean anticipatedTermination = recurringChargeInstance.isAnticipateEndOfSubscription() && woCanceled;
                 try {
-                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber, anticipatedTermination);
+                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber, woCanceled);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
@@ -994,8 +1000,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public void create(ServiceInstance entity) throws BusinessException {
         entity.updateSubscribedTillAndRenewalNotifyDates();
         super.create(entity);
-        // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
-        auditableFieldService.createFieldHistory(entity, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(entity.getStatus()));
     }
 
     @Override
@@ -1342,9 +1346,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             }
            
         }
-    }
         
-    public ServiceInstance findFetchProductById(Long id) {
+    }
+    
+    public ServiceInstance findAndFetchProductById(Long id) {
         return id == null ? null : (ServiceInstance)getEntityManager().createNamedQuery("ServiceInstance.findByIdAndFetchProduct").setParameter("id", id).getSingleResult();
     }
 }

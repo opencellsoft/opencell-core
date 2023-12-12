@@ -18,10 +18,13 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -40,6 +43,9 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.scripts.ScriptInstance;
+
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 /**
  * Billing cycle
@@ -208,11 +214,14 @@ public class BillingCycle extends BusinessCFEntity {
     private Map<String, Object> filters;
     
     /**
-     *  Higher priority macth with lowest priority value
+     * Higher priority match with lowest priority value
      */
     @Column(name = "priority")
     private int priority = 0;
     
+    /**
+     * Do not aggregate RTs to ILs at all
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "disable_aggregation")
     private boolean disableAggregation = false;
@@ -242,7 +251,111 @@ public class BillingCycle extends BusinessCFEntity {
      */
     @Type(type = "numeric_boolean")
     @Column(name = "incremental_invoice_lines")
-    private boolean incrementalInvoiceLines = Boolean.FALSE;
+    private boolean incrementalInvoiceLines = false;
+
+    /**
+     * Default configuration for billingRun.preReportAutoOnCreate
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "report_config_pre_report_auto_on_create")
+    private Boolean reportConfigPreReportAutoOnCreate = FALSE;
+
+    /**
+     * Default configuration for billingRun.preReportAutoOnInvoiceLinesJob
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "report_config_pre_report_auto_on_invoice_lines_job")
+    private Boolean reportConfigPreReportAutoOnInvoiceLinesJob = FALSE;
+
+    /**
+     * Pilots computation and display of billing accounts block
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "report_config_display_billing_accounts")
+    private Boolean reportConfigDisplayBillingAccounts = TRUE;
+
+    /**
+     * Pilots computation and display of subscriptions block
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "report_config_display_subscriptions")
+    private Boolean reportConfigDisplaySubscriptions = TRUE;
+
+    /**
+     *
+     * Pilots computation and display of offers block
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "report_config_display_offers")
+    private Boolean reportConfigDisplayOffers = TRUE;
+
+    /**
+     * Pilots computation and display of products block
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "report_config_display_products")
+    private Boolean reportConfigDisplayProducts = TRUE;
+
+    /**
+     * Pilots computation and display of articles block
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "report_config_display_articles")
+    private Boolean reportConfigDisplayArticles = TRUE;
+
+    /**
+     * Report billing accounts block size between 1 and 100
+     */
+    @Column(name = "report_config_block_size_billing_accounts")
+    private int reportConfigBlockSizeBillingAccounts = 10;
+
+    /**
+     * Report subscriptions block size between 1 and 100
+     */
+    @Column(name = "report_config_block_size_subscriptions")
+    private int reportConfigBlockSizeSubscriptions = 10;
+
+    /**
+     * Report offers block size between 1 and 100
+     */
+    @Column(name = "report_config_block_size_offers")
+    private int reportConfigBlockSizeOffers = 10;
+
+    /**
+     * Report products block size between 1 and 100
+     */
+    @Column(name = "report_config_block_size_products")
+    private int reportConfigBlockSizeProducts = 10;
+
+    /**
+     *
+     * Report articles block size between 1 and 100
+     */
+    @Column(name = "report_config_block_size_articles")
+    private int reportConfigBlockSizeArticles = 10;
+
+    @Column(name = "application_el", length = 2000)
+    @Size(max = 2000)
+    private String applicationEl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "discount_aggregation", nullable = false)
+    private DiscountAggregationModeEnum discountAggregation = DiscountAggregationModeEnum.FULL_AGGREGATION;
+
+    /**
+     * Define additional criterias for aggregation
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "billing_cycle_aggregation_fields", joinColumns = @JoinColumn(name = "billing_cycle_id"))
+    @Column(name = "fields")
+    private List<String> additionalAggregationFields;
+
+    /**
+     * Billing cycle aggregation setting for user accounts
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "ignore_user_accounts")
+    private boolean ignoreUserAccounts = true;
 
     public boolean isThresholdPerEntity() {
         return thresholdPerEntity;
@@ -306,7 +419,7 @@ public class BillingCycle extends BusinessCFEntity {
     }
 
     /**
-     * @param invoiceDateProductionDelay Expression to calculate the number of days to add to a billing run date to compute the invoice date
+     * @param invoiceDateProductionDelayEL Expression to calculate the number of days to add to a billing run date to compute the invoice date
      */
     public void setInvoiceDateProductionDelayEL(String invoiceDateProductionDelayEL) {
         this.invoiceDateProductionDelayEL = invoiceDateProductionDelayEL;
@@ -580,11 +693,141 @@ public class BillingCycle extends BusinessCFEntity {
         this.ignoreOrders = ignoreOrders;
     }
 
-    public Boolean getIncrementalInvoiceLines() {
+    public boolean isIncrementalInvoiceLines() {
         return incrementalInvoiceLines;
     }
 
     public void setIncrementalInvoiceLines(boolean incrementalInvoiceLines) {
         this.incrementalInvoiceLines = incrementalInvoiceLines;
     }
+
+    public String getApplicationEl() {
+        return applicationEl;
+    }
+
+    public DiscountAggregationModeEnum getDiscountAggregation() {
+        return discountAggregation;
+    }
+
+    public void setApplicationEl(String applicationEl) {
+        this.applicationEl = applicationEl;
+    }
+
+    public Boolean getReportConfigPreReportAutoOnCreate() {
+        return reportConfigPreReportAutoOnCreate;
+    }
+
+    public void setReportConfigPreReportAutoOnCreate(Boolean reportConfigPreReportAutoOnCreate) {
+        this.reportConfigPreReportAutoOnCreate = reportConfigPreReportAutoOnCreate;
+    }
+
+    public Boolean getReportConfigPreReportAutoOnInvoiceLinesJob() {
+        return reportConfigPreReportAutoOnInvoiceLinesJob;
+    }
+
+    public void setReportConfigPreReportAutoOnInvoiceLinesJob(Boolean reportConfigPreReportAutoOnInvoiceLinesJob) {
+        this.reportConfigPreReportAutoOnInvoiceLinesJob = reportConfigPreReportAutoOnInvoiceLinesJob;
+    }
+
+    public Boolean getReportConfigDisplayBillingAccounts() {
+        return reportConfigDisplayBillingAccounts;
+    }
+
+    public void setReportConfigDisplayBillingAccounts(Boolean reportConfigDisplayBillingAccounts) {
+        this.reportConfigDisplayBillingAccounts = reportConfigDisplayBillingAccounts;
+    }
+
+    public Boolean getReportConfigDisplaySubscriptions() {
+        return reportConfigDisplaySubscriptions;
+    }
+
+    public void setReportConfigDisplaySubscriptions(Boolean reportConfigDisplaySubscriptions) {
+        this.reportConfigDisplaySubscriptions = reportConfigDisplaySubscriptions;
+    }
+
+    public Boolean getReportConfigDisplayOffers() {
+        return reportConfigDisplayOffers;
+    }
+
+    public void setReportConfigDisplayOffers(Boolean reportConfigDisplayOffers) {
+        this.reportConfigDisplayOffers = reportConfigDisplayOffers;
+    }
+
+    public Boolean getReportConfigDisplayProducts() {
+        return reportConfigDisplayProducts;
+    }
+
+    public void setReportConfigDisplayProducts(Boolean reportConfigDisplayProducts) {
+        this.reportConfigDisplayProducts = reportConfigDisplayProducts;
+    }
+
+    public Boolean getReportConfigDisplayArticles() {
+        return reportConfigDisplayArticles;
+    }
+
+    public void setReportConfigDisplayArticles(Boolean reportConfigDisplayArticles) {
+        this.reportConfigDisplayArticles = reportConfigDisplayArticles;
+    }
+
+    public int getReportConfigBlockSizeBillingAccounts() {
+        return reportConfigBlockSizeBillingAccounts;
+    }
+
+    public void setReportConfigBlockSizeBillingAccounts(int reportConfigBlockSizeBillingAccounts) {
+        this.reportConfigBlockSizeBillingAccounts = reportConfigBlockSizeBillingAccounts;
+    }
+
+    public int getReportConfigBlockSizeSubscriptions() {
+        return reportConfigBlockSizeSubscriptions;
+    }
+
+    public void setReportConfigBlockSizeSubscriptions(int reportConfigBlockSizeSubscriptions) {
+        this.reportConfigBlockSizeSubscriptions = reportConfigBlockSizeSubscriptions;
+    }
+
+    public int getReportConfigBlockSizeOffers() {
+        return reportConfigBlockSizeOffers;
+    }
+
+    public void setReportConfigBlockSizeOffers(int reportConfigBlockSizeOffers) {
+        this.reportConfigBlockSizeOffers = reportConfigBlockSizeOffers;
+    }
+
+    public int getReportConfigBlockSizeProducts() {
+        return reportConfigBlockSizeProducts;
+    }
+
+    public void setReportConfigBlockSizeProducts(int reportConfigBlockSizeProducts) {
+        this.reportConfigBlockSizeProducts = reportConfigBlockSizeProducts;
+    }
+
+    public int getReportConfigBlockSizeArticles() {
+        return reportConfigBlockSizeArticles;
+    }
+
+    public void setReportConfigBlockSizeArticles(int reportConfigBlockSizeArticles) {
+        this.reportConfigBlockSizeArticles = reportConfigBlockSizeArticles;
+    }
+
+    public void setDiscountAggregation(DiscountAggregationModeEnum discountAggregation) {
+        this.discountAggregation = discountAggregation;
+    }
+
+
+	public boolean isIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
+
+	public void setIgnoreUserAccounts(boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+
+    public List<String> getAdditionalAggregationFields() {
+        return additionalAggregationFields;
+    }
+
+    public void setAdditionalAggregationFields(List<String> additionalAggregationFields) {
+        this.additionalAggregationFields = additionalAggregationFields;
+    }
+
 }

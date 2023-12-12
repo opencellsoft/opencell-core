@@ -46,10 +46,10 @@ public class AssignMatchingCodeToOldEntriesJob extends Job {
         Map<String, CustomFieldTemplate> result = new HashMap<>();
 
         result.put(CF_NB_RUNS, CustomFieldTemplateUtils.buildCF(CF_NB_RUNS, resourceMessages.getString("jobExecution.nbRuns"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:0", "1", false, null, null, APPLIES_TO_NAME));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:0", "1", APPLIES_TO_NAME));
 
         result.put(CF_WAITING_MILLIS, CustomFieldTemplateUtils.buildCF(CF_WAITING_MILLIS, resourceMessages.getString("jobExecution.waitingMillis"),
-                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:1", "0", false, null, null, APPLIES_TO_NAME));
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:1", "0", APPLIES_TO_NAME));
 
         return result;
     }

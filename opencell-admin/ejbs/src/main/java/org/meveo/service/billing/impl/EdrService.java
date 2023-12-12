@@ -47,7 +47,7 @@ import org.meveo.service.base.PersistenceService;
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  */
-@Stateless
+@Stateless(name="EDRService")
 public class EdrService extends PersistenceService<EDR> {
 
     @Inject
@@ -119,7 +119,7 @@ public class EdrService extends PersistenceService<EDR> {
  	        if(parameter2!=null) {
  	        	strQuery.append(" AND lower(e.parameter2)=:parameter2");
  	        }
- 	        strQuery.append(" order by e.id");
+ 	        strQuery.append(" order by e.subscription.id");
  	        
  	        TypedQuery<Long> query = getEntityManager().createQuery(strQuery.toString(),Long.class);
  	        if(rateUntilDate != null) {
@@ -134,6 +134,9 @@ public class EdrService extends PersistenceService<EDR> {
 	        if(parameter2!=null) {
 	        	query.setParameter("parameter2", parameter2.toLowerCase());
 	        }
+            if (nbToRetrieve > 0) {
+                query = query.setMaxResults(nbToRetrieve);
+            }
  	        return query.getResultList();
 
     }

@@ -35,6 +35,17 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         billingRun.setFilters(resource.getFilters());
         billingRun.setComputeDatesAtValidation(resource.isComputeDatesAtValidation());
         billingRun.setIncrementalInvoiceLines(resource.isIncrementalInvoiceLines());
+        billingRun.setAggregateUnitAmounts(resource.isAggregateUnitAmounts());
+        billingRun.setDateAggregation(resource.getDateAggregation());
+        billingRun.setDiscountAggregation(resource.getDiscountAggregation());
+        billingRun.setIgnoreOrders(resource.isIgnoreOrders());
+        billingRun.setIgnoreSubscriptions(resource.isIgnoreSubscriptions());
+        billingRun.setIgnoreUserAccounts(resource.isIgnoreUserAccounts());
+        billingRun.setDisableAggregation(resource.isDisableAggregation());
+        billingRun.setUseAccountingArticleLabel(resource.isUseAccountingArticleLabel());
+        billingRun.setPreReportAutoOnCreate(resource.isPreReportAutoOnCreate());
+        billingRun.setPreReportAutoOnInvoiceLinesJob(resource.isPreReportAutoOnInvoiceLinesJob());
+        billingRun.setApplicationEl(resource.getApplicationEl());
         return billingRun;
     }
 
@@ -51,6 +62,8 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         		.isComputeDatesAtValidation(entity.getComputeDatesAtValidation())
                 .isIncrementalInvoiceLines(entity.getIncrementalInvoiceLines())
         		.billingRunTypeEnum(entity.getProcessType())
+                .isPreReportAutoOnCreate(entity.isPreReportAutoOnCreate())
+                .isPreReportAutoOnInvoiceLinesJob(entity.isPreReportAutoOnInvoiceLinesJob())
         		.build();
     }
 }

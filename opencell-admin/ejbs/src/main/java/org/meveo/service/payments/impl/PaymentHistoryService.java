@@ -40,6 +40,8 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
     @Inject
     private AccountOperationService accountOperationService;
 
+	private static final String DEFAULT_CUSTOMER_CODE = "DEFAULT_CUSTOMER_CODE";
+
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void addHistoryInNewTransaction(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode, String errorMessage, String externalPaymentId,
@@ -70,12 +72,16 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 			String externalPaymentId, PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, String paymentGatewayCode, PaymentMethod paymentMethod, List<AccountOperation> aoToPay)
 			throws BusinessException {
 		PaymentHistory paymentHistory = new PaymentHistory();
-		paymentHistory.setCustomerAccountCode(customerAccount.getCode());
-		paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
-		if (customerAccount.getCustomer().getSeller() != null) {
-			paymentHistory.setSellerCode(customerAccount.getCustomer().getSeller().getCode());
+		if(customerAccount != null) {
+			paymentHistory.setCustomerAccountCode(customerAccount.getCode());
+			paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
+			if (customerAccount.getCustomer().getSeller() != null) {
+				paymentHistory.setSellerCode(customerAccount.getCustomer().getSeller().getCode());
+			}
+			paymentHistory.setCustomerCode(customerAccount.getCustomer().getCode());
+		} else {
+			paymentHistory.setCustomerAccountCode(DEFAULT_CUSTOMER_CODE);
 		}
-		paymentHistory.setCustomerCode(customerAccount.getCustomer().getCode());
 		paymentHistory.setPayment(payment);
 		paymentHistory.setRefund(refund);
 		paymentHistory.setOperationDate(new Date());

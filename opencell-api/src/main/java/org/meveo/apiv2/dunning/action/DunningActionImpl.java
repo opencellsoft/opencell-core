@@ -4,10 +4,13 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.dunning.DunningAction;
 import org.meveo.apiv2.dunning.ImmutableDunningAction;
 import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
@@ -15,6 +18,7 @@ import org.meveo.model.payments.ActionChannelEnum;
 import org.meveo.model.payments.ActionModeEnum;
 import org.meveo.service.payments.impl.DunningActionService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class DunningActionImpl implements DunningActionResource{
 
     @Inject
@@ -36,6 +40,10 @@ public class DunningActionImpl implements DunningActionResource{
     @Override
     public Response createDunningAction(DunningAction dunningAction) {
         globalSettingsVerifier.checkActivateDunning();
+        org.meveo.model.dunning.DunningAction dunningActionEntity = dunningActionService.findByCode(dunningAction.getCode());
+        if(dunningActionEntity != null) {
+            throw new EntityAlreadyExistsException("dunning action with code "+dunningAction.getCode()+" already exist.");
+        }
         org.meveo.model.dunning.DunningAction dunningActionToCreate = dunningAction.toEntity();
         dunningActionService.create(dunningActionToCreate);
         return Response.ok().entity("{\"actionStatus\":{\"status\":\"SUCCESS\",\"message\":\"the Dunning Action successfully created\"},\"id\":"+dunningActionToCreate.getId()+"} ").build();

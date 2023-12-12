@@ -414,6 +414,18 @@ public class InvoiceTypeApi extends BaseCrudApi<InvoiceType, InvoiceTypeDto> {
         	            .orElseThrow(() -> new EntityNotFoundException("No UntdidVatPaymentOption entities found.")))
         	);
         }
+        
+        if (!StringUtils.isBlank(dto.getCustomUblScript())) {
+        	ScriptInstance customUblScript = scriptInstanceService.findByCode(dto.getCustomUblScript());
+        	if (customUblScript == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getCustomUblScript());
+            } else if (customUblScript.getScriptInstanceCategory() == null || !"UBL_GENERATION".equals(customUblScript.getScriptInstanceCategory().getCode())) {
+            	throw new MeveoApiException("Custom UBL script must have category UBL_GENERATION");
+            }
+        	entity.setCustomUblScript(customUblScript);
+        } else if ("".equals(dto.getCustomUblScript())) {
+        	entity.setCustomUblScript(null);
+        }
 
         // populate customFields
         try {

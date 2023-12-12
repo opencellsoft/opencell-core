@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 
 import org.meveo.admin.util.ResourceBundle;
@@ -22,6 +23,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.apiv2.AcountReceivable.*;
 import org.meveo.apiv2.accountreceivable.AccountOperationApiService;
@@ -43,6 +45,7 @@ import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
 import org.meveo.service.payments.impl.AccountOperationService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class AccountReceivableResourceImpl implements AccountReceivableResource {
 
     @Inject

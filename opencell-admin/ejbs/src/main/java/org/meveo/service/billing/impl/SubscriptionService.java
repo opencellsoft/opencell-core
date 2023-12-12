@@ -54,8 +54,6 @@ import org.meveo.commons.utils.PersistenceUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.RatingResult;
-import org.meveo.model.audit.AuditChangeTypeEnum;
-import org.meveo.model.audit.AuditableFieldNameEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
@@ -81,17 +79,19 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.OrderItemActionEnum;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.persistence.JacksonUtil;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.audit.AuditableFieldService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.order.OrderHistoryService;
+import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.PaymentMethodService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 
 
@@ -124,10 +124,13 @@ public class SubscriptionService extends BusinessService<Subscription> {
     private DiscountPlanInstanceService discountPlanInstanceService;
 
     @Inject
-    private AuditableFieldService auditableFieldService;
+    private OneShotChargeInstanceService oneShotChargeInstanceService;
 
     @Inject
-    private OneShotChargeInstanceService oneShotChargeInstanceService;
+    private PaymentMethodService paymentMethodService;
+    
+    @Inject
+    private CustomerAccountService customerAccountService;
 
     @MeveoAudit
     @Override
@@ -137,15 +140,14 @@ public class SubscriptionService extends BusinessService<Subscription> {
         if(offerTemplate.isDisabled()) {
         	throw new BusinessException("Cannot subscribe to disabled offer");
         }
-        checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
+        List<PaymentMethod> paymentMethods =
+                paymentMethodService.listByCustomerAccount(subscription.getUserAccount().getBillingAccount().getCustomerAccount(), null, null);
+        checkSubscriptionPaymentMethod(subscription, paymentMethods);
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 
         subscription.createAutoRenewDate();
         subscription.setVersionNumber(1);
         super.create(subscription);
-
-        // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
-        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(subscription.getStatus()));
         
         // execute subscription script
         if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
@@ -183,9 +185,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.createAutoRenewDate();
         subscription.setVersionNumber(1);
         super.createWithoutNotif(subscription);
-
-        // Status audit (to trace the passage from before creation "" to creation "CREATED") need for lifecycle
-        auditableFieldService.createFieldHistory(subscription, AuditableFieldNameEnum.STATUS.getFieldName(), AuditChangeTypeEnum.STATUS, "", String.valueOf(subscription.getStatus()));
         
         // execute subscription script
         if (offerTemplate.getBusinessOfferModel() != null && offerTemplate.getBusinessOfferModel().getScript() != null) {
@@ -206,7 +205,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
     	if(offerTemplate.isDisabled()) {
     		throw new BusinessException("Cannot subscribe to disabled offer");
     	}
-        checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
+    	CustomerAccount customerAccount = customerAccountService.refreshOrRetrieve(subscription.getUserAccount().getBillingAccount().getCustomerAccount());
+        checkSubscriptionPaymentMethod(subscription, customerAccount.getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
        
         subscription.updateAutoRenewDate(subscriptionOld);
@@ -1081,5 +1081,11 @@ public class SubscriptionService extends BusinessService<Subscription> {
          } catch (NoResultException e) {
              return null;
          }
+    }
+    
+    public void removePaymentMethodLink(BillingAccount billingAccount) {
+		getEntityManager().createNamedQuery("Subscription.unlinkPaymentMehtodByBA")
+				.setParameter("billingAccount", billingAccount)
+				.executeUpdate();
     }
 }

@@ -4,54 +4,86 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.WalletOperationRerate;
 import org.meveo.apiv2.generic.core.GenericRequestMapper;
-import org.meveo.apiv2.generic.services.GenericApiAlteringService;
+import org.meveo.apiv2.generic.services.GenericApiLoadService;
 import org.meveo.apiv2.generic.services.PersistenceServiceHelper;
 import org.meveo.apiv2.rating.resource.WalletOperationResource;
+import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.jpa.EntityManagerWrapper;
+import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.service.billing.impl.BatchEntityService;
+import org.meveo.service.securityDeposit.impl.FinanceSettingsService;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+import javax.persistence.criteria.JoinType;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@Interceptors({WsRestApiInterceptor.class})
 public class WalletOperationResourceImpl implements WalletOperationResource {
 
     @Inject
-    private GenericApiAlteringService genericAlteringService;
+    @MeveoJpa
+    private EntityManagerWrapper entityManagerWrapper;
+
+    @Inject
+    private GenericApiLoadService genericApiLoadService;
+
+    @Inject
+    private FinanceSettingsService financeSettingsService;
+
+    @Inject
+    private BatchEntityService batchEntityService;
 
     @Override
     public ActionStatus markWOToRerate(WalletOperationRerate reRateFilters) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         GenericRequestMapper mapper = new GenericRequestMapper(WalletOperation.class, PersistenceServiceHelper.getPersistenceService());
         Map<String, Object> filters = mapper.evaluateFilters(Objects.requireNonNull(reRateFilters.getFilters()), WalletOperation.class);
+        boolean isEntityWithHugeVolume = financeSettingsService.isEntityWithHugeVolume("WalletOperation");
 
-        // Hardcoded filter : as status filter: WO with status in (F_TO_RERATE, OPEN, REJECTED), or status=TREATED and wo.ratedTransaction.status=OPEN
-        filters.put("SQL", "(a.status IN ('F_TO_RERATE', 'OPEN', 'REJECTED') OR (a.status = 'TREATED' AND rt.status = 'OPEN'))");
 
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING);
-        paginationConfiguration.setFilters(filters);
-        paginationConfiguration.setFetchFields(new ArrayList<>());
-        paginationConfiguration.getFetchFields().add("id");
-
-        Map<String, Object> toUpdateFields = new HashMap<>();
-        toUpdateFields.put("status", WalletOperationStatusEnum.TO_RERATE);
-        toUpdateFields.put("updated", new Date());
-
-        int updated = genericAlteringService.massUpdate(WalletOperation.class.getSimpleName(),
-                WalletOperation.class.getSimpleName(),
-                toUpdateFields, filters);
-
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        if (updated > 0) {
-            result.setMessage(updated + " Wallet operations updated to status 'TO_RERATE'");
+        if (isEntityWithHugeVolume) {
+            batchEntityService.create(filters, "MarkWOToRerateJob", "WalletOperation");
+            result.setMessage("Wallet operation entity is marked as \"huge\". Your filter is recorded as a marking batch and will be processed later by a marking job. " +
+                    "You will receive a notification email when marking is done.");
         } else {
-            result.setMessage("No Wallet operations found to update");
-        }
+            // Hardcoded filter : as status filter: WO with status in (F_TO_RERATE, OPEN, REJECTED), or status=TREATED and wo.ratedTransaction.status=OPEN
+            filters.put("SQL", "(a.status IN ('F_TO_RERATE', 'OPEN', 'REJECTED') OR (a.status = 'TREATED' AND rt.status = 'OPEN') " +
+                    "OR (rt.status = 'BILLED' AND rt.invoiceLine.status = 'OPEN'))");
 
+            PaginationConfiguration paginationConfiguration = new PaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING);
+            paginationConfiguration.setFilters(filters);
+            paginationConfiguration.setFetchFields(new ArrayList<>());
+            paginationConfiguration.getFetchFields().add("id");
+            // Prepare filter filterQuery
+            paginationConfiguration.setJoinType(JoinType.LEFT);
+
+
+            String filterQuery = genericApiLoadService.findAggregatedPaginatedRecordsAsString(WalletOperation.class, " a.ratedTransaction rt ",
+                    paginationConfiguration);
+            List<Long> ids = entityManagerWrapper.getEntityManager().createQuery(filterQuery).getResultList();
+
+            StringBuilder updateQuery = new StringBuilder("UPDATE WalletOperation SET ")
+                    .append("status=").append(QueryBuilder.paramToString(WalletOperationStatusEnum.TO_RERATE))
+                    .append(", updated=").append(QueryBuilder.paramToString(new Date()));
+
+            int updated = batchEntityService.markWoToRerate(updateQuery, ids);
+
+            if (updated > 0) {
+                result.setMessage(updated + " Wallet operations updated to status 'TO_RERATE'");
+            } else {
+                result.setMessage("No Wallet operations found to update");
+            }
+        }
         return result;
     }
 }

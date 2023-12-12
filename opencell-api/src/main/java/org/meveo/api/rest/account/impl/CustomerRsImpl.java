@@ -87,7 +87,9 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            result.setEntityId(customerApi.update(postData).getId());
+            Customer customer = customerApi.update(postData);
+            result.setEntityId(customer.getId());
+            result.setEntityCode(customer.getCode());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -383,6 +385,11 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
 
     @Override
     public ActionStatus anonymizeGdprV2(String customerCode) {
+        return anonymizeGdpr(customerCode);
+    }
+    
+    @Override
+    public ActionStatus updateAnonymizeGdpr(String customerCode) {
         return anonymizeGdpr(customerCode);
     }
 

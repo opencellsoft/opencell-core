@@ -37,9 +37,6 @@ import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.InvoiceStatusEnum;
-import org.meveo.model.billing.PostInvoicingReportsDTO;
-import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -104,14 +101,6 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
                 billingRun.setProcessType(BillingProcessTypesEnum.MANUAL);
             }
 
-            if ((billingRun != null) && (billingRun.getId() != null) && (preReport != null) && preReport) {
-                PreInvoicingReportsDTO preInvoicingReportsDTO = billingRunService.generatePreInvoicingReports(billingRun);
-                billingRun.setPreInvoicingReports(preInvoicingReportsDTO);
-            } else if ((billingRun != null) && (billingRun.getId() != null) && (postReport != null) && postReport) {
-                PostInvoicingReportsDTO postInvoicingReportsDTO = billingRunService.generatePostInvoicingReports(billingRun);
-                billingRun.setPostInvoicingReports(postInvoicingReportsDTO);
-            }
-
         } catch (BusinessException e) {
             log.error("Failed to initialize an object", e);
         }
@@ -163,6 +152,15 @@ public class BillingRunBean extends CustomFieldBean<BillingRun> {
             } else {
                 entity.setLastTransactionDate(DateUtils.addDaysToDate(entity.getProcessDate(), 1));
             }
+            entity.setDisableAggregation(billingCycle.isDisableAggregation());
+            entity.setUseAccountingArticleLabel(billingCycle.isUseAccountingArticleLabel());
+            entity.setIncrementalInvoiceLines(billingCycle.isIncrementalInvoiceLines());
+            entity.setAggregateUnitAmounts(billingCycle.isAggregateUnitAmounts());
+            entity.setDateAggregation(billingCycle.getDateAggregation());
+            entity.setDiscountAggregation(billingCycle.getDiscountAggregation());
+            entity.setIgnoreOrders(billingCycle.isIgnoreOrders());
+            entity.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
+
             log.debug("after setBillingCycle invoicedate={}, lastTransactionDate={}", entity.getInvoiceDate(), entity.getLastTransactionDate());
         }
     }

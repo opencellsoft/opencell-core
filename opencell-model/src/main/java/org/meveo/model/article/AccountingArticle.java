@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -51,15 +50,15 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(fetch = EAGER, cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = LAZY)
     @JoinColumn(name = "tax_class_id")
     private TaxClass taxClass;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = LAZY)
     @JoinColumn(name = "invoice_sub_category_id")
     private InvoiceSubCategory invoiceSubCategory;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "article_family_id")
     private ArticleFamily articleFamily;
 
@@ -67,7 +66,7 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
     
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
 
@@ -114,6 +113,13 @@ public class AccountingArticle extends EnableBusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "allowance_code")
     private UntdidAllowanceCode allowanceCode;
+
+    /**
+     * Need to know if article is physical of not : used by Tax calculation
+     */
+    @Type(type = "numeric_boolean")
+    @Column(name = "physical", nullable = false)
+    private boolean physical;
     
     public UntdidAllowanceCode getAllowanceCode() {
         return allowanceCode;
@@ -267,10 +273,11 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 			return false;
 		AccountingArticle other = (AccountingArticle) obj;
 		if (id == null) {
-			if (other.id != null)
+			if (other.getId() != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (other.getId()!=null && !id.equals(other.getId())) {
 			return false;
+		}
 		return true;
 	}
 
@@ -288,5 +295,13 @@ public class AccountingArticle extends EnableBusinessCFEntity {
 
     public void setIgnoreAggregation(boolean ignoreAggregation) {
         this.ignoreAggregation = ignoreAggregation;
+    }
+
+    public boolean isPhysical() {
+        return physical;
+    }
+
+    public void setPhysical(boolean physical) {
+        this.physical = physical;
     }
 }

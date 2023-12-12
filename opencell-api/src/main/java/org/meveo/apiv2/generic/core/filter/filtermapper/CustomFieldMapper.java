@@ -7,6 +7,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 
@@ -87,7 +88,8 @@ public class CustomFieldMapper extends FilterMapper {
         CustomFieldValue customFieldValue = new CustomFieldValue();
         switch (fieldType) {
             case DATE:
-                customFieldValue.setDateValue(new Date((Long) value));
+                Date date =  DateUtils.parseDate(value);
+                customFieldValue.setDateValue(date);
                 break;
             case LONG:
                 customFieldValue.setLongValue(Integer.toUnsignedLong((Integer) value));

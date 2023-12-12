@@ -6,15 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.apiv2.billing.InvoiceLinesToMarkAdjustment;
 import org.meveo.apiv2.billing.resource.InvoiceLinesResource;
 import org.meveo.apiv2.billing.service.InvoiceLinesApiService;
 
+@Interceptors({ WsRestApiInterceptor.class })
 public class InvoiceLinesResourceImpl implements InvoiceLinesResource {
 
     @Inject

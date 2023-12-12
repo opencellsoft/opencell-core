@@ -48,6 +48,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -216,9 +217,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
-
-    @Inject
-    private JobExecutionResultService jobExecutionResultService;
     
     private static final  int rtPaginationSize = 30000;
 
@@ -226,18 +224,18 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	@Override
 	public void create(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-		super.create(billingRun);
-	}
+        super.create(billingRun);
+    }
 
-	@MeveoAudit
+    @MeveoAudit
 	@Override
 	public BillingRun update(BillingRun billingRun) throws BusinessException {
 		setBillingRunType(billingRun);
-		return super.update(billingRun);
+        return super.update(billingRun);
 	}
 
 	/**
-	 * Put the BR type to CYCLE if a BC is attached, EXEPTIONAL otherwise
+	 * Put the BR type to CYCLE if a BC is attached, EXCEPTIONAL otherwise
 	 *
 	 * @param billingRun
 	 */
@@ -744,27 +742,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
     }
     
-    public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun) {
-    	return getBillingAccountsIdsForOpenRTs(billingRun,false);
-    }
-	public List<Long> getBillingAccountsIdsForOpenRTs(BillingRun billingRun, boolean massData) {
-		Map<String, Object> configuredFilter = billingRun.getBillingCycle() != null ? billingRun.getBillingCycle().getFilters() : billingRun.getFilters();
-		if(configuredFilter==null && billingRun.getBillingCycle() != null) {
-			configuredFilter = new TreeMap<String, Object>();
-			configuredFilter.put("billingAccount.billingCycle.id", billingRun.getBillingCycle().getId());
-		}
-		if(configuredFilter==null){
-			throw new BusinessException("No filter found for billingRun "+billingRun.getId());
-		}
-		Map<String, Object> filters = new TreeMap<String, Object>(configuredFilter);
-		if(massData) {
-			filters.put("billingAccount.massData", "true");
-		}
-		filters.put("status", RatedTransactionStatusEnum.OPEN.toString());
-		QueryBuilder queryBuilder = ratedTransactionService.getQueryFromFilters(filters, Arrays.asList("billingAccount.id"), true);
-		return queryBuilder.getQuery(getEntityManager()).getResultList();
-	}
-
     /**
      * Gets entities that are associated with a billing run
      *
@@ -1038,8 +1015,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             ratedTransactionService.uninvoiceRTs(excludedPrepaidInvoices);
             invoiceLinesService.uninvoiceILs(excludedPrepaidInvoices);//reopen ILs not created from  RTs
             invoiceLinesService.cancelIlForRemoveByInvoices(excludedPrepaidInvoices);//cancell ILs created from RTs
-            invoiceService.deleteInvoices(excludedPrepaidInvoices);
             invoiceAgregateService.deleteInvoiceAgregates(excludedPrepaidInvoices);
+            invoiceService.deleteInvoices(excludedPrepaidInvoices);
             rejectedBillingAccounts.forEach(rejectedBillingAccountId -> {
                 BillingAccount ba = getEntityManager().getReference(BillingAccount.class, rejectedBillingAccountId);
                 rejectedBillingAccountService.create(ba, getEntityManager().getReference(BillingRun.class, billingRun.getId()), "Billing account did not reach invoicing threshold");
@@ -1090,12 +1067,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     private void addInvoiceAmounts(Map<Long, Map<Long, Amounts>> entityAmounts, Amounts amounts, Long invoiceId, Long entityId) {
-        if (entityAmounts.get(entityId) == null) {
-            Map<Long, Amounts> thresholdAmounts = new TreeMap<>();
-            thresholdAmounts.put(invoiceId, amounts.clone());
-            entityAmounts.put(entityId, thresholdAmounts);
-        } else {
-            entityAmounts.get(entityId).put(invoiceId, amounts.clone());
+        if (entityId != null && invoiceId != null) {
+            Map<Long, Amounts> thresholdAmounts = entityAmounts.get(entityId);
+            if (thresholdAmounts == null) {
+                thresholdAmounts = new TreeMap<>();
+                thresholdAmounts.put(invoiceId, amounts.clone());
+                entityAmounts.put(entityId, thresholdAmounts);
+            } else {
+                thresholdAmounts.put(invoiceId, amounts.clone());
+            }
         }
     }
 
@@ -1703,10 +1683,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         
     }
 
-    public void updateBillingRunJobExecution(BillingRun billingRun, JobExecutionResultImpl result) {
-        billingRun = billingRunService.refreshOrRetrieve(billingRun);
+    public void updateBillingRunJobExecution(Long billingRunId, JobExecutionResultImpl result) {
+        BillingRun billingRun = billingRunService.findById(billingRunId);
         billingRun.addJobExecutions(result);
-
+        update(billingRun);
     }
 
     public Filter createFilter(BillingRun billingRun, boolean invoicingV2) {
@@ -1801,4 +1781,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 	public List<Long> getBAsHavingOpenILs(BillingRun billingRun) {
 		return getEntityManager().createNamedQuery("InvoiceLine.getBAsHavingOpenILsByBR",Long.class).setParameter("billingRunId", billingRun.getId()).getResultList();
 	}
+
+    public List<BillingRun> findBillingRunsByBillingCycle(BillingCycle bc) {
+        return getEntityManager().createNamedQuery("BillingRun.findByBillingCycle", BillingRun.class).setParameter("bc", bc).getResultList();
+    }
+
+    public List<BillingRun> getForInvoicing(int nbToRetrieve) {
+        TypedQuery<BillingRun> query = getEntityManager().createNamedQuery("BillingRun.getForInvoicing", BillingRun.class);
+        if (nbToRetrieve > 0) {
+            query = query.setMaxResults(nbToRetrieve);
+        }
+        return query.getResultList();
+    }
 }

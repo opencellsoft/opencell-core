@@ -22,12 +22,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.ReportConfig;
 import org.meveo.api.exception.*;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.tax.TaxCategory;
 import org.meveo.service.billing.impl.BillingCycleService;
+import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -35,6 +37,7 @@ import org.meveo.service.script.ScriptInstanceService;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -48,6 +51,9 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
 
     @Inject
     private BillingCycleService billingCycleService;
+
+    @Inject
+    private BillingRunService billingRunService;
 
     @Inject
     private CalendarService calendarService;
@@ -108,6 +114,13 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         dtoToEntity(entity, dto);
 
         entity = billingCycleService.update(entity);
+        List<BillingRun> attachedBRs = billingRunService.findBillingRunsByBillingCycle(entity);
+        List<String> additionalAggregationFields = entity.getAdditionalAggregationFields();
+        attachedBRs.forEach(br -> {
+            br.setAdditionalAggregationFields(additionalAggregationFields);
+            billingRunService.update(br);
+        });
+
         return entity;
     }
 
@@ -261,11 +274,14 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getDisableAggregation() != null) {
             entity.setDisableAggregation(dto.getDisableAggregation());
         }
+
         if (dto.getUseAccountingArticleLabel() != null) {
             entity.setUseAccountingArticleLabel(dto.getUseAccountingArticleLabel());
         }
-        
-        entity.setDateAggregation(dto.getDateAggregation());
+
+        if (dto.getDateAggregation() != null) {
+            entity.setDateAggregation(dto.getDateAggregation());
+        }
         
         if (dto.getAggregateUnitAmounts() != null) {
             entity.setAggregateUnitAmounts(dto.getAggregateUnitAmounts());
@@ -279,6 +295,57 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         if (dto.getIncrementalInvoiceLines() != null) {
             entity.setIncrementalInvoiceLines(dto.getIncrementalInvoiceLines());
         }
+        if (dto.getIgnoreUserAccounts() != null) {
+            entity.setIgnoreUserAccounts(dto.getIgnoreUserAccounts());
+        }
+        if (dto.getDiscountAggregation() != null) {
+            entity.setDiscountAggregation(dto.getDiscountAggregation());
+        }
+
+        entity.setApplicationEl(dto.getApplicationEl());
+        if(dto.getReportConfig() != null) {
+            validateReportBlockSizes(dto.getReportConfig());
+            if (dto.getReportConfig().getPreReportAutoOnCreate() != null) {
+                entity.setReportConfigPreReportAutoOnCreate(dto.getReportConfig().getPreReportAutoOnCreate());
+            }
+            if (dto.getReportConfig().getPreReportAutoOnInvoiceLinesJob() != null) {
+                entity.setReportConfigPreReportAutoOnInvoiceLinesJob(dto.getReportConfig().getPreReportAutoOnInvoiceLinesJob());
+            }
+            if(dto.getReportConfig().getDisplayBillingAccounts() != null) {
+                entity.setReportConfigDisplayBillingAccounts(dto.getReportConfig().getDisplayBillingAccounts());
+            }
+            if (dto.getReportConfig().getDisplaySubscriptions() != null) {
+                entity.setReportConfigDisplaySubscriptions(dto.getReportConfig().getDisplaySubscriptions());
+            }
+            if (dto.getReportConfig().getDisplayArticles() != null) {
+                entity.setReportConfigDisplayArticles(dto.getReportConfig().getDisplayArticles());
+            }
+            if(dto.getReportConfig().getDisplayOffers() != null) {
+                entity.setReportConfigDisplayOffers(dto.getReportConfig().getDisplayOffers());
+            }
+            if (dto.getReportConfig().getDisplayProducts() != null) {
+                entity.setReportConfigDisplayProducts(dto.getReportConfig().getDisplayProducts());
+            }
+            if(dto.getReportConfig().getBlockSizeArticles() != null) {
+                entity.setReportConfigBlockSizeArticles(dto.getReportConfig().getBlockSizeArticles());
+            }
+            if (dto.getReportConfig().getBlockSizeBillingAccounts() != null) {
+                entity.setReportConfigBlockSizeBillingAccounts(dto.getReportConfig().getBlockSizeBillingAccounts());
+            }
+            if (dto.getReportConfig().getBlockSizeSubscriptions() != null) {
+                entity.setReportConfigBlockSizeSubscriptions(dto.getReportConfig().getBlockSizeSubscriptions());
+            }
+            if (dto.getReportConfig().getBlockSizeOffers() != null) {
+                entity.setReportConfigBlockSizeOffers(dto.getReportConfig().getBlockSizeOffers());
+            }
+            if (dto.getReportConfig().getBlockSizeProducts() != null) {
+                entity.setReportConfigBlockSizeProducts(dto.getReportConfig().getBlockSizeProducts());
+            }
+        }
+
+        if(dto.getAdditionalAggregationFields() != null) {
+            entity.setAdditionalAggregationFields(dto.getAdditionalAggregationFields());
+        }
 
        	// populate customFields
         try {
@@ -290,6 +357,29 @@ public class BillingCycleApi extends BaseCrudApi<BillingCycle, BillingCycleDto> 
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
+        }
+    }
+
+    private void validateReportBlockSizes(ReportConfig reportConfig) {
+        if (reportConfig.getBlockSizeArticles() != null
+                && (reportConfig.getBlockSizeArticles() < 1 || reportConfig.getBlockSizeArticles() > 100)) {
+            throw  new BusinessApiException("Articles block size should be between 1 and 100");
+        }
+        if (reportConfig.getBlockSizeOffers() != null
+                && (reportConfig.getBlockSizeOffers() < 1 || reportConfig.getBlockSizeOffers() > 100)) {
+            throw  new BusinessApiException("Offers block size should be between 1 and 100");
+        }
+        if (reportConfig.getBlockSizeProducts() != null
+                && (reportConfig.getBlockSizeProducts() < 1 || reportConfig.getBlockSizeProducts() > 100)) {
+            throw  new BusinessApiException("Products block size should be between 1 and 100");
+        }
+        if (reportConfig.getBlockSizeSubscriptions() != null
+                && (reportConfig.getBlockSizeSubscriptions() < 1 || reportConfig.getBlockSizeSubscriptions() > 100)) {
+            throw  new BusinessApiException("Subscriptions block size should be between 1 and 100");
+        }
+        if (reportConfig.getBlockSizeBillingAccounts() != null
+                && (reportConfig.getBlockSizeBillingAccounts() < 1 || reportConfig.getBlockSizeBillingAccounts() > 100)) {
+            throw  new BusinessApiException("Billing account block size should be between 1 and 100");
         }
     }
 

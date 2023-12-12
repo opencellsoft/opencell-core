@@ -27,6 +27,7 @@ import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CurrencyIsoRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
+import org.meveo.model.admin.Currency;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -47,7 +48,8 @@ public class CurrencyIsoRsImpl extends BaseRs implements CurrencyIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyIsoApi.create(currencyIsoDto);
+        	Currency currency = currencyIsoApi.create(currencyIsoDto);
+        	result.setEntityId(currency.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -86,7 +88,8 @@ public class CurrencyIsoRsImpl extends BaseRs implements CurrencyIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyIsoApi.update(currencyIsoDto);
+        	Currency currency = currencyIsoApi.update(currencyIsoDto);
+            result.setEntityId(currency.getId());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -99,7 +102,8 @@ public class CurrencyIsoRsImpl extends BaseRs implements CurrencyIsoRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            currencyIsoApi.createOrUpdate(currencyIsoDto);
+        	Currency currency = currencyIsoApi.createOrUpdate(currencyIsoDto);
+        	result.setEntityId(currency.getId());
         } catch (Exception e) {
             processException(e, result);
         }
