@@ -26,6 +26,8 @@ import org.meveo.model.admin.CustomGenericEntityCode;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BatchEntity;
 import org.meveo.model.billing.BatchEntityStatusEnum;
+import org.meveo.model.billing.InvoiceLineStatusEnum;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.Provider;
@@ -46,11 +48,14 @@ import javax.inject.Named;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
@@ -180,23 +185,37 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
      * @return all filters (new + original)
      */
     private Map<String, Object> addFilters(Map<String, Object> originalFilters) {
+        Set<String> statusTobeExcluded = Stream.of(WalletOperationStatusEnum.TO_RERATE.name(), WalletOperationStatusEnum.RERATED.name(),
+                        WalletOperationStatusEnum.CANCELED.name())
+                .collect(Collectors.toCollection(HashSet::new));
         Map<String, Object> filters = new HashMap<>();
         if (originalFilters != null) {
             filters.putAll(originalFilters);
         }
         if (filters.get("not-inList status") != null) {
             if (filters.get("not-inList status") instanceof Collection) {
-                Set filtersSet = ((Collection<String>) filters.get("not-inList status")).stream().map(val -> val != null ? val.toLowerCase() : val)
-                        .collect(Collectors.toSet());
-                filtersSet.addAll(List.of(WalletOperationStatusEnum.TO_RERATE.name(), WalletOperationStatusEnum.TREATED.name()));
+                statusTobeExcluded.addAll(((Collection<String>) filters.get("not-inList status")).stream().map(val -> val != null ? val.toUpperCase() : val)
+                        .collect(Collectors.toSet()));
             } else {
-                filters.put("not-inList status", Set.of((String) filters.get("not-inList status"), WalletOperationStatusEnum.TO_RERATE.name(),
-                        WalletOperationStatusEnum.TREATED.name()));
+                statusTobeExcluded.add((String) filters.get("not-inList status"));
             }
-        } else {
-            filters.put("not-inList status", List.of(WalletOperationStatusEnum.TO_RERATE.name(), WalletOperationStatusEnum.TREATED.name()));
         }
-        filters.put("not-inList status", List.of(WalletOperationStatusEnum.TO_RERATE.name(), WalletOperationStatusEnum.TREATED.name()));
+        filters.put("not-inList status", statusTobeExcluded);
+        Map<String, Object> filter = new LinkedHashMap();
+        filter.put("$operator", "OR");
+        filter.put("ne ratedTransaction.status", RatedTransactionStatusEnum.BILLED.name());
+        filter.put("ne ratedTransaction.invoiceLine.status", InvoiceLineStatusEnum.BILLED.name());
+        boolean result = Stream.of(filters.keySet().toArray())
+                .anyMatch(key -> {
+                    String keyObject = (String) key;
+                    if (keyObject.matches("\\$filter[0-9]+$")) {
+                        return filter.equals(filters.get(key));
+                    }
+                    return false;
+                });
+        if (!result) {
+            filters.put("$filter0101", filter);
+        }
         return filters;
     }
 
