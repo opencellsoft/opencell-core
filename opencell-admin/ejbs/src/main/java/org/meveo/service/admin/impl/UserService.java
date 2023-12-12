@@ -67,7 +67,10 @@ public class UserService extends PersistenceService<User> {
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
     public User update(User user) throws ElementNotFoundException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
-        keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
+	    String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
+		if(lUserManagementSource.equalsIgnoreCase("KC")){
+			keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
+		}
         if(user.getId() != null) {
             return super.update(user);
         } else {
