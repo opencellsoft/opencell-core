@@ -57,7 +57,8 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
                     "You will receive a notification email when marking is done.");
         } else {
             // Hardcoded filter : as status filter: WO with status in (F_TO_RERATE, OPEN, REJECTED), or status=TREATED and wo.ratedTransaction.status=OPEN
-            filters.put("SQL", "(a.status IN ('F_TO_RERATE', 'OPEN', 'REJECTED') OR (a.status = 'TREATED' AND rt.status = 'OPEN'))");
+            filters.put("SQL", "(a.status IN ('F_TO_RERATE', 'OPEN', 'REJECTED') OR (a.status = 'TREATED' AND rt.status = 'OPEN') " +
+                    "OR (rt.status = 'BILLED' AND rt.invoiceLine.status = 'OPEN'))");
 
             PaginationConfiguration paginationConfiguration = new PaginationConfiguration("id", PagingAndFiltering.SortOrder.ASCENDING);
             paginationConfiguration.setFilters(filters);
