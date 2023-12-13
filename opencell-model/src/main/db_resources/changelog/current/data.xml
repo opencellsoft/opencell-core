@@ -21704,25 +21704,6 @@ public class ImportJobNotification extends Script {
             <column name="force_ubl_generation" valueNumeric="1" />
         </update>
     </changeSet>
-
-	<changeSet id="#INTRD-19224_20231101" author="zelmeliani">
-        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -1 and dunning_level_id = -1</sql>
-        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -1 and dunning_level_id = -2</sql>
-        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -1 and dunning_level_id = -3</sql>
-        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -1 and dunning_level_id = -4</sql>
-        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -2 and dunning_level_id = -5</sql>
-        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -2 and dunning_level_id = -6</sql>
-        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -2 and dunning_level_id = -7</sql>
-        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -2 and dunning_level_id = -8</sql>
-        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -10 and dunning_level_id = -10</sql>
-        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -10 and dunning_level_id = -20</sql>
-        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -10 and dunning_level_id = -30</sql>
-        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -10 and dunning_level_id = -40</sql>
-        <sql>update dunning_policy_level set sequence = 0 where dunning_policy_id = -20 and dunning_level_id = -50</sql>
-        <sql>update dunning_policy_level set sequence = 1 where dunning_policy_id = -20 and dunning_level_id = -60</sql>
-        <sql>update dunning_policy_level set sequence = 2 where dunning_policy_id = -20 and dunning_level_id = -70</sql>
-        <sql>update dunning_policy_level set sequence = 3 where dunning_policy_id = -20 and dunning_level_id = -80</sql>
-	</changeSet>
 	
 	<changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid">
 		<update tableName="adm_custom_generic_entity_code">
