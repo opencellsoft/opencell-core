@@ -246,7 +246,7 @@ public class DiscountPlanService extends BusinessService<DiscountPlan> {
 						walletOperationDiscountAmount, walletOperation.getTaxPercent(), appProvider.isEntreprise(),
 						rounding, roundingMode.getRoundingMode());
 			    amounts = NumberUtils.computeDerivedAmounts(walletOperationDiscountAmount, walletOperationDiscountAmount, taxPercent, appProvider.isEntreprise(), appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-			    discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount).multiply(walletOperation.getQuantity()):null;
+			    discountedAmount=discountedAmount!=null?discountedAmount.add(walletOperationDiscountAmount):null;
     			
     		     log.info("calculateDiscountplanItems walletOperationDiscountAmount{},unitAmountWithoutTax{} ,discountValue{} ,discountedAmount{} ",walletOperationDiscountAmount,unitAmountWithoutTax,discountValue,discountedAmount);
 			    
