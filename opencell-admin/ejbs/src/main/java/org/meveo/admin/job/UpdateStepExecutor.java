@@ -1,16 +1,5 @@
 package org.meveo.admin.job;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.Query;
-
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.jpa.EntityManagerWrapper;
@@ -19,6 +8,16 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 @Stateless
 public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
@@ -56,9 +55,18 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
         if(!StringUtils.isEmpty(readQuery)){
         	result= isNativeQuery? (Object[]) emWrapper.getEntityManager().createNativeQuery(readQuery).getSingleResult() : (Object[]) emWrapper.getEntityManager().createQuery(readQuery).getSingleResult();
         }
-		Long minId = result != null ? ((Number)result[0]).longValue() :  (Long)jobExecutionResult.getJobParam(PARAM_MIN_ID);
-		Long maxId = result != null ? ((Number)result[1]).longValue() :  (Long)jobExecutionResult.getJobParam(PARAM_MAX_ID);
+
         Long chunkSize = (Long) jobExecutionResult.getJobParam(PARAM_CHUNK_SIZE);
+        Long minId = (Long) jobExecutionResult.getJobParam(PARAM_MIN_ID);
+        Long maxId = (Long) jobExecutionResult.getJobParam(PARAM_MAX_ID);
+        if (result != null && result.length >= 2) {
+            if (result[0] != null) {
+                minId = ((Number) result[0]).longValue();
+            }
+            if (result[1] != null) {
+                maxId = ((Number) result[1]).longValue();
+            }
+        }
 
         if (minId == null || maxId == null || chunkSize == null) {
             log.error("params should not be null - minId: {}, maxId: {}, chunkSize: {}", minId, maxId, chunkSize);
@@ -92,22 +100,34 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
      * @param jobExecutionResult The job execution result.
      */
 	private void processUpdateByInterval(Long[] interval, JobExecutionResultImpl jobExecutionResult) {
-		String namedQuery = (String) jobExecutionResult.getJobParam(PARAM_NAMED_QUERY);
-		String updateQuery = (String) jobExecutionResult.getJobParam(PARAM_UPDATE_QUERY);
-		String tableAlias = (String) jobExecutionResult.getJobParam(PARAM_TABLE_ALIAS);
-		
+        String namedQuery = (String) jobExecutionResult.getJobParam(PARAM_NAMED_QUERY);
+        String updateQuery = (String) jobExecutionResult.getJobParam(PARAM_UPDATE_QUERY);
+        String tableAlias = (String) jobExecutionResult.getJobParam(PARAM_TABLE_ALIAS);
 
-		if (namedQuery == null && (tableAlias == null || updateQuery == null)) {
-			log.error("params should not be null - updateQuery: {}, tableAlias: {}, namedQuery: {}", updateQuery, tableAlias, namedQuery);
-			return;
-		}
 
-		String sqlString = namedQuery!=null ? null : updateQuery + (updateQuery.toUpperCase().contains("WHERE") ? " AND " : " WHERE ") + tableAlias + ".id BETWEEN :minId AND :maxId";
-		Query query = namedQuery != null ? emWrapper.getEntityManager().createNamedQuery(namedQuery)
-				: (isNativeQuery ? emWrapper.getEntityManager().createNativeQuery(sqlString):emWrapper.getEntityManager().createQuery(sqlString));
+        if (namedQuery == null && (tableAlias == null || updateQuery == null)) {
+            log.error("params should not be null - updateQuery: {}, tableAlias: {}, namedQuery: {}", updateQuery, tableAlias, namedQuery);
+            return;
+        }
 
-		int result = query.setParameter("minId", interval[0]).setParameter("maxId", interval[1]).executeUpdate();
-		Long updatedElementsCount = (Long) jobExecutionResult.getJobParam("updatedElementsCount");
-		updatedElementsCount = updatedElementsCount + result;
-	}
+        String sqlString = null;
+        if (StringUtils.isBlank(namedQuery)) {
+            if (updateQuery.toUpperCase().contains("WHERE")) {
+                sqlString = replaceLast(updateQuery, "WHERE", "WHERE " + tableAlias + ".id BETWEEN :minId AND :maxId AND ");
+            } else {
+                sqlString = updateQuery + " WHERE " + tableAlias + ".id BETWEEN :minId AND :maxId";
+            }
+        }
+        Query query = namedQuery != null ? emWrapper.getEntityManager().createNamedQuery(namedQuery)
+                : (isNativeQuery ? emWrapper.getEntityManager().createNativeQuery(sqlString) : emWrapper.getEntityManager().createQuery(sqlString));
+        Long updatedElementsCount = Long.valueOf(query.setParameter("minId", interval[0]).setParameter("maxId", interval[1]).executeUpdate());
+        if (jobExecutionResult.getJobParam("updatedElementsCount") != null) {
+            updatedElementsCount = updatedElementsCount + (Long) jobExecutionResult.getJobParam("updatedElementsCount");
+        }
+        jobExecutionResult.addJobParam("updatedElementsCount", updatedElementsCount);
+    }
+
+    private String replaceLast(String text, String regex, String replacement) {
+        return text.replaceFirst("(?i)(.*)" + regex, "$1" + replacement);
+    }
 }
