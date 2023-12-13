@@ -1724,15 +1724,16 @@ public class NativePersistenceService extends BaseService {
     }
 
     /**
-     * Execute the provided query builder with the provided filters
+     * Build the update query with the provided filters
      *
      * @param updateQueryBuilder the update query builder
      * @param entityClassName    the entity class name
      * @param filters            the filters
      */
-    public void update(QueryBuilder updateQueryBuilder, String entityClassName, Map<String, Object> filters) {
+    public String getUpdateQuery(QueryBuilder updateQueryBuilder, String entityClassName, Map<String, Object> filters) {
+        String updateQuery = null;
         if (updateQueryBuilder != null) {
-            String updateQuery = updateQueryBuilder.getQueryAsString();
+            updateQuery = updateQueryBuilder.getQueryAsString();
             if (filters != null && !filters.isEmpty()) {
                 PaginationConfiguration searchConfig = new PaginationConfiguration(filters);
                 searchConfig.setFetchFields(Arrays.asList("id"));
@@ -1745,6 +1746,20 @@ public class NativePersistenceService extends BaseService {
                     updateQuery = updateQuery.replaceAll("\\(a\\.", "(");
                 }
             }
+        }
+        return updateQuery;
+    }
+
+    /**
+     * Execute the provided query builder with the provided filters
+     *
+     * @param updateQueryBuilder the update query builder
+     * @param entityClassName    the entity class name
+     * @param filters            the filters
+     */
+    public void update(QueryBuilder updateQueryBuilder, String entityClassName, Map<String, Object> filters) {
+        String updateQuery = getUpdateQuery(updateQueryBuilder, entityClassName, filters);
+        if (StringUtils.isNotBlank(updateQuery)) {
             getEntityManager().createQuery(updateQuery).executeUpdate();
         }
     }

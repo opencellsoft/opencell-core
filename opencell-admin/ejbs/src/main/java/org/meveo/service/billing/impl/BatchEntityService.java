@@ -18,8 +18,12 @@
 package org.meveo.service.billing.impl;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.MassUpdateJob;
+import org.meveo.admin.job.UpdateStepExecutor;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.MethodCallingUtils;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.CustomGenericEntityCode;
@@ -33,6 +37,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.NativePersistenceService;
@@ -41,10 +46,13 @@ import org.meveo.service.communication.impl.EmailSender;
 import org.meveo.service.communication.impl.EmailTemplateService;
 import org.meveo.service.communication.impl.InternationalSettingsService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.job.JobInstanceService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -71,6 +79,7 @@ import static org.meveo.service.base.ValueExpressionWrapper.evaluateExpression;
 public class BatchEntityService extends PersistenceService<BatchEntity> {
 
     private static final String DEFAULT_EMAIL_ADDRESS = "no-reply@opencellsoft.com";
+    private static final String MASS_UPDATE_JOB_CODE = "MassUpdateJob";
 
     @Inject
     @Named
@@ -99,6 +108,12 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    private JobInstanceService jobInstanceService;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     /**
      * Create the new batch entity
@@ -156,14 +171,16 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
                 batchEntity.setJobInstance(jobInstance);
 
                 String entityClassName = "WalletOperation";
-                StringBuilder updateQuery = new StringBuilder("UPDATE ").append(entityClassName).append(" SET ")
+                StringBuilder updateQueryBuilder = new StringBuilder("UPDATE ").append(entityClassName).append(" SET ")
                         .append("status=").append(QueryBuilder.paramToString(WalletOperationStatusEnum.TO_RERATE))
                         .append(", updated=").append(QueryBuilder.paramToString(new Date()))
                         .append(", reratingBatch.id=").append(batchEntity.getId());
 
-                QueryBuilder queryBuilder = new QueryBuilder(updateQuery.toString());
+                QueryBuilder queryBuilder = new QueryBuilder(updateQueryBuilder.toString());
                 Map<String, Object> filters = addFilters(batchEntity.getFilters());
-                nativePersistenceService.update(queryBuilder, entityClassName, filters);
+                //nativePersistenceService.update(queryBuilder, entityClassName, filters);
+                executeMassUpdateJob(queryBuilder, entityClassName, filters);
+
                 batchEntity.setStatus(BatchEntityStatusEnum.SUCCESS);
                 update(batchEntity);
                 jobExecutionResult.registerSucces();
@@ -176,6 +193,46 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
                         e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
             }
         }
+    }
+
+    /**
+     * Execute the mass update job
+     *
+     * @param updateQueryBuilder the update query builder
+     * @param entityClassName    the entity class name
+     * @param filters            the filters
+     */
+    private void executeMassUpdateJob(QueryBuilder updateQueryBuilder, String entityClassName, Map<String, Object> filters) {
+        String massUpdateJobCode = ParamBeanFactory.getAppScopeInstance().getProperty("job.massUpdateJob.code", MASS_UPDATE_JOB_CODE);
+        JobInstance jobInstance = ofNullable(jobInstanceService.findByCode(massUpdateJobCode))
+                .orElseThrow(() -> new EntityDoesNotExistsException(JobInstance.class, massUpdateJobCode));
+        Map<String, Object> params = new HashMap<>();
+        params.put(MassUpdateJob.CF_MASS_UPDATE_CHUNK, 100000L);
+        params.put(UpdateStepExecutor.PARAM_UPDATE_QUERY, nativePersistenceService.getUpdateQuery(updateQueryBuilder, entityClassName, filters));
+        params.put(UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY, getSelectQuery(entityClassName, filters));
+        params.put(UpdateStepExecutor.PARAM_TABLE_ALIAS, "a");
+        params.put(UpdateStepExecutor.PARAM_NATIVE_QUERY, false);
+        jobInstance.setRunTimeValues(params);
+        jobExecutionService.executeJob(jobInstance, params, JobLauncherEnum.API);
+    }
+
+    /**
+     * Gets the select query
+     *
+     * @param entityClassName the entity class name
+     * @param filters         the filters
+     * @return the select query
+     */
+    private String getSelectQuery(String entityClassName, Map<String, Object> filters) {
+        String selectQuery = null;
+        if (filters != null && !filters.isEmpty()) {
+            PaginationConfiguration searchConfig = new PaginationConfiguration(filters);
+            searchConfig.setFetchFields(Arrays.asList("MIN(id)", "MAX(id)"));
+            selectQuery = nativePersistenceService.getQuery(entityClassName, searchConfig, null).getQueryAsString();
+            selectQuery = selectQuery.replaceAll("MIN\\(id\\)", "MIN(a.id)");
+            selectQuery = selectQuery.replaceAll("MAX\\(id\\)", "MAX(a.id)");
+        }
+        return selectQuery;
     }
 
     /**
@@ -205,19 +262,17 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
         filter.put("$operator", "OR");
         filter.put("ne ratedTransaction.status", RatedTransactionStatusEnum.BILLED.name());
         filter.put("ne ratedTransaction.invoiceLine.status", InvoiceLineStatusEnum.BILLED.name());
-        boolean result = Stream.of(filters.keySet().toArray())
-                .anyMatch(key -> {
+        Stream.of(filters.keySet().toArray())
+                .filter(key -> {
                     String keyObject = (String) key;
                     if (keyObject.matches("\\$filter[0-9]+$")) {
                         return filter.equals(filters.get(key));
                     }
                     return false;
-                });
-        if (!result) {
-            filters.put("$filter0101", filter);
-        }
+                }).forEach(key -> filters.remove(key));
         filter.put("inList status", Set.of(WalletOperationStatusEnum.OPEN.name(), WalletOperationStatusEnum.F_TO_RERATE.name(),
                 WalletOperationStatusEnum.REJECTED.name()));
+        filters.put("$filter0101", filter);
         return filters;
     }
 

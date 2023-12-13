@@ -40,13 +40,15 @@ public class MassUpdateJob extends Job {
 
 	private void initUpdateStepParams(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
 		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_CHUNK_SIZE,
-				(Long) getParamOrCFValue(jobInstance, MassUpdateJob.CF_MASS_UPDATE_CHUNK, 100000L));
+				getParamOrCFValue(jobInstance, MassUpdateJob.CF_MASS_UPDATE_CHUNK, 100000L));
 		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_UPDATE_QUERY,
-				(String)getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_UPDATE_QUERY));
+				getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_UPDATE_QUERY));
 		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY,
-				(String)getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY));
+				getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY));
 		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_TABLE_ALIAS,
-				(String)getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_TABLE_ALIAS));
+				getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_TABLE_ALIAS));
+		jobExecutionResult.addJobParam(UpdateStepExecutor.PARAM_NATIVE_QUERY,
+				getParamOrCFValue(jobInstance, UpdateStepExecutor.PARAM_NATIVE_QUERY));
 	}
 
 	@Override
@@ -81,6 +83,10 @@ public class MassUpdateJob extends Job {
 				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_READ_INTERVAL_QUERY,
 						resourceMessages.getString("jobExecution.massUpdate.limitQuery"), CustomFieldTypeEnum.TEXT_AREA,
 						"tab:Configuration:0;fieldGroup:Configuration:0;field:5", "", JOB_INSTANCE_MASS_UPDATE_JOB));
+		result.put(UpdateStepExecutor.PARAM_NATIVE_QUERY,
+				CustomFieldTemplateUtils.buildCF(UpdateStepExecutor.PARAM_NATIVE_QUERY,
+						resourceMessages.getString("jobExecution.massUpdate.isNativeQuery"), CustomFieldTypeEnum.BOOLEAN,
+						"tab:Configuration:0;fieldGroup:Configuration:0;field:6", "true", JOB_INSTANCE_MASS_UPDATE_JOB));
 		return result;
 	}
 }
