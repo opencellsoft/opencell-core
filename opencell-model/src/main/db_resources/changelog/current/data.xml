@@ -21594,7 +21594,7 @@ public class ImportJobNotification extends Script {
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="code" value="416011"></column>
+            <column name="code" value="416000000"></column>
             <column name="description" value="Doubtful receivable - payment plan"></column>
             <column name="chart_of_account_type" value="ASSETS"></column>
             <column name="chart_of_account_view_type" value="REGULAR"></column>
