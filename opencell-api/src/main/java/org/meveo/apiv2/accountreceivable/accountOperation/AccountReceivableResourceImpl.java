@@ -1,6 +1,7 @@
 package org.meveo.apiv2.accountreceivable.accountOperation;
 
 import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
+import static javax.ws.rs.core.Response.ok;
 import static org.meveo.api.dto.ActionStatusEnum.FAIL;
 import static org.meveo.api.MeveoApiErrorCodeEnum.DIFFERENT_CURRENCIES;
 
@@ -37,9 +38,6 @@ import org.meveo.model.accounting.SubAccountingPeriod;
 import org.meveo.model.accounting.SubAccountingPeriodStatusEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
-import org.meveo.model.payments.Payment;
-import org.meveo.model.payments.Refund;
-import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.accounting.impl.AccountingPeriodService;
 import org.meveo.service.accounting.impl.SubAccountingPeriodService;
@@ -259,5 +257,14 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
 
         return Response.status(Response.Status.OK).build();
 
+    }
+
+    @Override
+    public Response setLitigation(Long accountOperationId, LitigationInput litigationInput) {
+        final Long accountOperationID = accountOperationServiceApi.setLitigation(accountOperationId, litigationInput);
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"," +
+                        "\"message\":\"Account operation successfully updated\"},\"id\":" + accountOperationID + "}")
+                .build();
     }
 }

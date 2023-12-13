@@ -24,12 +24,14 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.AcountReceivable.AccountOperationAndSequence;
 import org.meveo.apiv2.AcountReceivable.CustomerAccount;
+import org.meveo.apiv2.AcountReceivable.LitigationInput;
 import org.meveo.apiv2.AcountReceivable.UnMatchingAccountOperationDetail;
 import org.meveo.apiv2.generic.exception.ConflictException;
 import org.meveo.apiv2.ordering.services.ApiService;
@@ -40,6 +42,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AccountOperationStatus;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.payments.impl.*;
 import org.meveo.service.securityDeposit.impl.SecurityDepositTransactionService;
 
@@ -49,7 +52,7 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
     protected ResourceBundle resourceMessages;
     
 	@Inject
-	private org.meveo.service.payments.impl.AccountOperationService accountOperationService;
+	private AccountOperationService accountOperationService;
 
 	@Inject
 	private CustomerAccountService customerAccountService;
@@ -62,6 +65,9 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 
 	@Inject
 	private SecurityDepositTransactionService securityDepositTransactionService;
+
+	@Inject
+	private RecordedInvoiceService recordedInvoiceService;
 
 	@Override
 	public List<AccountOperation> list(Long offset, Long limit, String sort, String orderBy, String filter) {
@@ -345,5 +351,20 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			customerAccount = customerAccountService.findByCode(customerAccountInput.getCode());
 		}
 		return customerAccount;
+	}
+
+	/**
+	 * @param accountOperationId recordedInvoice id.
+	 * @param litigationInput litigation input.
+	 * @return id of the updated recordedInvoice
+	 */
+	public Long setLitigation(Long accountOperationId, LitigationInput litigationInput) {
+		RecordedInvoice recordedInvoice = ofNullable(recordedInvoiceService.findById(accountOperationId))
+				.orElseThrow(() -> new NotFoundException("Account operation does not exits"));
+		try {
+			return recordedInvoiceService.setLitigation(recordedInvoice, litigationInput.getLitigationReason()).getId();
+		} catch (BusinessException exception) {
+			throw new BusinessApiException(exception.getMessage());
+		}
 	}
 }

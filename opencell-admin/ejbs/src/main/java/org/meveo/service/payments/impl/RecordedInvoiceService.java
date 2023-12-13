@@ -17,11 +17,15 @@
  */
 package org.meveo.service.payments.impl;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.DISPUTED;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
+import static org.meveo.model.payments.OperationCategoryEnum.DEBIT;
 import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
 
 import java.math.BigDecimal;
@@ -32,6 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -748,6 +753,47 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             log.info("Invoice with id {} was not found. Returning null.", invoiceId);
             return null;
         }
+    }
+
+    /**
+     * @param recordedInvoice recorded invoice.
+     * @param litigationReason litigation reason.
+     * @return id of the updated recordedInvoice
+     * @throws BusinessException business exception.
+     */
+    public RecordedInvoice setLitigation(RecordedInvoice recordedInvoice,
+                                         String litigationReason) throws BusinessException {
+        if (recordedInvoice != null) {
+            recordedInvoice = findById(recordedInvoice.getId());
+        }
+        Optional<String> validationResult = validateRecordInvoice(recordedInvoice);
+        if(validationResult.isPresent()) {
+            throw new BusinessException(validationResult.get());
+        }
+        recordedInvoice.setMatchingStatus(MatchingStatusEnum.I);
+        recordedInvoice.setLitigationReason(litigationReason);
+        recordedInvoice.getInvoice().setPaymentStatus(DISPUTED);
+        update(recordedInvoice);
+        return recordedInvoice;
+    }
+
+    private Optional<String> validateRecordInvoice(RecordedInvoice recordedInvoice) {
+        if (recordedInvoice == null) {
+            throw new BusinessException("Account operation not found");
+        }
+        if(!DEBIT.equals(recordedInvoice.getTransactionCategory())) {
+            return of("Account operation transaction category should be DEBIT");
+        }
+        if(recordedInvoice.getInvoice() == null) {
+            throw new BusinessException("No invoice associated to account operation");
+        }
+        if(!(PENDING.equals(recordedInvoice.getInvoice().getPaymentStatus()) ||
+                PPAID.equals(recordedInvoice.getInvoice().getPaymentStatus()) ||
+                UNPAID.equals(recordedInvoice.getInvoice().getPaymentStatus()) ||
+                DISPUTED.equals(recordedInvoice.getInvoice().getPaymentStatus()))) {
+            return of("Invoice payment status should be in (PENDING, PPAID, UNPAID, DISPUTED)");
+        }
+        return empty();
     }
 
 }

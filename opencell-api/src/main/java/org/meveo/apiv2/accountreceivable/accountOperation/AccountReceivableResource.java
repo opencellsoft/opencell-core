@@ -107,4 +107,19 @@ public interface AccountReceivableResource {
 					@ApiResponse(responseCode = "400", description = "Matching action is failed")
 			})
 	Response unMatchOperations(UnMatchingAccountOperation unMatchingAO);
+
+	/**
+	 * @param accountOperationId account operation to set litigation
+	 * @param litigationInput      litigation input
+	 * @return Response
+	 */
+	@PUT
+	@Path("/{id}/litigation")
+	@Operation(summary = "Set litigation matching status on an account operation",
+			description = "Set litigation matching status on an account operation",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "litigation successfully set"),
+					@ApiResponse(responseCode = "404", description = "Account operations don't exist")})
+	Response setLitigation(@PathParam("id") Long accountOperationId,
+						   @Parameter(description = "Litigation dto", required = true) LitigationInput litigationInput);
 }

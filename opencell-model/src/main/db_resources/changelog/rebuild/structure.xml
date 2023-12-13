@@ -2173,7 +2173,8 @@
             <column name="transactional_payment_fees" type="numeric(23, 12)" />
 			<column name="error_detail" type="varchar(2000)" />
 			<column name="refunded_payment_id" type="bigint" />
-		</createTable>
+            <column name="litigation_reason" type="varchar(2000)" />
+        </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
         <createTable tableName="ar_action_dunning">
@@ -21162,6 +21163,7 @@
     <changeSet id="#INTRD-19614_20231127" author="AdilElJaouhari" />
     <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi" />
     <changeSet id="#INTRD-20056_finance_settings" author="a.rouaguebe" />
+    <changeSet id="#INTRD-19574_20230712" author="zbariki" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
