@@ -2,7 +2,6 @@ package org.meveo.admin.job;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -35,7 +34,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 
 	private static final long serialVersionUID = -4097694568061727769L;
 	private static final String mainViewName = "main_rerate_tree";
-	private static final String billedViewName = "rerate_billed_IL";
+	private static final String billedViewName = "rerate_billed_il";
 	private static final String triggeredViewName = "triggered_rerate_tree";
 
 	@Inject
@@ -285,7 +284,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	    		"	SET amount_without_tax = il.amount_without_tax + rr." + prefix + "rt_amount_without_tax, amount_with_tax = il.amount_with_tax + rr." + prefix + "rt_amount_with_tax," +
 	    		"		quantity = il.quantity + rr." + prefix + "rt_quantity, amount_tax = il.amount_tax + rr." + prefix + "rt_amount_tax, updated = CURRENT_TIMESTAMP " +
 	            "	FROM " + viewName + " rr " +
-	            "		WHERE rr.id NOT IN (SELECT id FROM rerate_billed_IL) " +
+	            "		WHERE rr.id NOT IN (SELECT id FROM "+billedViewName+") " +
 	            "		AND rr." + prefix + "il_id IS NOT NULL " +
 	            "		AND il.id = rr." + prefix + "il_id " +
 	            "		AND rr.id BETWEEN :min AND :max ";
@@ -302,6 +301,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void runInNewTransaction(long min, long max, String updateQuery, String secondUpdateQuery) {
+		emWrapper.getEntityManager().createNativeQuery(updateQuery).setParameter("min", min).setParameter("max", max).executeUpdate();
 		if(secondUpdateQuery!=null) {
 			emWrapper.getEntityManager().createNativeQuery(secondUpdateQuery).setParameter("min", min).setParameter("max", max).executeUpdate();
 		}
