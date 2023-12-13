@@ -18,13 +18,7 @@
 
 package org.meveo.api;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -35,16 +29,26 @@ import org.meveo.api.dto.SecuredEntityDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.security.SecuredBusinessEntityService;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * API class for managing roles
@@ -301,4 +305,61 @@ public class RoleApi extends BaseApi {
 
         return result;
     }
+	
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void cleanAllAccessibleEntities(Long id){
+		Role role = roleService.findById(id);
+		if(role == null)
+			throw new EntityDoesNotExistsException(Role.class, id);
+		var securedEntity = securedBusinessEntityService.getSecuredEntitiesForRole(role.getName());
+		if(org.apache.commons.collections.CollectionUtils.isNotEmpty(securedEntity))
+			securedBusinessEntityService.remove(securedEntity.stream().map(SecuredEntity::getId).collect(Collectors.toSet()));
+	}
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void removeAccessibleEntity(Long roleId, Long securedEntityId){
+		Role role = roleService.findById(roleId);
+		if(role == null)
+			throw new EntityDoesNotExistsException(Role.class, roleId);
+		if(securedEntityId == null) {
+			throw new BusinessApiException("The Id is mandatory");
+		}
+		SecuredEntity securedEntity = securedBusinessEntityService.findById(securedEntityId);
+		if(securedEntity == null) {
+			throw new EntityDoesNotExistsException(SecuredEntity.class, securedEntityId);
+		}
+		if(!securedEntity.getRoleName().equalsIgnoreCase(role.getName())) {
+			throw new BusinessApiException("Secured Entity : " + securedEntity.getEntityCode() + " doesn't attached to role : " + role.getName());
+		}
+		securedBusinessEntityService.remove(securedEntity);
+	}
+	
+	
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void addAccessibleEntity(Long roleId,  SecuredEntityDto securedEntityDto){
+		Role role = roleService.findById(roleId);
+		if(role == null)
+			throw new EntityDoesNotExistsException(Role.class, roleId);
+		List<SecuredEntity> securedEntities =  extractSecuredEntities(List.of(securedEntityDto));
+		securedBusinessEntityService.addSecuredEntityForRole(securedEntities.get(0), role.getName());
+	}
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void addAccessibleEntities(Long roleId, List<SecuredEntityDto> securedEntitiesDtos){
+		if(CollectionUtils.isNotEmpty(securedEntitiesDtos)){
+			List<SecuredEntity> securedEntities =  extractSecuredEntities(securedEntitiesDtos);
+			Role role = roleService.findById(roleId);
+			if(role == null)
+				throw new EntityDoesNotExistsException(Role.class, roleId);
+			securedEntities.forEach(securedEntity -> securedBusinessEntityService.addSecuredEntityForRole(securedEntity, role.getName()));
+		}
+	}
+	
+	
 }
