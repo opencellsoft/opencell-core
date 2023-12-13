@@ -32,6 +32,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.meveo.admin.exception.BusinessException;
@@ -50,6 +51,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
@@ -447,4 +449,55 @@ public class UserApi extends BaseApi {
         user.getUserRoles().addAll(roles);
         userService.update(user);
     }
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void cleanAllAccessibleEntities(Long id){
+		User user = userService.findById(id);
+		if(user == null)
+			throw new EntityDoesNotExistsException(User.class, id);
+		var securedEntity = securedBusinessEntityService.getSecuredEntitiesForUser(user.getUserName());
+		if(CollectionUtils.isNotEmpty(securedEntity))
+			securedBusinessEntityService.remove(securedEntity.stream().map(SecuredEntity::getId).collect(Collectors.toSet()));
+	}
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void removeAccessibleEntity(Long id, Long securedEntityId){
+		if(securedEntityId == null){
+			missingParameters.add("username");
+		}
+		handleMissingParameters();
+		User user = userService.findById(id);
+		if(user == null)
+			throw new EntityDoesNotExistsException(User.class, id);
+		SecuredEntity securedEntity = securedBusinessEntityService.findById(securedEntityId);
+		if(securedEntity == null){
+			throw new EntityDoesNotExistsException(SecuredEntity.class, securedEntityId);
+		}
+		securedBusinessEntityService.remove(securedEntity);
+	}
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void addAccessibleEntity(Long id,  SecuredEntityDto securedEntity){
+		User user = userService.findById(id);
+		if(user == null)
+			throw new EntityDoesNotExistsException(User.class, id);
+		List<SecuredEntity> securedEntities =  extractSecuredEntities(List.of(securedEntity));
+		securedBusinessEntityService.addSecuredEntityForUser(securedEntities.get(0), user.getUserName());
+	}
+	
+	@JpaAmpNewTx
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void addAccessibleEntities(Long id, List<SecuredEntityDto> securedEntitiesDtos){
+		if(CollectionUtils.isNotEmpty(securedEntitiesDtos)){
+			List<SecuredEntity> securedEntities =  extractSecuredEntities(securedEntitiesDtos);
+			User user = userService.findById(id);
+			if(user == null)
+				throw new EntityDoesNotExistsException(User.class, id);
+			securedEntities.forEach(securedEntity -> securedBusinessEntityService.addSecuredEntityForUser(securedEntity, user.getUserName()));
+		}
+	}
+
 }
