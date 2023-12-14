@@ -483,9 +483,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
             }
         }
 
-        if (isToTriggerCollectionPlanLevelsJob) {
+        // Commented to avoid performance issues
+        /*if (isToTriggerCollectionPlanLevelsJob) {
             invoiceService.triggersCollectionPlanLevelsJob();
-        }
+        }*/
 
         matchingCode.setMatchingAmountDebit(amount);
         matchingCode.setMatchingAmountCredit(amount);
