@@ -22,7 +22,7 @@ package org.meveo.model.payments;
 
 public enum CreditCardTypeEnum {
 
-    VISA(1), MASTERCARD(2), AMERICAN_EXPRESS(3), CB(130);
+    VISA(1), MASTERCARD(3), AMERICAN_EXPRESS(2), CB(130);
 
     private Integer id;
 
