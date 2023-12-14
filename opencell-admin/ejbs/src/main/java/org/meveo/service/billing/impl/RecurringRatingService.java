@@ -439,17 +439,8 @@ public class RecurringRatingService extends RatingService implements Serializabl
                     }
                     // Apply prorating if needed
                     if (prorate && !isVirtual) {
-                        BigDecimal prorata = DateUtils.calculateProrataRatio(effectiveChargeFromDate, effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, false);
-                        if (prorata == null) {
-                            throw new RatingException("Failed to calculate prorating for charge id=" + chargeInstance.getId() + " : periodFrom=" + currentPeriodFromDate + ", periodTo=" + currentPeriodToDate
-                                    + ", proratedFrom=" + effectiveChargeFromDate + ", proratedTo=" + effectiveChargeToDate);
-                        }
-
-                        inputQuantity = inputQuantity.multiply(prorata)
-                                .setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-                        if(effectiveChargeFromDate.after(effectiveChargeToDate)) {
-                            inputQuantity = inputQuantity.negate();
-                        }
+                        inputQuantity = computeProrate(chargeInstance, effectiveChargeFromDate,
+                                effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, inputQuantity);
                     }
 
                     if (chargeMode.isReimbursement()) {
@@ -474,6 +465,14 @@ public class RecurringRatingService extends RatingService implements Serializabl
                         // Any operation past the termination date is invoiced with termination date
                         if (chargeInstance.getTerminationDate() != null && operationDate.after(chargeInstance.getTerminationDate())) {
                             operationDate = chargeInstance.getTerminationDate();
+                        }
+
+                        if(chargeInstance != null
+                                && chargeInstance.getSubscription() != null
+                                && chargeInstance.getSubscription().getSubscribedTillDate() != null) {
+                            effectiveChargeFromDate = chargeInstance.getSubscription().getSubscriptionDate();
+                            inputQuantity = computeProrate(chargeInstance, effectiveChargeFromDate,
+                                    effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, inputQuantity);
                         }
 
                         RatingResult localRatingResult = rateChargeAndInstantiateTriggeredEDRs(chargeInstance, operationDate, inputQuantity, null,
@@ -555,6 +554,24 @@ public class RecurringRatingService extends RatingService implements Serializabl
         }
 
         return ratingResult;
+    }
+
+    private BigDecimal computeProrate(RecurringChargeInstance chargeInstance,
+                                      Date effectiveChargeFromDate, Date effectiveChargeToDate,
+                                      Date currentPeriodFromDate, Date currentPeriodToDate, BigDecimal inputQuantity) {
+        BigDecimal prorata = DateUtils.calculateProrataRatio(effectiveChargeFromDate,
+                effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, false);
+        if (prorata == null) {
+            throw new RatingException("Failed to calculate prorating for charge id=" + chargeInstance.getId()
+                    + " : periodFrom=" + currentPeriodFromDate + ", periodTo=" + currentPeriodToDate
+                    + ", proratedFrom=" + effectiveChargeFromDate + ", proratedTo=" + effectiveChargeToDate);
+        }
+        inputQuantity = inputQuantity.multiply(prorata)
+                .setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        if(effectiveChargeFromDate.after(effectiveChargeToDate)) {
+            inputQuantity = inputQuantity.negate();
+        }
+        return inputQuantity;
     }
 
     private boolean isAlreadyInvoiced(WalletOperation walletOperation) {
