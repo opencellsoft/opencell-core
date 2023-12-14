@@ -639,7 +639,6 @@
             <column name="description" value="Rejected payment - check" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-6" />
@@ -652,7 +651,6 @@
             <column name="description" value="Rejected payment - direct debit" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-7" />
@@ -665,7 +663,6 @@
             <column name="description" value="Rejected payment - TIP" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-8" />
@@ -704,7 +701,6 @@
             <column name="description" value="Refund - check" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-11" />
@@ -717,7 +713,6 @@
             <column name="description" value="Refund - direct debit" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-18" />
@@ -730,7 +725,6 @@
             <column name="description" value="Expense - payment rounding" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-3" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-19" />
@@ -743,7 +737,6 @@
             <column name="description" value="Income - payment rounding" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-3" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-20" />
@@ -770,7 +763,6 @@
             <column name="description" value="Fee - late payment" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-3" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
         </insert>
         <update tableName="ar_occ_template">            
             <column name="accounting_code_id" valueNumeric="-6" />
@@ -791,7 +783,6 @@
             <column name="description" value="Refund - card" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-31" />
@@ -805,7 +796,6 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-32" />
@@ -819,7 +809,6 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-33" />
@@ -833,7 +822,6 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-34" />
@@ -847,7 +835,6 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-35" />
@@ -860,7 +847,6 @@
             <column name="description" value="Rejected payment - card" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-36" />
@@ -873,7 +859,6 @@
             <column name="description" value="Rejected refund - card" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-37" />
@@ -886,7 +871,6 @@
             <column name="description" value="Rejected refund - direct debit" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-38" />
@@ -900,7 +884,6 @@
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-1" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-39" />
@@ -914,7 +897,6 @@
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-1" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
         </insert>
         <update tableName="ar_occ_template">
             <column name="accounting_code_id" valueNumeric="-6" />
@@ -934,7 +916,6 @@
             <column name="description" value="Refund - TIP" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-42" />
@@ -946,7 +927,6 @@
             <column name="description" value="Expense - bad debt write-off" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-3" />
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-43" />
@@ -973,7 +953,6 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-45" />
@@ -986,7 +965,6 @@
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>    
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-46" />
@@ -4523,7 +4501,6 @@
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-2" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-52" />
@@ -4537,7 +4514,6 @@
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-2" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-53" />
@@ -4551,7 +4527,6 @@
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
             <column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
 		</insert>
 		<insert tableName="billing_seq_invoice">
 			<column name="id" valueNumeric="-6" />
@@ -6490,6 +6465,117 @@
             <column name="chart_of_account_type" value="ASSETS"></column>
             <column name="chart_of_account_view_type" value="REGULAR"></column>
         </insert>
+    </changeSet>
+
+    	<changeSet id="INTRD-19853_20231213" author="zelmeliani">
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='CRD_SD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='CRD_TRS'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='DBT_TRS'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='DEB_SD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='EXP_WRT'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
+            <where>code='INV_DIS'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
+            <where>code='INV_REB'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
+            <where>code='INV_FEE'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_CHK'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_CRD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_DDT'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_SD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_TIP'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_CHK'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_CRD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_DDT'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_RCR'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_RDD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_TIP'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='RND_EXP'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='RND_INC'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='TAX_VAT_00'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='TAX_VAT_05'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='TAX_VAT_10'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='TAX_VAT_20'</where>
+        </update>
+        <update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='PPL_CREATION'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='PPL_INSTALLMENT'</where>
+        </update>
     </changeSet>
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
