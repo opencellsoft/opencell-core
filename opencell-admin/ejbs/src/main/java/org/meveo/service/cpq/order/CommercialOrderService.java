@@ -226,6 +226,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setOrderOffer(offer);
 				subscription.setSubscriptionRenewal(offer.getOfferTemplate() != null ? offer.getOfferTemplate().getSubscriptionRenewal().copy() : null);
 				subscription.setSalesPersonName(order.getSalesPersonName());
+				if(offer.getOfferTemplate() != null) {
+					subscription.setAutoEndOfEngagement(offer.getOfferTemplate().getAutoEndOfEngagement());
+				}
 				if(offer.getTerminationDate() != null) {
 					subscription.setTerminationDate(offer.getTerminationDate());
 					subscription.setSubscribedTillDate(offer.getTerminationDate());
