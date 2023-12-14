@@ -737,13 +737,14 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-19" />
             <column name="version" valueNumeric="0" />
+
             <column name="created" valueDate="2015-03-19 00:04:20.456" />
-            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="758100000" />
+            <column name="accounting_code_id" valueNumeric="-5" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="RND_INC" />
             <column name="description" value="Income - payment rounding" />
             <column name="occ_category" value="CREDIT" />
-            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <column name="journal_id" value="-3" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-20" />
