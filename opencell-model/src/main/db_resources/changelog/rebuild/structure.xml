@@ -18275,29 +18275,44 @@
             <sql>create index idx_subscription_id_charge_type on ${db.schema.adapted}billing_charge_instance using btree (subscription_id, charge_type)</sql>
     </changeSet>
 
-    <changeSet id="#INTRD-19124_wo_partitioning_fct" author="a.rouaguebe" dbms="postgresql">
+    <changeSet id="#INTRD-19124_wo_partitioning_fct" author="a.rouaguebe">
+        <createSequence sequenceName="tech_wo_partition_log_seq" startValue="1" />
+        <createSequence sequenceName="tech_rt_partition_log_seq" startValue="1" />
+        <createSequence sequenceName="tech_edr_partition_log_seq" startValue="1" />
         <createTable tableName="tech_wo_partition_log">
+            <column name="id" type="bigint" defaultValueSequenceNext="tech_wo_partition_log_seq">
+                <constraints nullable="false" primaryKeyName="tech_wo_partition_log_pk" />
+            </column>
             <column name="partition_name" type="varchar(255)">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="tech_wo_partition_log_pk" />
+                <constraints nullable="false" />
             </column>
             <column name="range_from" type="datetime" />
             <column name="range_to" type="datetime" />
+            <column name="purge_date" type="datetime" />
         </createTable>
         <createTable tableName="tech_rt_partition_log">
-            <column name="partition_name" type="varchar(255)">
+            <column name="id" type="bigint" defaultValueSequenceNext="tech_rt_partition_log_seq">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="tech_rt_partition_log_pk" />
             </column>
-            <column name="range_from" type="datetime" />
-            <column name="range_to" type="datetime" />
-        </createTable>
-        <createTable tableName="tech_edr_partition_log">
             <column name="partition_name" type="varchar(255)">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="tech_edr_partition_log_pk" />
+                <constraints nullable="false" />
             </column>
             <column name="range_from" type="datetime" />
             <column name="range_to" type="datetime" />
+            <column name="purge_date" type="datetime" />
         </createTable>
-        <sql splitStatements="false" stripComments="false"><![CDATA[
+        <createTable tableName="tech_edr_partition_log">
+            <column name="id" type="bigint" defaultValueSequenceNext="tech_edr_partition_log_seq">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="tech_wedrpartition_log_pk" />
+            </column>
+            <column name="partition_name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="range_from" type="datetime" />
+            <column name="range_to" type="datetime" />
+            <column name="purge_date" type="datetime" />
+        </createTable>
+        <sql splitStatements="false" stripComments="false" dbms="postgresql"><![CDATA[
             CREATE OR REPLACE FUNCTION create_new_wo_partition(
                 p_source_table    text,
                 p_partition_name  text,
@@ -18333,7 +18348,7 @@
                                p_range_from,
                                l_partition_interval);
 
-                execute format('insert into tech_wo_partition_log values (%L, %L, (to_date(%L, ''YYYY-MM-DD'') + %s * interval ''1 month''))',
+                execute format('insert into tech_wo_partition_log (partition_name, range_from, range_to) values (%L, %L, (to_date(%L, ''YYYY-MM-DD'') + %s * interval ''1 month''))',
                                p_partition_name,
                                p_range_from,
                                p_range_from,
@@ -18341,7 +18356,7 @@
             END;
             $$;
             ]]></sql>
-        <sql splitStatements="false" stripComments="false"><![CDATA[
+        <sql splitStatements="false" stripComments="false" dbms="postgresql"><![CDATA[
             CREATE OR REPLACE FUNCTION create_new_rt_partition(
                 p_source_table    text,
                 p_partition_name  text,
@@ -18377,7 +18392,7 @@
                                p_range_from,
                                l_partition_interval);
 
-                execute format('insert into tech_rt_partition_log values (%L, %L, (to_date(%L, ''YYYY-MM-DD'') + %s * interval ''1 month''))',
+                execute format('insert into tech_rt_partition_log (partition_name, range_from, range_to) values (%L, %L, (to_date(%L, ''YYYY-MM-DD'') + %s * interval ''1 month''))',
                                p_partition_name,
                                p_range_from,
                                p_range_from,
@@ -18385,7 +18400,7 @@
             END;
             $$;
             ]]></sql>
-        <sql splitStatements="false" stripComments="false"><![CDATA[
+        <sql splitStatements="false" stripComments="false" dbms="postgresql"><![CDATA[
             CREATE OR REPLACE FUNCTION create_new_edr_partition(
                 p_source_table    text,
                 p_partition_name  text,
@@ -18421,7 +18436,7 @@
                                p_range_from,
                                l_partition_interval);
 
-                execute format('insert into tech_edr_partition_log values (%L, %L, (to_date(%L, ''YYYY-MM-DD'') + %s * interval ''1 month''))',
+                execute format('insert into tech_edr_partition_log (partition_name, range_from, range_to) values (%L, %L, (to_date(%L, ''YYYY-MM-DD'') + %s * interval ''1 month''))',
                                p_partition_name,
                                p_range_from,
                                p_range_from,
