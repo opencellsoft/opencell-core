@@ -136,7 +136,10 @@ public class MediationFileProcessing {
 				    result.registerError("file=" + fileName + ", line=" + (cdr != null ? cdr.getLine() : "") + ": " + cdr.getRejectReason());
 				    cdr.setStatus(CDRStatusEnum.ERROR);
 				    createOrUpdateCdr(cdr);
-				    
+					synchronized (rejectFileWriter) {
+						rejectFileWriter.println(cdr.getLine() + "\t" + cdr.getRejectReason());
+					}
+
 				}
 	            
 
