@@ -21737,7 +21737,7 @@ public class ImportJobNotification extends Script {
 		</delete>
 	</changeSet>
 
-	<changeSet id="#INTRD-18995_20231107-c" author="zelmeliani">
+	<changeSet id="#INTRD-18995_20231107" author="zelmeliani">
 		<update tableName="crm_seller">
             <column name="trading_country_id" valueComputed="(select id from billing_trading_country where code = 'US')" />
 			<column name="legal_entity_type_id" valueComputed="(select id from adm_title where code = 'SAS')" />
@@ -21766,7 +21766,8 @@ public class ImportJobNotification extends Script {
             <where>code = 'QUOTE'</where>
         </update>
     </changeSet>
-	<changeSet id="INTRD-19862" author="zelmeliani">
+	
+	<changeSet id="19862_20231214-19862" author="zelmeliani">
         <update tableName="ar_occ_template">    
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
             <column name="account_code_client_side" value="758100000" />

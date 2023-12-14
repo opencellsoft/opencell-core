@@ -6473,7 +6473,7 @@
     <changeSet id="#INTRD-16859_20230626" author="aeljaouhari" />
     <changeSet id="#INTRD-18527_20231002" author="aeljaouhari" />
     
-    <changeSet id="INTRD-19862" author="zelmeliani">
+    <changeSet id="#INTRD-19862_20231214" author="zelmeliani">
         <update tableName="ar_occ_template">    
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
             <column name="account_code_client_side" value="758100000" />
