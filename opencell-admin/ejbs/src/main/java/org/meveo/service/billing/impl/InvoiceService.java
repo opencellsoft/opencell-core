@@ -7013,13 +7013,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         List<InvoiceLine> invoiceLines = new ArrayList<>();
+	    if (invoice.getInvoiceLines() != null) {
+		    invoice.getInvoiceLines().size();
+	    }
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
         }
-        else if (invoice.getInvoiceLines() != null) {
-            invoice.getInvoiceLines().size();
+        else {
             invoiceLines.addAll(invoice.getInvoiceLines());
         }
+		
+		if(invoice.getLinkedInvoices() != null) {
+			invoice.getLinkedInvoices().size();
+		}
 
         detach(invoice);
 
