@@ -264,19 +264,21 @@ public class RecurringRatingService extends RatingService implements Serializabl
                     applyChargeToDate = chargeInstance.getTerminationDate() != null ? chargeInstance.getTerminationDate() : prorateLastPeriodDate;
                     prorateLastPeriod = true;
                 }
-                Date end = getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
-                if(end != null && chargeInstance.getTerminationDate() != null && chargeInstance.getTerminationDate().after(end)) {
-                    WalletOperation walletOperation = chargeInstance.getWalletOperations().get(chargeInstance.getWalletOperations().size() - 1);
-                    while (chargeInstance.getTerminationDate().after(end)) {
-                        Date startDate = getRecurringPeriodStartDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
-                        if (walletOperation.getRatedTransaction() != null
-                                && walletOperation.getRatedTransaction().getStatus().equals(RatedTransactionStatusEnum.BILLED)
-                                && walletOperation.getStartDate().compareTo(startDate) == 0) {
-                            startDate = walletOperation.getEndDate();
+                if(chargeInstance.getSubscription().getSubscribedTillDate() != null) {
+                    Date end = getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
+                    if (end != null && chargeInstance.getTerminationDate() != null && chargeInstance.getTerminationDate().after(end)) {
+                        WalletOperation walletOperation = chargeInstance.getWalletOperations().get(chargeInstance.getWalletOperations().size() - 1);
+                        while (chargeInstance.getTerminationDate().after(end)) {
+                            Date startDate = getRecurringPeriodStartDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
+                            if (walletOperation.getRatedTransaction() != null
+                                    && walletOperation.getRatedTransaction().getStatus().equals(RatedTransactionStatusEnum.BILLED)
+                                    && walletOperation.getStartDate().compareTo(startDate) == 0) {
+                                startDate = walletOperation.getEndDate();
+                            }
+                            DatePeriod datePeriod = new DatePeriod(startDate, end);
+                            end = chargeInstance.getCalendar().nextCalendarDate(end);
+                            periods.add(datePeriod);
                         }
-                        DatePeriod datePeriod = new DatePeriod(startDate, end);
-                        end = chargeInstance.getCalendar().nextCalendarDate(end);
-                        periods.add(datePeriod);
                     }
                 }
             }
