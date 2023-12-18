@@ -164,6 +164,10 @@ public class CustomFieldDto {
      */
     private String fields;
 
+    private Boolean applicableOnEl;
+
+    private String applicableOnElExpression;
+
     /**
      * Instantiates a new custom field dto.
      */
@@ -734,5 +738,21 @@ public class CustomFieldDto {
 
     public void setUrlReferenceValue(UrlReferenceDto urlReferenceValue) {
         this.urlReferenceValue = urlReferenceValue;
+    }
+
+    public Boolean getApplicableOnEl() {
+        return applicableOnEl;
+    }
+
+    public void setApplicableOnEl(Boolean applicableOnEl) {
+        this.applicableOnEl = applicableOnEl;
+    }
+
+    public String getApplicableOnElExpression() {
+        return applicableOnElExpression;
+    }
+
+    public void setApplicableOnElExpression(String applicableOnElExpression) {
+        this.applicableOnElExpression = applicableOnElExpression;
     }
 }

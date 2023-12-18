@@ -18,6 +18,7 @@
 package org.meveo.service.admin.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,7 +68,10 @@ public class UserService extends PersistenceService<User> {
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
     public User update(User user) throws ElementNotFoundException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
-        keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
+	    String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
+		if(lUserManagementSource.equalsIgnoreCase("KC")){
+			keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
+		}
         if(user.getId() != null) {
             return super.update(user);
         } else {
@@ -322,5 +326,21 @@ public class UserService extends PersistenceService<User> {
         if(pKeycloakUser.getUuid() == null && pDbUser.getUuid() != null && !pDbUser.getUuid().isEmpty()) {
             pKeycloakUser.setUuid(pDbUser.getUuid());
         }
+    }
+
+    public String getUserAttributeValue(String username, String attributeName) {
+        UserRepresentation userRepresentation = getUserRepresentationByUsername(username);
+        if (userRepresentation != null) {
+            Map<String, List<String>> keycloakAttributes = userRepresentation.getAttributes();
+
+            if (keycloakAttributes != null && !keycloakAttributes.isEmpty()) {
+                for (Map.Entry<String, List<String>> entry : keycloakAttributes.entrySet()) {
+                    if (entry.getKey().equalsIgnoreCase(attributeName)) {
+                        return String.join(", ", entry.getValue());
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

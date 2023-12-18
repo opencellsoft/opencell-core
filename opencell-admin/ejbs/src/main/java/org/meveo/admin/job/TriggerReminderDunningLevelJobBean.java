@@ -1,6 +1,7 @@
 package org.meveo.admin.job;
 
 import static java.util.Arrays.asList;
+import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
 import static javax.ejb.TransactionAttributeType.REQUIRED;
 import static org.meveo.model.dunning.DunningLevelInstanceStatusEnum.DONE;
@@ -10,6 +11,7 @@ import static org.meveo.model.payments.ActionModeEnum.AUTOMATIC;
 import static org.meveo.model.payments.ActionTypeEnum.SCRIPT;
 import static org.meveo.model.payments.ActionTypeEnum.SEND_NOTIFICATION;
 import static org.meveo.model.shared.DateUtils.addDaysToDate;
+import static org.meveo.model.shared.DateUtils.daysBetween;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
@@ -20,6 +22,7 @@ import org.meveo.model.dunning.*;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
@@ -75,16 +78,17 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
             int numberOFAllInvoicesProcessed = 0;
             for (DunningPolicy policy : policies) {
                 DunningCollectionPlan dunningCollectionPlan = collectionPlanService.findByPolicy(policy);
+                boolean cpProcessed = false;
                 for (DunningPolicyLevel policyLevel : policy.getDunningLevels()) {
                     if (policyLevel.getDunningLevel() != null && policyLevel.getDunningLevel().isReminder()) {
-                        List<Invoice> invoices = policyService.findEligibleInvoicesForPolicy(policy);
-                        processInvoices(invoices, policyLevel.getDunningLevel(), policyLevel, dunningCollectionPlan);
+                        List<Invoice> invoices = policyService.findEligibleInvoicesToTriggerReminder(policy);
+                        cpProcessed = processInvoices(invoices, policyLevel.getDunningLevel(), policyLevel, dunningCollectionPlan);
                         jobExecutionResult.setNbItemsToProcess(jobExecutionResult.getNbItemsToProcess() + invoices.size());
                         numberOFAllInvoicesProcessed += invoices.size();
                     }
                 }
 
-                if(dunningCollectionPlan != null) {
+                if(dunningCollectionPlan != null && cpProcessed) {
                     dunningCollectionPlan.setLastActionDate(new Date());
                     collectionPlanService.update(dunningCollectionPlan);
                 }
@@ -95,17 +99,20 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
         }
     }
 
-    private void processInvoices(List<Invoice> invoices, DunningLevel reminderLevel, DunningPolicyLevel policyLevel, DunningCollectionPlan dunningCollectionPlan) {
+    private boolean processInvoices(List<Invoice> invoices, DunningLevel reminderLevel, DunningPolicyLevel policyLevel, DunningCollectionPlan dunningCollectionPlan) {
         Date today = new Date();
+        boolean processed = false;
         reminderLevel = levelService.findById(reminderLevel.getId(), asList("dunningActions"));
         for (Invoice invoice : invoices) {
             Date dateToCompare = addDaysToDate(invoice.getDueDate(), reminderLevel.getDaysOverdue());
             if (simpleDateFormat.format(dateToCompare).equals(simpleDateFormat.format(today)) && !invoice.isReminderLevelTriggered()) {
-                launchActions(reminderLevel.getDunningActions(), invoice, dunningCollectionPlan);
+                launchActions(invoice, dunningCollectionPlan, reminderLevel);
                 markInvoiceAsReminderAlreadySent(invoice);
                 createLevelInstance(policyLevel);
+                processed = true;
             }
         }
+        return processed;
     }
 
     private void markInvoiceAsReminderAlreadySent(Invoice invoice) {
@@ -113,20 +120,39 @@ public class TriggerReminderDunningLevelJobBean extends BaseJobBean {
         invoiceService.update(invoice);
     }
 
-    private void launchActions(List<DunningAction> actions, Invoice invoice, DunningCollectionPlan dunningCollectionPlan) {
-        for (DunningAction action : actions) {
+    private void launchActions(Invoice invoice, DunningCollectionPlan dunningCollectionPlan, DunningLevel reminderLevel) {
+        DunningLevelInstance levelInstance =
+                dunningCollectionPlan.getDunningLevelInstances().stream()
+                        .filter(level -> level.getDunningLevel().getId().equals(reminderLevel.getId()))
+                        .findFirst().orElse(null);
+        for (DunningActionInstance action : levelInstance.getActions()) {
             if (action.getActionMode().equals(AUTOMATIC)) {
-                if (action.getActionType().equals(SCRIPT)) {
-                    if (action.getScriptInstance() != null) {
-                        scriptInstanceService.execute(action.getScriptInstance().getCode(), new HashMap<>());
+                if (action.getActionType().equals(SCRIPT) || action.getActionType().equals(SEND_NOTIFICATION)) {
+                    if (action.getActionType().equals(SCRIPT)) {
+                        ScriptInstance scriptInstance = action.getDunningAction().getScriptInstance();
+                        if (scriptInstance != null) {
+                            scriptInstanceService.execute(scriptInstance.getCode(), new HashMap<>());
+                        }
                     }
-                }
-                if (action.getActionType().equals(SEND_NOTIFICATION)) {
-                    if (action.getActionChannel().equals(EMAIL) || action.getActionChannel().equals(LETTER)) {
-                        sendReminderEmail(action.getActionNotificationTemplate(), invoice, dunningCollectionPlan);
+                    if (action.getActionType().equals(SEND_NOTIFICATION)) {
+                        if (action.getDunningAction().getActionChannel().equals(EMAIL)
+                                || action.getDunningAction().getActionChannel().equals(LETTER)) {
+                            sendReminderEmail(action.getDunningAction().getActionNotificationTemplate(), invoice, dunningCollectionPlan);
+                        }
                     }
+                    action.setActionStatus(DunningActionInstanceStatusEnum.DONE);
+                    dunningCollectionPlan.setLastAction(action.getActionType().toString());
+                    dunningCollectionPlan.setLastActionDate(new Date());
+                    dunningCollectionPlan.setDaysOpen(Math.abs((int) daysBetween(new Date(), dunningCollectionPlan.getStartDate())));
                 }
             }
+            List<DunningPolicyLevel> levels = dunningCollectionPlan.getRelatedPolicy().getDunningLevels();
+            levels.sort(comparing(DunningPolicyLevel::getSequence));
+            List<DunningAction> nextLevelActions = levels.get(1).getDunningLevel().getDunningActions();
+            dunningCollectionPlan.setNextAction(nextLevelActions != null && !nextLevelActions.isEmpty()
+                    ? nextLevelActions.get(0).getActionType().toString() : null);
+            dunningCollectionPlan.setNextActionDate(nextLevelActions != null && !nextLevelActions.isEmpty()
+                    ? addDaysToDate(dunningCollectionPlan.getStartDate(), dunningCollectionPlan.getDaysOpen()) : null);
         }
     }
 

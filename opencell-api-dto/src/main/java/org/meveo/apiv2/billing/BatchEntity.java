@@ -6,7 +6,6 @@ import org.immutables.value.Value;
 import org.meveo.apiv2.models.Resource;
 
 import javax.annotation.Nullable;
-import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
@@ -22,9 +21,9 @@ import java.util.Map;
 @JsonDeserialize(as = ImmutableBatchEntity.class)
 public interface BatchEntity extends Resource {
 
+    @Nullable
     @Schema(description = "An optional text for user to input a customized description")
-    @NotNull
-    String getCode();
+    String getDescription();
 
     @NotNull
     @Schema(description = "The job template that can process the batch.\n" +

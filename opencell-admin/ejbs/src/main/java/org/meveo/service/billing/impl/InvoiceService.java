@@ -1437,6 +1437,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck, boolean save) {
     	invoice = invoiceService.refreshOrRetrieve(invoice);
+        if (invoice.getStatus() != InvoiceStatusEnum.VALIDATED) {
+            invoice.setStatus(InvoiceStatusEnum.DRAFT);
+        }
         if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
                 (invoice.getInvoiceType().getInvoiceValidationScript() != null
                         || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
@@ -1501,6 +1504,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 				ScriptInterface validationRuleScript = injectScriptParameters(methodContext, validationRule);
 				validationRuleScript.execute(methodContext);
 				validationResult = methodContext.get(Script.INVOICE_VALIDATION_STATUS);
+				invoice.setRejectReason((String) methodContext.get(Script.INVOICE_VALIDATION_REASON));
 			} else if (validationRule.getType() == ValidationRuleTypeEnum.EXPRESSION_LANGUAGE) {
 				validationResult = evaluateExpression(validationRule.getValidationEL(), Map.of("invoice", invoice), Boolean.class);
 			} else if (validationRule.getType() == ValidationRuleTypeEnum.RULE_SET) {
@@ -1548,12 +1552,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 		if (InvoiceValidationStatusEnum.REJECTED.equals(failStatus)) {
 			invoice.setStatus(InvoiceStatusEnum.REJECTED);
 			invoice.setRejectedByRule(validationRule);
-			if (invoice.getRejectReason() == null)
+			if (StringUtils.isBlank(invoice.getRejectReason()))
 				invoice.setRejectReason("Rejected by rule " + validationRule.getDescription());
 		} else if (InvoiceValidationStatusEnum.SUSPECT.equals(failStatus)) {
 			invoice.setStatus(InvoiceStatusEnum.SUSPECT);
 			invoice.setRejectedByRule(validationRule);
-			if (invoice.getRejectReason() == null)
+			if (StringUtils.isBlank(invoice.getRejectReason()))
 				invoice.setRejectReason("Suspected by rule " + validationRule.getDescription());
 		}
 	}
@@ -7022,13 +7026,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         List<InvoiceLine> invoiceLines = new ArrayList<>();
+	    if (invoice.getInvoiceLines() != null) {
+		    invoice.getInvoiceLines().size();
+	    }
         if (invoiceLinesIds != null && !invoiceLinesIds.isEmpty()) {
             invoiceLines.addAll(invoiceLinesService.findByInvoiceAndIds(invoice, invoiceLinesIds));
         }
-        else if (invoice.getInvoiceLines() != null) {
-            invoice.getInvoiceLines().size();
+        else {
             invoiceLines.addAll(invoice.getInvoiceLines());
         }
+		
+		if(invoice.getLinkedInvoices() != null) {
+			invoice.getLinkedInvoices().size();
+		}
 
         detach(invoice);
 

@@ -237,6 +237,12 @@
             <artifactId>opencell-api-dto</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.opencellsoft.wildfly</groupId>
+            <artifactId>wildfly-cache-scripts</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Libraries included in Jboss -->
 
         <dependency>

@@ -24,7 +24,7 @@ import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.billing.impl.ReratingService;
 
 @Stateless
-public class MediationsettingService extends PersistenceService<MediationSetting> {
+public class MediationSettingService extends PersistenceService<MediationSetting> {
 
     @Inject
     private ReratingService reratingService;

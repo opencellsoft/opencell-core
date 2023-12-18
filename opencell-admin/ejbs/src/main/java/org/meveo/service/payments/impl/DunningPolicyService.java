@@ -390,4 +390,21 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
                 .getResultList()
                 .isEmpty();
     }
+
+    public List<Invoice> findEligibleInvoicesToTriggerReminder(DunningPolicy policy) {
+        policy = refreshOrRetrieve(policy);
+        if (policy == null) {
+            throw new BusinessException("Policy does not exists");
+        }
+        if(policy.getDunningPolicyRules() != null && !policy.getDunningPolicyRules().isEmpty()) {
+            try {
+                String query = "SELECT inv FROM Invoice inv WHERE (inv.paymentStatus = 'UNPAID' OR inv.paymentStatus = 'PPAID') AND inv.isReminderLevelTriggered = false AND "
+                        + buildPolicyRulesFilter(policy.getDunningPolicyRules());
+                return (List<Invoice>) invoiceService.executeSelectQuery(query, null);
+            } catch (Exception exception) {
+                throw new BusinessException(exception.getMessage());
+            }
+        }
+        return EMPTY_LIST;
+    }
 }

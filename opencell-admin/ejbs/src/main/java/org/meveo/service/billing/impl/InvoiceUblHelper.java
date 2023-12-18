@@ -17,6 +17,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.Fina
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.FinancialInstitution;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.InvoiceLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ItemType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.MonetaryTotalType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.OrderReference;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PartyLegalEntity;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.PartyTaxScheme;
@@ -69,8 +70,10 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.StartDat
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.StreetName;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxCurrencyCode;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxExclusiveAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxExemptionReason;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxExemptionReasonCode;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxInclusiveAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxTypeCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.TaxableAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Telephone;
@@ -150,6 +153,7 @@ public class InvoiceUblHelper {
 		setUblExtension(invoiceXml, creditNote);
 		setAllowanceCharge(invoice, invoiceXml, creditNote);
 		
+		
 		if (CollectionUtils.isNotEmpty(invoice.getInvoiceAgregates())) {
 			List<TaxInvoiceAgregate> taxInvoiceAgregates = invoice.getInvoiceAgregates().stream().filter(invAgg -> "T".equals(invAgg.getDescriminatorValue()))
 					.map(invAgg -> (TaxInvoiceAgregate) invAgg)
@@ -160,16 +164,21 @@ public class InvoiceUblHelper {
 		setAccountingSupplierParty(invoice.getSeller(), invoiceXml, creditNote);
 		setAccountingCustomerParty(invoice.getBillingAccount(), invoiceXml, creditNote);
 		setPaymentMeans(invoice.getPaymentMethod(), invoiceXml, creditNote);
+		String curreny = invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getCurrencyCode():null;
+		BigDecimal amountWithoutTax = invoice.getAmountWithoutTax();
+		BigDecimal amountWithTax = invoice.getAmountWithTax();
 		if (creditNote != null) {
 			setGeneralInfo(invoice, creditNote);
 			setBillingReference(invoice, creditNote);
 			setOrderReference(invoice, creditNote);
 			setInvoiceLine(invoice.getInvoiceLines(), creditNote);
+			creditNote.setLegalMonetaryTotal(setTaxExclusiveAmount(curreny, amountWithoutTax , amountWithTax));
 		} else {
 			setGeneralInfo(invoice, invoiceXml);
 			setBillingReference(invoice, invoiceXml);
 			setOrderReference(invoice, invoiceXml);
 			setInvoiceLine(invoice.getInvoiceLines(), invoiceXml);
+			invoiceXml.setLegalMonetaryTotal(setTaxExclusiveAmount(curreny, amountWithoutTax , amountWithTax));
 		}
 		
 		
@@ -925,5 +934,21 @@ public class InvoiceUblHelper {
 		taxScheme.setTaxTypeCode(taxTypeCode);
 		taxCategoryType.setTaxScheme(taxScheme);
 		return taxCategoryType;
+	}
+	
+	private static MonetaryTotalType setTaxExclusiveAmount(String currency, BigDecimal amountWithoutTax, BigDecimal amountWithTax) {
+		MonetaryTotalType moneyTotalType = objectFactoryCommonAggrement.createMonetaryTotalType();
+		TaxInclusiveAmount taxInclusiveAmount = objectFactorycommonBasic.createTaxInclusiveAmount();
+		taxInclusiveAmount.setCurrencyID(currency);
+		taxInclusiveAmount.setValue(amountWithTax);
+		moneyTotalType.setTaxInclusiveAmount(taxInclusiveAmount);
+		
+		TaxExclusiveAmount taxExclusiveAmount = objectFactorycommonBasic.createTaxExclusiveAmount();
+		taxExclusiveAmount.setCurrencyID(currency);
+		taxExclusiveAmount.setValue(amountWithoutTax);
+		moneyTotalType.setTaxExclusiveAmount(taxExclusiveAmount);
+		
+		return moneyTotalType;
+		
 	}
 }

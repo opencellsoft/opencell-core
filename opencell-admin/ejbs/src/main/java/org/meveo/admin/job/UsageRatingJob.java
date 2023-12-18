@@ -27,6 +27,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.utils.CustomFieldTemplateUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -34,6 +35,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.MeveoJobCategoryEnum;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.ScopedJob;
 
 /**
  * The Class UsageRatingJob rate all opened EDRs.
@@ -42,7 +44,7 @@ import org.meveo.service.job.Job;
  * @lastModifiedVersion 7.0
  */
 @Stateless
-public class UsageRatingJob extends Job {
+public class UsageRatingJob extends ScopedJob {
 
     /** The usage rating job bean when rollback IS needed when rating fails. */
     @Inject
@@ -101,7 +103,7 @@ public class UsageRatingJob extends Job {
         waitingMillis.setDefaultValue("0");
         waitingMillis.setGuiPosition("tab:Configuration:0;field:1");
         result.put(Job.CF_WAITING_MILLIS, waitingMillis);
-        
+
         CustomFieldTemplate nbPublishers = new CustomFieldTemplate();
         nbPublishers.setCode(Job.CF_NB_PUBLISHERS);
         nbPublishers.setAppliesTo("JobInstance_UsageRatingJob");
@@ -146,7 +148,7 @@ public class UsageRatingJob extends Job {
         batchSize.setMaxValue(10000L);
         batchSize.setGuiPosition("tab:Configuration:0;field:5");
         result.put(batchSize.getCode(), batchSize);
-        
+
         CustomFieldTemplate parameter1 = new CustomFieldTemplate();
         parameter1.setCode("parameter1");
         parameter1.setAppliesTo("JobInstance_UsageRatingJob");
@@ -158,7 +160,7 @@ public class UsageRatingJob extends Job {
         parameter1.setMaxValue(200L);
         parameter1.setGuiPosition("tab:Configuration:0;field:6");
         result.put("parameter1", parameter1);
-        
+
         CustomFieldTemplate parameter2 = new CustomFieldTemplate();
         parameter2.setCode("parameter2");
         parameter2.setAppliesTo("JobInstance_UsageRatingJob");
@@ -171,16 +173,14 @@ public class UsageRatingJob extends Job {
         parameter2.setGuiPosition("tab:Configuration:0;field:7");
         result.put("parameter2", parameter2);
 
-//        CustomFieldTemplate noRollback = new CustomFieldTemplate();
-//        noRollback.setCode(CF_ROLLBACK_ON_FAILURE);
-//        noRollback.setAppliesTo("JobInstance_UsageRatingJob");
-//        noRollback.setActive(true);
-//        noRollback.setDescription(resourceMessages.getString("jobExecution.rollbackOnFailure"));
-//        noRollback.setFieldType(CustomFieldTypeEnum.BOOLEAN);
-//        noRollback.setValueRequired(false);
-//        noRollback.setDefaultValue("true");
-//        noRollback.setGuiPosition("tab:Configuration:0;field:5");
-//        result.put(noRollback.getCode(), noRollback);
+        result.put(CF_JOB_ITEMS_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_ITEMS_LIMIT, resourceMessages.getString("jobExecution.jobItemsLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:8", "JobInstance_UsageRatingJob"));
+
+        result.put(CF_JOB_DURATION_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_DURATION_LIMIT, resourceMessages.getString("jobExecution.jobDurationLimit"),
+                CustomFieldTypeEnum.LONG, "tab:Configuration:0;field:9", "JobInstance_UsageRatingJob"));
+
+        result.put(CF_JOB_TIME_LIMIT, CustomFieldTemplateUtils.buildCF(CF_JOB_TIME_LIMIT, resourceMessages.getString("jobExecution.jobTimeLimit"),
+                CustomFieldTypeEnum.STRING, "tab:Configuration:0;field:10", "JobInstance_UsageRatingJob", 5L));
 
         return result;
     }

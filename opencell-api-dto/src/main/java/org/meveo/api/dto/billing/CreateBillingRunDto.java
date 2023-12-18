@@ -133,13 +133,13 @@ public class CreateBillingRunDto extends BaseEntityDto {
     private List<LanguageDescriptionDto> descriptionsTranslated;
 
     @Schema(description = " Do not aggregate Rated transactions to Invoice lines at all", nullable = true)
-    private Boolean disableAggregation = false;
+    private Boolean disableAggregation;
 
     /**
      * Aggregate based on accounting article label instead of RT description
      */
     @Schema(description = "Aggregate based on accounting article label instead of RT description", nullable = true)
-    private Boolean useAccountingArticleLabel = false;
+    private Boolean useAccountingArticleLabel;
 
     /**
      * Aggregate by date option
@@ -164,6 +164,13 @@ public class CreateBillingRunDto extends BaseEntityDto {
      */
     @Schema(description = "If TRUE, aggregation will ignore order field (multiple orders will be aggregated together)", nullable = true)
     private Boolean ignoreOrders;
+    
+    /**
+     * If TRUE, aggregation will ignore user accounts field (multiple user accounts will be aggregated together)
+     */
+    @Schema(description = "If TRUE, aggregation will ignore user accounts field (multiple user accounts will be aggregated together)", nullable = true)
+    private Boolean ignoreUserAccounts;
+
 
     /**
      * Discount aggregation type
@@ -525,8 +532,16 @@ public class CreateBillingRunDto extends BaseEntityDto {
     public void setIgnoreSubscriptions(Boolean ignoreSubscriptions) {
         this.ignoreSubscriptions = ignoreSubscriptions;
     }
+    
+    public Boolean getIgnoreUserAccounts() {
+		return ignoreUserAccounts;
+	}
 
-    @Override
+	public void setIgnoreUserAccounts(Boolean ignoreUserAccounts) {
+		this.ignoreUserAccounts = ignoreUserAccounts;
+	}
+
+	@Override
     public String toString() {
         return "CreateBillingRunDto{" + "billingCycleCode='" + billingCycleCode + '\'' + ", billingRunTypeEnum=" + billingRunTypeEnum + ", startDate=" + startDate + ", endDate="
                 + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", referenceDate=" + referenceDate

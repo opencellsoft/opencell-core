@@ -597,7 +597,7 @@ public class InvoiceApi extends BaseApi {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }
         invoiceService.recalculateDatesForValidated(invoiceId);
-        serviceSingleton.triggersJobs();
+        //serviceSingleton.triggersJobs(); // Commented to avoid performance issues
 
         Date today = new Date();
         invoice = invoiceService.refreshOrRetrieve(invoice);

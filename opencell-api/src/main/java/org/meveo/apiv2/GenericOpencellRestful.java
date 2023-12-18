@@ -31,6 +31,7 @@ import org.meveo.apiv2.article.impl.ArticleMappingLineResourceImpl;
 import org.meveo.apiv2.article.impl.ArticleMappingResourceImpl;
 import org.meveo.apiv2.audit.impl.AuditDataConfigurationResourceImpl;
 import org.meveo.apiv2.audit.impl.AuditDataLogResourceImpl;
+import org.meveo.apiv2.billing.impl.BatchEntityResourceImpl;
 import org.meveo.apiv2.billing.impl.DiscountPlanInstanceResourceImpl;
 import org.meveo.apiv2.billing.impl.EinvoiceResourceImpl;
 import org.meveo.apiv2.billing.impl.InvoiceLinesResourceImpl;
@@ -104,10 +105,10 @@ import org.meveo.apiv2.report.query.impl.ReportQueryResourceImpl;
 import org.meveo.apiv2.securityDeposit.financeSettings.impl.FinanceSettingsResourceImpl;
 import org.meveo.apiv2.securityDeposit.impl.SecurityDepositResourceImpl;
 import org.meveo.apiv2.securityDeposit.securityDepositTemplate.impl.SecurityDepositTemplateResourceImpl;
+import org.meveo.apiv2.settings.globalSettings.impl.AdvancedSettingsResourceImpl;
 import org.meveo.apiv2.settings.globalSettings.impl.GlobalSettingsResourceImpl;
 import org.meveo.apiv2.settings.openOrderSetting.impl.OpenOrderSettingResourceImpl;
 import org.meveo.apiv2.standardReport.impl.StandardReportResourceImpl;
-import org.meveo.apiv2.billing.impl.BatchEntityResourceImpl;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
 
@@ -162,7 +163,7 @@ public class GenericOpencellRestful extends Application {
                 OpenOrderQuoteResourceImpl.class, CpqQuoteResourceImpl.class, CommercialOrderResourceImpl.class,
                 InvoiceLinesResourceImpl.class, CpqContractResourceImpl.class, OpenOrderResourceImpl.class,
                 ContactCategoryResourceImpl.class, WalletOperationResourceImpl.class, InvoiceValidationRulesResourceImpl.class, InternationalSettingsResourceImpl.class,
-                CustomTableResourceImpl.class, CustomerBalanceResourceImpl.class, FileTypeResourceImpl.class, DocumentCategoryResourceImpl.class, 
+                CustomTableResourceImpl.class, AdvancedSettingsResourceImpl.class, CustomerBalanceResourceImpl.class, FileTypeResourceImpl.class, DocumentCategoryResourceImpl.class, 
                 ElectronicInvoicingResourceImpl.class,PaymentResourceImpl.class, PriceListResourceImpl.class, SellerResourceImpl.class, PriceListLineResourceImpl.class, CatalogPriceListResourceImpl.class,
 				        SignatureRequestResourceImpl.class, AuditDataConfigurationResourceImpl.class, AuditDataLogResourceImpl.class, EinvoiceResourceImpl.class, BatchEntityResourceImpl.class)
                 .collect(Collectors.toSet());

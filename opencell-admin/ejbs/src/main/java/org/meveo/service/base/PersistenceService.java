@@ -798,7 +798,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         if (config.isCacheable()) {
             query.setHint("org.hibernate.cacheable", true);
         }
-        return query.setFlushMode(FlushModeType.AUTO).getResultList();
+        if (config.getLimit() != null) {
+            query = query.setMaxResults(config.getLimit());
+        }
+        return query.getResultList();
     }
 
     public QueryBuilder listQueryBuilder(PaginationConfiguration config) {
