@@ -1,7 +1,6 @@
 package org.meveo.admin.job;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +12,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -46,6 +44,7 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.as.ee.component.ComponentIsStoppedException;
 import org.jgroups.JChannel;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.async.SynchronizedIteratorGrouped;
@@ -334,8 +333,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             boolean[] isProcessing = { !jobExecutionService.isJobCancelled(jobInstance.getId()) };
 
             // Start job status report task. Not run in future, so it will die when main thread dies
-            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing,
-                currentUserProvider, log, jobExecutionResultService, jobExecutionService);
+            Runnable jobStatusReportTask = IteratorBasedJobBean.getJobStatusReportingTask(jobInstance, lastCurrentUser, jobInstance.getJobStatusReportFrequency(), jobExecutionResult, isProcessing, currentUserProvider,
+                log, jobExecutionResultService, jobExecutionService);
             Thread jobStatusReportThread = new Thread(jobStatusReportTask);
             jobStatusReportThread.start();
 
@@ -396,8 +395,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 finalizeInitFunction.accept(jobExecutionResult);
             }
 
-            // Mark job as stopped if task was killed
-            if (wasKilled) {
+            // Mark job as stopped if task was killed but not shut down
+            if (wasKilled && !JobExecutionService.isServerIsInShutdownMode()) {
                 jobExecutionService.markJobToStop(jobInstance);
 
                 // Mark that all threads are finished
@@ -407,7 +406,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;
 
-            if (wasCanceled && isRunningAsJobManager && spreadOverCluster) {
+            // Clear pending workload in MQ queue if multinode job was canceled but not shut down
+            if (wasCanceled && isRunningAsJobManager && spreadOverCluster && !JobExecutionService.isServerIsInShutdownMode()) {
                 clearPendingWorkLoad(jobInstance);
             }
 
@@ -421,7 +421,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             jobExecutionResult.registerError(e.getMessage());
         }
 
-        if (finalizeFunction != null) {
+        if (finalizeFunction != null && !JobExecutionService.isServerIsInShutdownMode()) {
             finalizeFunction.accept(jobExecutionResult);
         }
     }
@@ -449,6 +449,11 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             }
 
             return jobExecutionResult.registerSucces(itemCount);
+
+            // Server is shutting down
+        } catch (ComponentIsStoppedException e) {
+
+            throw e;
 
             // Register errors
         } catch (Exception e) {
@@ -521,7 +526,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         final AtomicLong durationLimit = jobDurationLimit != null ? new AtomicLong(jobDurationLimit) : null;
         final AtomicLong timeLimit = jobTimeLimit != null ? new AtomicLong(jobTimeLimit) : null;
 
-
         Runnable task = () -> {
             Thread.currentThread().setName(jobInstanceCode + "-ReportJobStatus");
 
@@ -544,8 +548,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     if ((durationLimit != null && durationLimit.get() <= 0) || (timeLimit != null && timeLimit.get() <= 0)) {
                         jobExecutionService.stopJob(jobInstance);
                     } else {
-                        if ((durationLimit != null && durationLimit.get() < reportFrequency)
-                                || (timeLimit != null && timeLimit.get() < reportFrequency)) {
+                        if ((durationLimit != null && durationLimit.get() < reportFrequency) || (timeLimit != null && timeLimit.get() < reportFrequency)) {
                             if (durationLimit != null && timeLimit != null) {
                                 if (durationLimit.get() < timeLimit.get()) {
                                     Thread.sleep(durationLimit.get() * 1000);
@@ -712,9 +715,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         ItertatorJobMessageListener messageListener = null;
         if (spreadOverCluster) {
             jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.CLIENT_ACKNOWLEDGE);
-            JMSConsumer jmsConsumer = jmsContext.createConsumer(jobQueue);
-            messageListener = new ItertatorJobMessageListener(countDown, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
-            jmsConsumer.setMessageListener(messageListener);
             jmsContext.setExceptionListener(new ExceptionListener() {
 
                 @Override
@@ -723,6 +723,11 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                 }
             });
+
+            JMSConsumer jmsConsumer = jmsContext.createConsumer(jobQueue);
+            jmsContext.stop(); // Context is autostarted when consumer is created
+            messageListener = new ItertatorJobMessageListener(countDown, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
+            jmsConsumer.setMessageListener(messageListener);
         }
         final JMSContext jmsContextFinal = jmsContext;
         final ItertatorJobMessageListener messageListenerFinal = messageListener;
@@ -762,7 +767,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             int nrofMessages = 0;
 
             // Continue processing messages from a message queue if applicable
-            if (spreadOverCluster) {
+            if (spreadOverCluster && !isJobRequestedToStop(jobInstanceId)) {
 
                 jmsContextFinal.start();
                 try {
@@ -806,7 +811,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, JobExecutionResultImpl jobExecutionResult) {
 
         int nrOfItemsInBatch = itemsToProcess.size();
-        long globalI = 0;
 
         // Process items in batch.
         if (useMultipleItemProcessing) {
@@ -819,11 +823,14 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     processMultipleItemFunction.accept(itemsToProcess, jobExecutionResult);
                 }
 
-                if (isProcessMultipleItemFunctionUpdateProgressItself()) {
-                    globalI = globalI + nrOfItemsInBatch;
-                } else {
-                    globalI = jobExecutionResult.registerSucces(nrOfItemsInBatch);
+                if (!isProcessMultipleItemFunctionUpdateProgressItself()) {
+                    jobExecutionResult.registerSucces(nrOfItemsInBatch);
                 }
+
+                // Server is shutting down
+            } catch (ComponentIsStoppedException e) {
+
+                throw e;
 
                 // Batch processing has failed, so process item one by one if possible
             } catch (Exception e) {
@@ -832,20 +839,20 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                     log.error("Failed to process items in batch. Items will be processed one by one", e);
                     for (T itemToProcessFromFailedBatch : itemsToProcess) {
-                        globalI = processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult);
+                        processItem(itemToProcessFromFailedBatch, isNewTx, processSingleItemFunction, jobExecutionResult);
                     }
 
                 } else {
 
                     log.error("Failed to process items in batch", e);
-                    globalI = jobExecutionResult.registerError(e.getMessage(), nrOfItemsInBatch);
+                    jobExecutionResult.registerError(e.getMessage(), nrOfItemsInBatch);
                 }
             }
 
             // Process each item
         } else {
 
-            globalI = processItem(itemsToProcess.get(0), isNewTx, processSingleItemFunction, jobExecutionResult);
+            processItem(itemsToProcess.get(0), isNewTx, processSingleItemFunction, jobExecutionResult);
         }
     }
 
@@ -1070,13 +1077,18 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         @Override
         public void onMessage(Message msg) {
 
+            if (isJobRequestedToStop(jobExecutionResult.getJobInstance().getId())) {
+                return;
+            }
+
             try {
                 // Indicates that a last message in a queue was reached and further processing should stop
                 if (EOF_MESSAGE.equals(msg.getStringProperty(EOF_MESSAGE))) {
-                    msg.acknowledge();
 
                     // Fire an event to release threads for data processing
                     lastJobDataMsgEventProducer.fire(jobExecutionResult.getJobInstance().getId());
+
+                    msg.acknowledge();
 
                 } else {
 
@@ -1084,7 +1096,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                     List<T> itemsToProcess = (List<T>) msg.getBody(Serializable.class);
                     msgCount++;
                     itemCount = itemCount + itemsToProcess.size();
-
                     processItems(itemsToProcess, isNewTx, useMultipleItemProcessing, processSingleItemFunction, processMultipleItemFunction, jobExecutionResult);
 
                     msg.acknowledge();

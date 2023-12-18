@@ -8,29 +8,34 @@ package org.meveo.model.jobs;
 public enum JobExecutionResultStatusEnum {
 
     /**
-     * Job is currently running
+     * Server node was shutdown
      */
-    RUNNING(3),
+    SHUTDOWN(1),
 
     /**
      * Finished completely, no more data to process
      */
-    COMPLETED(1),
+    COMPLETED(2),
 
     /**
      * Job finished, but there is more data to process
      */
-    COMPLETED_MORE(2),
+    COMPLETED_MORE(3),
 
     /**
-     * Job execution was cancelled
+     * Job is currently running
      */
-    CANCELLED(5),
+    RUNNING(4),
 
     /**
      * Job execution had failed because of some errors
      */
-    FAILED(4);
+    FAILED(5),
+
+    /**
+     * Job execution was cancelled
+     */
+    CANCELLED(6);
 
     /**
      * Priority of status. The higher the number, the more "unsuccessful" was the job execution.

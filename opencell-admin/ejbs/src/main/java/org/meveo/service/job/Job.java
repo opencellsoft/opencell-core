@@ -84,7 +84,7 @@ public abstract class Job {
      * Custom field for a number of items to process simultaneously in one transaction as a batch. If batch fails, items will be processed one by one.
      */
     public static final String CF_BATCH_SIZE = "batchSize";
-    
+
     /**
      * Custom field for a number of items to process simultaneously in one transaction as a batch for Job secondary steps.
      */
@@ -94,7 +94,7 @@ public abstract class Job {
      * Custom field for a number of threads to publish data for cluster wide processing
      */
     public static final String CF_NB_PUBLISHERS = "nbPublishers";
-    
+
     /**
      * Custom field for a applyBilingRules.
      */
@@ -197,7 +197,7 @@ public abstract class Job {
                 executionResult = execute(executionResult, jobInstance);
 
                 boolean moreToProcess = executionResult.isMoreToProcess();
-                
+
                 boolean jobCanceled = closeExecutionResult(jobInstance, executionResult, moreToProcess);
 
                 log.info("Job {} of type {} execution finished. Job {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
@@ -233,13 +233,18 @@ public abstract class Job {
         }
     }
 
-	protected boolean closeExecutionResult(JobInstance jobInstance, JobExecutionResultImpl executionResult, boolean moreToProcess) {
-		boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());
-		executionResult.setStatus(jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
-		executionResult.close();
-		jobExecutionResultService.persistResult(executionResult);
-		return jobCanceled;
-	}
+    protected boolean closeExecutionResult(JobInstance jobInstance, JobExecutionResultImpl executionResult, boolean moreToProcess) {
+        boolean serverShutdown = JobExecutionService.isServerIsInShutdownMode();
+        boolean jobCanceled = serverShutdown ? true : jobExecutionService.isJobCancelled(jobInstance.getId());
+        executionResult.setStatus(serverShutdown ? JobExecutionResultStatusEnum.SHUTDOWN
+                : jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
+        if (serverShutdown) {
+            executionResult.addReportToBeginning("Job cancelled due to the server was shutdown in the middle of job execution");
+        }
+        executionResult.close();
+        jobExecutionResultService.persistResult(executionResult);
+        return jobCanceled;
+    }
 
     /**
      * The actual job execution logic implementation.

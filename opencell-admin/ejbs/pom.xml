@@ -212,6 +212,11 @@
         <!-- Libraries included in Jboss -->
 
         <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-ee</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_4.0_spec</artifactId>
             <scope>provided</scope>
