@@ -87,6 +87,7 @@ import org.meveo.model.payments.Journal;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
+import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
@@ -102,6 +103,7 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.JournalReportService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
+import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentPlanService;
 import org.meveo.service.payments.impl.AccountOperationService.AccountOperationActionEnum;
 import org.slf4j.Logger;
@@ -151,6 +153,9 @@ public class AccountOperationApi extends BaseApi {
 
     @Inject
     private TradingCurrencyService tradingCurrencyService;
+    
+    @Inject
+    private OCCTemplateService oCCTemplateService;
 
     /**
      * Create account operation.
@@ -251,7 +256,15 @@ public class AccountOperationApi extends BaseApi {
                 accountOperation.setAccountingCode(accountingCode);
             }
         }
-
+        
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(postData.getCode());
+        if (occTemplate == null) {
+            throw new BusinessException("Cannot find OCC Template with code=" + postData.getCode());
+        }
+        if (!occTemplate.isManualCreationEnabled()) {
+            throw new BusinessException(String.format("Creation is prohibited; occTemplate %s is not allowed for manual creation", postData.getCode()));
+        }
+        
         BigDecimal functionalAmount = postData.getAmount();
         BigDecimal transactionalAmount = postData.getAmount();
 
