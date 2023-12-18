@@ -99,7 +99,7 @@ public class OCCTemplate extends BusinessEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "manual_creation_enabled")
-    private boolean manualCreationEnabled;
+    private boolean manualCreationEnabled = true;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ar_customer_balance_templates",
