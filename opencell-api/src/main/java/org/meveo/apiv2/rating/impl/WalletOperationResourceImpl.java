@@ -87,7 +87,7 @@ public class WalletOperationResourceImpl implements WalletOperationResource {
 
             Map<String, Object> filter2 = new LinkedHashMap();
             filter2.put("$operator", "AND");
-            filter2.put("eq status", WalletOperationStatusEnum.OPEN);
+            filter2.put("eq status", WalletOperationStatusEnum.TREATED);
             filter2.put("eq ratedTransaction.status", RatedTransactionStatusEnum.OPEN);
             filter1.put("$filter2", filter2);
 
