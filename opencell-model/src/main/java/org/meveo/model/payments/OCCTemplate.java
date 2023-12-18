@@ -94,7 +94,7 @@ public class OCCTemplate extends BusinessEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "manual_creation_enabled")
-    private boolean manualCreationEnabled;
+    private boolean manualCreationEnabled = true;
 
     public String getAccountCodeClientSide() {
         return accountCodeClientSide;
