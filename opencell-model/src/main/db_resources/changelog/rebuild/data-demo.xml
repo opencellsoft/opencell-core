@@ -647,7 +647,6 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-5" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:20.13" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
@@ -655,11 +654,11 @@
             <column name="description" value="Rejected payment - check" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-6" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:20.171" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
@@ -667,11 +666,11 @@
             <column name="description" value="Rejected payment - direct debit" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-7" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:20.192" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
@@ -679,6 +678,7 @@
             <column name="description" value="Rejected payment - TIP" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-8" />
@@ -709,7 +709,6 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-10" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:20.257" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
@@ -717,11 +716,11 @@
             <column name="description" value="Refund - check" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-11" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:20.278" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
@@ -729,11 +728,11 @@
             <column name="description" value="Refund - direct debit" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-18" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:20.435" />
             <column name="accounting_code_id" valueNumeric="-4" />
             <column name="account_code_client_side" value="411000000" />
@@ -741,11 +740,11 @@
             <column name="description" value="Expense - payment rounding" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-3" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-19" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="2015-03-19 00:04:20.456" />
             <column name="accounting_code_id" valueNumeric="-5" />
             <column name="account_code_client_side" value="411000000" />
@@ -753,6 +752,7 @@
             <column name="description" value="Income - payment rounding" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-3" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-20" />
@@ -779,6 +779,7 @@
             <column name="description" value="Fee - late payment" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-3" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
         </insert>
         <update tableName="ar_occ_template">            
             <column name="accounting_code_id" valueNumeric="-6" />
@@ -791,7 +792,6 @@
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-30" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
@@ -799,11 +799,11 @@
             <column name="description" value="Refund - card" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-31" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="445510000" />
@@ -812,11 +812,11 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-32" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="445510000" />
@@ -825,11 +825,11 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-33" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="445510000" />
@@ -838,11 +838,11 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-34" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="445510000" />
@@ -851,11 +851,11 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-4" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-35" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
@@ -863,11 +863,11 @@
             <column name="description" value="Rejected payment - card" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-36" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
@@ -875,11 +875,11 @@
             <column name="description" value="Rejected refund - card" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-37" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-3" />
             <column name="account_code_client_side" value="411000000" />
@@ -887,11 +887,11 @@
             <column name="description" value="Rejected refund - direct debit" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-38" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="709000000" />
@@ -900,11 +900,11 @@
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-1" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-39" />
             <column name="version" valueNumeric="0" />
-
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueNumeric="-6" />
             <column name="account_code_client_side" value="709000000" />
@@ -913,6 +913,7 @@
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-1" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
         </insert>
         <update tableName="ar_occ_template">
             <column name="accounting_code_id" valueNumeric="-6" />
@@ -932,6 +933,7 @@
             <column name="description" value="Refund - TIP" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-42" />
@@ -943,6 +945,7 @@
             <column name="description" value="Expense - bad debt write-off" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-3" />
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-43" />
@@ -969,6 +972,7 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" value="-2" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-45" />
@@ -981,7 +985,8 @@
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" value="-2" />
             <column name="manual_creation_enabled" value="0"/>
-        </insert>    
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+        </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-46" />
             <column name="version" valueNumeric="0" />
@@ -4479,6 +4484,7 @@
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-2" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-52" />
@@ -4492,6 +4498,7 @@
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-2" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-53" />
@@ -4505,6 +4512,7 @@
 			<column name="journal_id" value="-2" />
 			<column name="creator" value="opencell.admin" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
 		</insert>
 		<insert tableName="billing_seq_invoice">
 			<column name="id" valueNumeric="-6" />
@@ -4698,7 +4706,7 @@
             <column name="billing_template_name_el" value="commercial_order_new" />
             <column name="invoice_code_type_id" valueComputed="(select id from untdid_1001_invoice_code_type uict where code = '220')" />
             <column name="invoice_subject_code" valueComputed="(select id from untdid_4451_invoice_subject_code where code = 'ORI')" />
-		</insert>	
+		</insert>
 	</changeSet>
 	
 	<changeSet id="INTRD-15222_20230424" author="aelmalki">
@@ -4770,7 +4778,7 @@
                 {"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/massImport/billingAccount/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/massImport/billingAccount/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/massImport/billingAccount/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/massImport/billingAccount/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\"/>\r\n            <property name=\"comments\" value=\"END\"/>\r\n            <property name=\"multilineEnabled\" value=\"true\"/>\r\n        </parser>\r\n        <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" ignore=\"true\" />\r\n            <field name=\"OC_ACTION\" ignore=\"true\" />\r\n            <field name=\"OC_CUSTOMERACCOUNT_CODE\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_DESCRIPTION\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_BC\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_COUNTRY\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_LANGUAGE\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_CURRENCY\" ignore=\"true\" />\r\n            <field name=\"OC_BILLINGACCOUNT_TAXCAT\" ignore=\"true\" />\r\n            <field name=\"OC_BA_DATE\" ignore=\"true\" />\r\n            <field name=\"OC_BA_REGISTRATION\" ignore=\"true\" />\r\n            <field name=\"OC_BA_TVANUMBER\" ignore=\"true\" />\r\n            <field name=\"OC_BA_TITLE\" ignore=\"true\" />\r\n            <field name=\"OC_BA_FNAME\" ignore=\"true\" />\r\n            <field name=\"OC_BA_LNAME\" ignore=\"true\" />\r\n            <field name=\"OC_BA_ORGANIZATION\" ignore=\"true\" />\r\n            <field name=\"OC_BA_EBILL\" ignore=\"true\" />\r\n            <field name=\"OC_BA_EBILLEMAIL\" ignore=\"true\" />\r\n            <field name=\"OC_BA_EBILLEMAILS\" ignore=\"true\" />\r\n            <field name=\"OC_BA_ADDRESS\" ignore=\"true\" />\r\n            <field name=\"OC_BA_ZIPCODE\" ignore=\"true\" />\r\n            <field name=\"OC_BA_CITY\" ignore=\"true\" />\r\n            <field name=\"OC_BA_STATE\" ignore=\"true\" />\r\n            <field name=\"OC_BA_COUNTRY\" ignore=\"true\" />\r\n        </record>\r\n        <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" required=\"true\"/>\r\n            <field name=\"OC_ACTION\" required=\"true\"/>\r\n            <field name=\"OC_CUSTOMERACCOUNT_CODE\" />\r\n            <field name=\"OC_BILLINGACCOUNT_CODE\" />\r\n            <field name=\"OC_BILLINGACCOUNT_DESCRIPTION\" />\r\n            <field name=\"OC_BILLINGACCOUNT_BC\" required=\"true\"/>\r\n            <field name=\"OC_BILLINGACCOUNT_COUNTRY\" required=\"true\"/>\r\n            <field name=\"OC_BILLINGACCOUNT_LANGUAGE\" required=\"true\"/>\r\n            <field name=\"OC_BILLINGACCOUNT_CURRENCY\" />\r\n            <field name=\"OC_BILLINGACCOUNT_TAXCAT\" />\r\n            <field name=\"OC_BA_DATE\" />\r\n            <field name=\"OC_BA_REGISTRATION\" />\r\n            <field name=\"OC_BA_TVANUMBER\" />\r\n            <field name=\"OC_BA_TITLE\" />\r\n            <field name=\"OC_BA_FNAME\" />\r\n            <field name=\"OC_BA_LNAME\" required=\"true\"/>\r\n            <field name=\"OC_BA_ORGANIZATION\" />\r\n            <field name=\"OC_BA_EBILL\" />\r\n            <field name=\"OC_BA_EBILLEMAIL\" />\r\n            <field name=\"OC_BA_EBILLEMAILS\" />\r\n            <field name=\"OC_BA_ADDRESS\" />\r\n            <field name=\"OC_BA_ZIPCODE\" />\r\n            <field name=\"OC_BA_CITY\" />\r\n            <field name=\"OC_BA_STATE\" />\r\n            <field name=\"OC_BA_COUNTRY\" />\r\n            <field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n        </record>\r\n    </stream>\r\n</beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.BillingAccountImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
                 ]]>
             </column>
-        </insert>        
+        </insert>
         <!--    PAYMENT_METHOD  -->
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
@@ -4791,7 +4799,7 @@
                 {"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/massImport/paymentMethod/input"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/massImport/paymentMethod/output"}], "FlatFileProcessingJob_rejectDir": [{"string": "/imports/massImport/paymentMethod/reject"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/massImport/paymentMethod/archive"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n        xmlns=\"http://www.beanio.org/2012/03\"\r\n        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n        xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n    <stream name=\"record\" format=\"csv\">\r\n        <parser>\r\n            <property name=\"delimiter\" value=\";\"/>\r\n            <property name=\"comments\" value=\"END\"/>\r\n            <property name=\"multilineEnabled\" value=\"true\"/>\r\n        </parser>\r\n        <record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" ignore=\"true\"/>\r\n            <field name=\"OC_ACTION\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_TYPE\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_PREFERRED\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_ALIAS\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_CA\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_cardType\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_monthExpiration\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_yearExpiration\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_tokenId\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_cardNumber\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_issueNumber\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_userId\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_email\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_referenceDocumentCode\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_bankCode\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_branchCode\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_accountNumber\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_key\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_iban\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_bic\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_accountOwner\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_bankName\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_bankId\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_issuerNumber\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_issuerName\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_ics\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_mandateIdentification\" ignore=\"true\"/>\r\n            <field name=\"OC_PMT_mandateDate\" ignore=\"true\"/>\r\n        </record>\r\n        <record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n            <field name=\"OC_ENTITY\" required=\"true\"/>\r\n            <field name=\"OC_ACTION\" required=\"true\"/>\r\n            <field name=\"OC_PMT_TYPE\" required=\"true\"/>\r\n            <field name=\"OC_PMT_PREFERRED\"/>\r\n            <field name=\"OC_PMT_ALIAS\"/>\r\n            <field name=\"OC_PMT_CA\"/>\r\n            <field name=\"OC_PMT_cardType\"/>\r\n            <field name=\"OC_PMT_monthExpiration\"/>\r\n            <field name=\"OC_PMT_yearExpiration\"/>\r\n            <field name=\"OC_PMT_tokenId\"/>\r\n            <field name=\"OC_PMT_cardNumber\"/>\r\n            <field name=\"OC_PMT_issueNumber\"/>\r\n            <field name=\"OC_PMT_userId\"/>\r\n            <field name=\"OC_PMT_email\"/>\r\n            <field name=\"OC_PMT_referenceDocumentCode\"/>\r\n            <field name=\"OC_PMT_bankCode\" />\r\n            <field name=\"OC_PMT_branchCode\" />\r\n            <field name=\"OC_PMT_accountNumber\" />\r\n            <field name=\"OC_PMT_key\" />\r\n            <field name=\"OC_PMT_iban\" />\r\n            <field name=\"OC_PMT_bic\" />\r\n            <field name=\"OC_PMT_accountOwner\"/>\r\n            <field name=\"OC_PMT_bankName\"/>\r\n            <field name=\"OC_PMT_bankId\"/>\r\n            <field name=\"OC_PMT_issuerNumber\"/>\r\n            <field name=\"OC_PMT_issuerName\"/>\r\n            <field name=\"OC_PMT_ics\"/>\r\n            <field name=\"OC_PMT_mandateIdentification\"/>\r\n            <field name=\"OC_PMT_mandateDate\"/>\r\n            <field name=\"OC_CFS\" type=\"String\" collection=\"list\" minOccurs=\"0\" maxOccurs=\"unbounded\" />\r\n        </record>\r\n    </stream>\r\n</beanio>\r\n"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.PaymentMethodImportScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
                 ]]>
             </column>
-        </insert>        
+        </insert>
         <!-- CUSTOMER_ACCOUNT -->
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
@@ -4974,7 +4982,7 @@
                 "FlatFileProcessingJob_originFilename":[{"string":"origin_filename"}],
                 "FlatFileProcessingJob_formatTransfo":[{"string":"None"}],
                 "FlatFileProcessingJob_errorAction":[{"string":"CONTINUE"}]}]]></column>
-        </insert>        
+        </insert>
         <!-- Subscription Job -->
         <insert tableName="meveo_job_instance">
             <column name="id" valueSequenceNext="meveo_job_instance_seq" />
@@ -6606,6 +6614,7 @@
             <where>code='PPL_INSTALLMENT'</where>
         </update>
     </changeSet>
+    <changeSet id="INTRD-19853_20231213" author="zelmeliani" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
