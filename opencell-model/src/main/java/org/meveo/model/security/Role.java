@@ -18,8 +18,15 @@
 
 package org.meveo.model.security;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.meveo.model.AuditableCFEntity;
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+import org.meveo.model.IReferenceEntity;
+import org.meveo.model.ReferenceIdentifierCode;
+import org.meveo.model.ReferenceIdentifierDescription;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -31,16 +38,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.meveo.model.AuditableCFEntity;
-import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.ExportIdentifier;
-import org.meveo.model.IReferenceEntity;
-import org.meveo.model.ReferenceIdentifierCode;
-import org.meveo.model.ReferenceIdentifierDescription;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Application security role
@@ -100,7 +99,7 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
      */
     @Transient
     private Boolean replicateInKc=Boolean.TRUE;
-
+	
     public Role() {
         // TODO Auto-generated constructor stub
     }
@@ -244,6 +243,4 @@ public class Role extends AuditableCFEntity implements IReferenceEntity {
 	public void setReplicateInKc(Boolean replicateInKc) {
 		this.replicateInKc = replicateInKc;
 	}
-    
-    
 }
