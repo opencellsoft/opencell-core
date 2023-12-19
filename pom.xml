@@ -100,8 +100,15 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
-           <dependency>
+            
+            <dependency>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-ee</artifactId>
+                <version>26.1.2.Final</version>
+                <scope>provided</scope>
+            </dependency>
+            
+            <dependency>
                 <groupId>com.opencellsoft.wildfly</groupId>
                 <artifactId>wildfly-cache-scripts</artifactId>
                 <version>${project.version}</version>

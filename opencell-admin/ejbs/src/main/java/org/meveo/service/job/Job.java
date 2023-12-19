@@ -187,12 +187,9 @@ public abstract class Job {
                 eventJobStarted.fire(executionResult);
                 executionResult = execute(executionResult, jobInstance);
 
-                boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());
                 boolean moreToProcess = executionResult.isMoreToProcess();
 
-                executionResult.setStatus(jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
-                executionResult.close();
-                jobExecutionResultService.persistResult(executionResult);
+                boolean jobCanceled = closeExecutionResult(jobInstance, executionResult, moreToProcess);
 
                 log.info("Job {} of type {} execution finished. Job {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
                     jobCanceled ? "was canceled." : moreToProcess ? "completed, with more data to process." : "completed.");
@@ -225,6 +222,19 @@ public abstract class Job {
 
             return JobExecutionResultStatusEnum.CANCELLED;
         }
+    }
+
+    protected boolean closeExecutionResult(JobInstance jobInstance, JobExecutionResultImpl executionResult, boolean moreToProcess) {
+        boolean serverShutdown = JobExecutionService.isServerIsInShutdownMode();
+        boolean jobCanceled = serverShutdown ? true : jobExecutionService.isJobCancelled(jobInstance.getId());
+        executionResult.setStatus(serverShutdown ? JobExecutionResultStatusEnum.SHUTDOWN
+                : jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
+        if (serverShutdown) {
+            executionResult.addReportToBeginning("Job cancelled due to the server was shutdown in the middle of job execution");
+        }
+        executionResult.close();
+        jobExecutionResultService.persistResult(executionResult);
+        return jobCanceled;
     }
 
     /**
