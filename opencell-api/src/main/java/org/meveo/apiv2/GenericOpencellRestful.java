@@ -57,7 +57,7 @@ import org.meveo.apiv2.document.DocumentResourceImpl;
 import org.meveo.apiv2.documentCategory.impl.DocumentCategoryResourceImpl;
 import org.meveo.apiv2.dunning.action.DunningActionImpl;
 import org.meveo.apiv2.dunning.impl.CollectionPlanStatusResourceImpl;
-import org.meveo.apiv2.dunning.impl.CustomerBalanceResourceImpl;
+import org.meveo.apiv2.payments.resource.CustomerBalanceResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningAgentResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningCollectionPlanResourceImpl;
 import org.meveo.apiv2.dunning.impl.DunningLevelResourceImpl;

@@ -1,4 +1,4 @@
-package org.meveo.apiv2.dunning.impl;
+package org.meveo.apiv2.payments;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,10 +6,11 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.meveo.apiv2.dunning.CustomerBalance;
-import org.meveo.apiv2.dunning.ImmutableCustomerBalance;
+import org.meveo.apiv2.payments.ImmutableCustomerBalance;
 import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.models.Resource;
+import org.meveo.apiv2.payments.resource.CustomerBalanceResourceImpl;
+import org.meveo.apiv2.payments.resource.CustomerBalanceMapper;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.payments.impl.CustomerBalanceService;
 import org.mockito.InjectMocks;
@@ -67,7 +68,7 @@ public class CustomerBalanceResourceImplTest {
                 .occTemplates(Arrays.asList(template, template2))
                 .build();
 
-        when(customerBalanceService.findByCode("CODE")).thenReturn(new org.meveo.model.dunning.CustomerBalance());
+        when(customerBalanceService.findByCode("CODE")).thenReturn(new org.meveo.model.payments.CustomerBalance());
 
         customerBalanceResource.create(customerBalance);
     }
@@ -121,7 +122,7 @@ public class CustomerBalanceResourceImplTest {
                 .occTemplates(Arrays.asList(template, template2))
                 .build();
 
-        org.meveo.model.dunning.CustomerBalance entity = mapper.toEntity(customerBalance);
+        org.meveo.model.payments.CustomerBalance entity = mapper.toEntity(customerBalance);
         when(customerBalanceService.findById(1L)).thenReturn(entity);
 
         Response response = customerBalanceResource.delete(1L);
@@ -139,7 +140,7 @@ public class CustomerBalanceResourceImplTest {
 
     @Test(expected = BadRequestException.class)
     public void shouldNotDeleteDefaultCustomerBalance() {
-        org.meveo.model.dunning.CustomerBalance entity = new org.meveo.model.dunning.CustomerBalance();
+        org.meveo.model.payments.CustomerBalance entity = new org.meveo.model.payments.CustomerBalance();
         OCCTemplate template1 = new OCCTemplate();
         template1.setId(1L);
         OCCTemplate template2 = new OCCTemplate();

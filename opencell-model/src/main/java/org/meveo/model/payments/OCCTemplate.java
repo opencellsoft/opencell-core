@@ -37,7 +37,6 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.dunning.CustomerBalance;
 
 import java.util.List;
 
