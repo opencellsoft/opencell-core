@@ -8872,5 +8872,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>update ${db.schema.adapted}finance_settings set use_auxiliary_accounting = 0 where use_auxiliary_accounting is null;</sql>
         <sql>ALTER TABLE ${db.schema.adapted}finance_settings ALTER COLUMN use_auxiliary_accounting SET NOT NULL ;</sql>
     </changeSet>
+
+    <changeSet id="#INTRD-19574_20230712" author="zbariki">
+        <addColumn tableName="ar_account_operation">
+            <column name="litigation_reason" type="varchar(2000)"/>
+        </addColumn>
+    </changeSet>
     
 </databaseChangeLog>
