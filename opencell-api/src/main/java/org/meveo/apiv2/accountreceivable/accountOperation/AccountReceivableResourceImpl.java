@@ -267,4 +267,13 @@ public class AccountReceivableResourceImpl implements AccountReceivableResource 
                         "\"message\":\"Account operation successfully updated\"},\"id\":" + accountOperationID + "}")
                 .build();
     }
+
+    @Override
+    public Response removeLitigation(Long accountOperationId, LitigationInput litigationInput) {
+        final Long accountOperationID = accountOperationServiceApi.removeLitigation(accountOperationId, litigationInput);
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"," +
+                        "\"message\":\"litigation successfully removed\"},\"id\":" + accountOperationID + "}")
+                .build();
+    }
 }

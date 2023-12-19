@@ -21,10 +21,12 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.DISPUTED;
+import static org.meveo.model.billing.InvoicePaymentStatusEnum.PAID;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PPAID;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
+import static org.meveo.model.payments.MatchingStatusEnum.I;
 import static org.meveo.model.payments.OperationCategoryEnum.DEBIT;
 import static org.meveo.model.shared.DateUtils.setDateToEndOfDay;
 
@@ -54,6 +56,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.CategoryInvoiceAgregate;
 import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoicePaymentStatusEnum;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.order.Order;
@@ -190,7 +193,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 
             if (dunningExclusion) {
                 invoices = (List<RecordedInvoice>) getEntityManager().createQuery("from " + RecordedInvoice.class.getSimpleName()
-                        + " where customerAccount.id=:customerAccountId and matchingStatus= " + MatchingStatusEnum.I + " order by dueDate")
+                        + " where customerAccount.id=:customerAccountId and matchingStatus= " + I + " order by dueDate")
                     .setParameter("customerAccountId", customerAccount.getId()).getResultList();
             } else {
                 invoices = (List<RecordedInvoice>) getEntityManager()
@@ -770,11 +773,17 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         if(validationResult.isPresent()) {
             throw new BusinessException(validationResult.get());
         }
-        recordedInvoice.setMatchingStatus(MatchingStatusEnum.I);
+        recordedInvoice.setMatchingStatus(I);
         recordedInvoice.setLitigationReason(litigationReason);
-        recordedInvoice.getInvoice().setPaymentStatus(DISPUTED);
+        updatePaymentStatus(recordedInvoice, DISPUTED, new Date());
         update(recordedInvoice);
         return recordedInvoice;
+    }
+
+    private void updatePaymentStatus(RecordedInvoice recordedInvoice,
+                                     InvoicePaymentStatusEnum paymentStatus, Date paymentStatusDate) {
+        recordedInvoice.getInvoice().setPaymentStatus(paymentStatus);
+        recordedInvoice.getInvoice().setPaymentStatusDate(paymentStatusDate);
     }
 
     private Optional<String> validateRecordInvoice(RecordedInvoice recordedInvoice) {
@@ -796,4 +805,63 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         return empty();
     }
 
+    /**
+     * @param recordedInvoice  recorded invoice.
+     * @param litigationReason litigation reason.
+     * @return id of the updated recordedInvoice
+     * @throws BusinessException business exception.
+     */
+    public RecordedInvoice removeLitigation(RecordedInvoice recordedInvoice,
+                                            String litigationReason) throws BusinessException {
+        if (recordedInvoice != null) {
+            recordedInvoice = findById(recordedInvoice.getId());
+        }
+        validateAccountOperation(recordedInvoice);
+        final Date today = new Date();
+        setMatchingStatus(recordedInvoice);
+        recordedInvoice.setLitigationReason(litigationReason);
+        computePaymentStatus(recordedInvoice, today);
+        update(recordedInvoice);
+        return recordedInvoice;
+    }
+
+    private void validateAccountOperation(RecordedInvoice recordedInvoice) {
+        if (recordedInvoice == null) {
+            throw new BusinessException("Account operation not found");
+        }
+        if (recordedInvoice.getInvoice() == null) {
+            throw new BusinessException("No invoice associated to account operation");
+        }
+        if (!(I.equals(recordedInvoice.getMatchingStatus())
+                && DISPUTED.equals(recordedInvoice.getInvoice().getPaymentStatus()))) {
+            throw new BusinessException("Account operation [id=" + recordedInvoice.getId() + "] is not in litigation");
+        }
+    }
+
+    private RecordedInvoice setMatchingStatus(RecordedInvoice recordedInvoice) {
+        if (recordedInvoice.getAmount().compareTo(recordedInvoice.getMatchingAmount()) == 0) {
+            recordedInvoice.setMatchingStatus(MatchingStatusEnum.L);
+        } else if (recordedInvoice.getAmount().compareTo(recordedInvoice.getUnMatchingAmount()) == 0) {
+            recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
+        } else {
+            recordedInvoice.setMatchingStatus(MatchingStatusEnum.P);
+        }
+        return recordedInvoice;
+    }
+
+    private void computePaymentStatus(RecordedInvoice recordedInvoice, Date today) {
+        if (recordedInvoice.getMatchingAmount().compareTo(recordedInvoice.getAmount()) == 0) {
+            updatePaymentStatus(recordedInvoice, PAID, today);
+        } else {
+            if (today.before(recordedInvoice.getInvoice().getDueDate())) {
+                if (recordedInvoice.getMatchingAmount().compareTo(BigDecimal.ZERO) != 0) {
+                    updatePaymentStatus(recordedInvoice, PPAID, today);
+                } else {
+                    updatePaymentStatus(recordedInvoice, PENDING, today);
+                }
+            } else if (today.after(recordedInvoice.getInvoice().getDueDate())) {
+                updatePaymentStatus(recordedInvoice, UNPAID, today);
+            }
+        }
+    }
 }

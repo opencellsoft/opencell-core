@@ -1,6 +1,5 @@
 package org.meveo.apiv2.accountreceivable.accountOperation;
 
-
 import java.util.Map;
 import java.util.Set;
 
@@ -121,5 +120,21 @@ public interface AccountReceivableResource {
 					@ApiResponse(responseCode = "200", description = "litigation successfully set"),
 					@ApiResponse(responseCode = "404", description = "Account operations don't exist")})
 	Response setLitigation(@PathParam("id") Long accountOperationId,
+						   @Parameter(description = "Litigation dto", required = true) LitigationInput litigationInput);
+
+	/**
+	 * @param accountOperationId account operation id to remove litigation
+	 * @param litigationInput      litigation input
+	 * @return Response
+	 */
+	@POST
+	@Path("/{id}/litigation/remove")
+	@Operation(summary = "Remove litigation status on an account operation",
+			description = "Remove litigation status on an account operation",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "litigation successfully removed"),
+					@ApiResponse(responseCode = "400", description = "Account operation is not in litigation"),
+					@ApiResponse(responseCode = "404", description = "Account operations don't exist")})
+	Response removeLitigation(@PathParam("id") Long accountOperationId,
 						   @Parameter(description = "Litigation dto", required = true) LitigationInput litigationInput);
 }

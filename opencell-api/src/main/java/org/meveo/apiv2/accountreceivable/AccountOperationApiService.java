@@ -367,4 +367,19 @@ public class AccountOperationApiService implements ApiService<AccountOperation> 
 			throw new BusinessApiException(exception.getMessage());
 		}
 	}
+
+	/**
+	 * @param accountOperationId recordedInvoice id.
+	 * @param litigationInput litigation input.
+	 * @return id of the updated recordedInvoice
+	 */
+	public Long removeLitigation(Long accountOperationId, LitigationInput litigationInput) {
+		RecordedInvoice recordedInvoice = ofNullable(recordedInvoiceService.findById(accountOperationId))
+				.orElseThrow(() -> new NotFoundException("Account operation does not exits"));
+		try {
+			return recordedInvoiceService.removeLitigation(recordedInvoice, litigationInput.getLitigationReason()).getId();
+		} catch (BusinessException exception) {
+			throw new BusinessApiException(exception.getMessage());
+		}
+	}
 }
