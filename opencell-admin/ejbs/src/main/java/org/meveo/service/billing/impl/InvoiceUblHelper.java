@@ -130,6 +130,7 @@ public class InvoiceUblHelper {
 	private final static oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory objectFactoryCommonAggrement;
 	
 	private final static UntdidAllowanceCodeService untdidAllowanceCodeService;
+	private final static UntdidTaxationCategoryService UntdidTaxationCategoryService;
 	private final static InvoiceAgregateService invoiceAgregateService;
 	
 	static {
@@ -137,6 +138,7 @@ public class InvoiceUblHelper {
 		objectFactoryCommonAggrement = new oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory();
 		invoiceAgregateService = (InvoiceAgregateService) EjbUtils.getServiceInterface(InvoiceAgregateService.class.getSimpleName());
 		untdidAllowanceCodeService = (UntdidAllowanceCodeService) EjbUtils.getServiceInterface(UntdidAllowanceCodeService.class.getSimpleName());
+		UntdidTaxationCategoryService = (UntdidTaxationCategoryService) EjbUtils.getServiceInterface(UntdidTaxationCategoryService.class.getSimpleName());
 	}
 	
 	private InvoiceUblHelper(){}
@@ -921,17 +923,19 @@ public class InvoiceUblHelper {
 	
 	private TaxCategoryType setTaxCategory(TaxInvoiceAgregate taxInvoiceAgregate) {
 		TaxCategoryType taxCategoryType = objectFactoryCommonAggrement.createTaxCategoryType();
-		ID id = objectFactorycommonBasic.createID();
-		id.setSchemeID("UN/ECE 5305");
-		id.setSchemeAgencyID("6");
-		id.setValue("E");
-		taxCategoryType.setID(id);
+		Tax tax = taxInvoiceAgregate.getTax();
+		if(tax != null && taxInvoiceAgregate.getTax().getUntdidTaxationCategory() != null) {
+			ID id = objectFactorycommonBasic.createID();
+			id.setSchemeID("UN/ECE 5305");
+			id.setSchemeAgencyID("6");
+			id.setValue(taxInvoiceAgregate.getTax().getUntdidTaxationCategory().getCode());
+			taxCategoryType.setID(id);
+		}
 		
 		Percent percent = objectFactorycommonBasic.createPercent();
 		percent.setValue(taxInvoiceAgregate.getTaxPercent());
 		taxCategoryType.setPercent(percent);
 		
-		Tax tax = taxInvoiceAgregate.getTax();
 		if(tax.getUntdidTaxationCategory() != null) {
 			UntdidTaxationCategory untdidTaxationCategory = tax.getUntdidTaxationCategory();
 			TaxExemptionReason taxExemptionReason = objectFactorycommonBasic.createTaxExemptionReason();
