@@ -22142,4 +22142,294 @@ public class ImportJobNotification extends Script {
 		</insert>
 	</changeSet>
 
+	<changeSet id="#INTRD-19862_20231214" author="zelmeliani">
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="758100000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'RND_INC'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="658100000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'RND_EXP'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="445510000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'TAX')" />
+            <where>code = 'TAX_VAT_00'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="445510000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'TAX')" />
+            <where>code = 'TAX_VAT_05'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="445510000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'TAX')" />
+            <where>code = 'TAX_VAT_10'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="445510000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'TAX')" />
+            <where>code = 'TAX_VAT_20'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />        
+            <column name="account_code_client_side" value="511200000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REJ_CHK'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />        
+            <column name="account_code_client_side" value="511011000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REJ_CRD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />        
+            <column name="account_code_client_side" value="512000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REJ_DDT'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />        
+            <column name="account_code_client_side" value="511011000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REJ_RCR'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />        
+            <column name="account_code_client_side" value="512000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REJ_RDD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />        
+            <column name="account_code_client_side" value="511000610" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REJ_TIP'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />        
+            <column name="account_code_client_side" value="512010000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'PAY_REC'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />        
+            <column name="account_code_client_side" value="512010000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'PAY_NID'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />        
+            <column name="account_code_client_side" value="512010000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'PAY_DEP'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="512000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'PAY_DDT'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="511011000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'PAY_CRD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="511200000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'PAY_CHK'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="511000610" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'PAY_TIP'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="512000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'PAY_BATCH'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="512010000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REF_CASH'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="511200000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REF_CHK'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="511011000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REF_CRD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="512000000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REF_DDT'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="511011000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REF_SD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="511000610" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'REF_TIP'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="701000000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <where>code = 'INV_STD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="701000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <where>code = 'INV_REB'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="701000000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <where>code = 'INV_FEE'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="701000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <where>code = 'INV_DIS'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="701000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <where>code = 'INV_CRN'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="701000000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <where>code = 'INV_ADV'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701010000')" />        
+            <column name="account_code_client_side" value="411000000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <where>code = 'DEB_SD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />        
+            <column name="account_code_client_side" value="411000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'CRD_SD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />        
+            <column name="account_code_client_side" value="411000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'CRD_TRS'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />        
+            <column name="account_code_client_side" value="411000000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'DBT_TRS'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '654100000')" />        
+            <column name="account_code_client_side" value="411000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'EXP_WRT'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="658000000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'RND_EXP'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="758000000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'RND_INC'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="416011000" />
+            <column name="occ_category" value="CREDIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'PPL_CREATION'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />        
+            <column name="account_code_client_side" value="416011000" />
+            <column name="occ_category" value="DEBIT" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <where>code = 'PPL_INSTALLMENT'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
