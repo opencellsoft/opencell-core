@@ -1,11 +1,11 @@
-package org.meveo.apiv2.dunning.resource;
+package org.meveo.apiv2.payments.resource;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.meveo.apiv2.dunning.CustomerBalance;
+import org.meveo.apiv2.payments.CustomerBalance;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -16,7 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-@Path("/dunning/customerBalance")
+@Path("/customerBalance")
 @Produces({APPLICATION_JSON})
 @Consumes({APPLICATION_JSON})
 public interface CustomerBalanceResource {
