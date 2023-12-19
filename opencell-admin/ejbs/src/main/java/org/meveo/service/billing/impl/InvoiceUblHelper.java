@@ -4,6 +4,7 @@ package org.meveo.service.billing.impl;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.AddressLine;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.AddressType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.AllowanceChargeType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.BillingReference;
@@ -57,6 +58,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.InvoiceT
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.InvoicedQuantity;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.IssueDate;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.JobTitle;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Line;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.LineExtensionAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Note;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PayableAmount;
@@ -128,6 +130,7 @@ public class InvoiceUblHelper {
 	private final static oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory objectFactoryCommonAggrement;
 	
 	private final static UntdidAllowanceCodeService untdidAllowanceCodeService;
+	private final static UntdidTaxationCategoryService UntdidTaxationCategoryService;
 	private final static InvoiceAgregateService invoiceAgregateService;
 	
 	static {
@@ -135,6 +138,7 @@ public class InvoiceUblHelper {
 		objectFactoryCommonAggrement = new oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_2.ObjectFactory();
 		invoiceAgregateService = (InvoiceAgregateService) EjbUtils.getServiceInterface(InvoiceAgregateService.class.getSimpleName());
 		untdidAllowanceCodeService = (UntdidAllowanceCodeService) EjbUtils.getServiceInterface(UntdidAllowanceCodeService.class.getSimpleName());
+		UntdidTaxationCategoryService = (UntdidTaxationCategoryService) EjbUtils.getServiceInterface(UntdidTaxationCategoryService.class.getSimpleName());
 	}
 	
 	private InvoiceUblHelper(){}
@@ -654,6 +658,13 @@ public class InvoiceUblHelper {
 				additionalStreetName.setValue(address.getAddress2());
 				addressType.setAdditionalStreetName(additionalStreetName);
 			}
+			if(StringUtils.isNotBlank(address.getAddress3())){
+				AddressLine addressLine = objectFactoryCommonAggrement.createAddressLine();
+				Line line = objectFactorycommonBasic.createLine();
+				line.setValue(address.getAddress3());
+				addressLine.setLine(line);
+				addressType.getAddressLines().add(addressLine);
+			}
 			// AccountingSupplierParty/Party/PartyLegalEntity/RegistrationAddress/PostalZone
 			PostalZone postalZone = objectFactorycommonBasic.createPostalZone();
 			postalZone.setValue(address.getZipCode());
@@ -666,8 +677,17 @@ public class InvoiceUblHelper {
 				countryType.setIdentificationCode(identificationCode);
 				addressType.setCountry(countryType);
 			}
-			partyLegalEntity.setRegistrationAddress(addressType);
-			partyType.getPartyLegalEntities().add(partyLegalEntity);
+			if(StringUtils.isNotBlank(address.getCity())){
+				CityName cityName = objectFactorycommonBasic.createCityName();
+				cityName.setValue(address.getCity());
+				addressType.setCityName(cityName);
+			}
+			if(StringUtils.isNotBlank(address.getState())) {
+				CountrySubentity countrySubentity = objectFactorycommonBasic.createCountrySubentity();
+				countrySubentity.setValue(address.getState());
+				addressType.setCountrySubentity(countrySubentity);
+			}
+			partyType.setPostalAddress(addressType);
 		}
 		if(StringUtils.isNotBlank(seller.getVatNo())){
 			// AccountingSupplierParty/Party/PartyTaxScheme/CompanyID
@@ -903,17 +923,19 @@ public class InvoiceUblHelper {
 	
 	private TaxCategoryType setTaxCategory(TaxInvoiceAgregate taxInvoiceAgregate) {
 		TaxCategoryType taxCategoryType = objectFactoryCommonAggrement.createTaxCategoryType();
-		ID id = objectFactorycommonBasic.createID();
-		id.setSchemeID("UN/ECE 5305");
-		id.setSchemeAgencyID("6");
-		id.setValue("E");
-		taxCategoryType.setID(id);
+		Tax tax = taxInvoiceAgregate.getTax();
+		if(tax != null && taxInvoiceAgregate.getTax().getUntdidTaxationCategory() != null) {
+			ID id = objectFactorycommonBasic.createID();
+			id.setSchemeID("UN/ECE 5305");
+			id.setSchemeAgencyID("6");
+			id.setValue(taxInvoiceAgregate.getTax().getUntdidTaxationCategory().getCode());
+			taxCategoryType.setID(id);
+		}
 		
 		Percent percent = objectFactorycommonBasic.createPercent();
 		percent.setValue(taxInvoiceAgregate.getTaxPercent());
 		taxCategoryType.setPercent(percent);
 		
-		Tax tax = taxInvoiceAgregate.getTax();
 		if(tax.getUntdidTaxationCategory() != null) {
 			UntdidTaxationCategory untdidTaxationCategory = tax.getUntdidTaxationCategory();
 			TaxExemptionReason taxExemptionReason = objectFactorycommonBasic.createTaxExemptionReason();
