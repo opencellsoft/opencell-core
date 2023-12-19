@@ -333,9 +333,11 @@ public class TriggerCollectionPlanLevelsJobBean extends BaseJobBean {
                 throw new BusinessException("No getRecordedInvoice for the invoice "
                         + (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()));
             }
+            List<Long> ids = new ArrayList<>();
+            ids.add(invoice.getRecordedInvoice().getId());
             PaymentGateway paymentGateway =
                     paymentGatewayService.getPaymentGateway(customerAccount, preferredPaymentMethod, null);
-            //jobBean.doPayment(preferredPaymentMethod, customerAccount, amountToPay, asList(invoice.getRecordedInvoice().getId()), paymentGateway);
+            jobBean.doPayment(preferredPaymentMethod, customerAccount, amountToPay, ids, paymentGateway);
         }
     }
 
