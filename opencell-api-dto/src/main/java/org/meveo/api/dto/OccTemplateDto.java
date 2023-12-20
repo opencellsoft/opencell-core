@@ -78,6 +78,9 @@ public class OccTemplateDto extends BusinessEntityDto {
     @Schema(description = "contra Accounting Code 2")
     @XmlElement(name = "contraAccountingCode2")
     private String contraAccountingCode2;
+    
+    @Schema(description = "Flag manual creation enabled")
+    private Boolean manualCreationEnabled;
 
     /**
      * Instantiates a new occ template dto.
@@ -96,6 +99,7 @@ public class OccTemplateDto extends BusinessEntityDto {
         accountCode = occTemplate.getAccountingCode().getCode();
         occCategory = occTemplate.getOccCategory();
         accountCodeClientSide = occTemplate.getAccountCodeClientSide();
+        manualCreationEnabled = occTemplate.isManualCreationEnabled();
         if (occTemplate.getAccountingScheme() != null) {
             accountingScheme = new AccountingSchemeDto(occTemplate.getAccountingScheme());
         }
@@ -239,4 +243,13 @@ public class OccTemplateDto extends BusinessEntityDto {
     public void setContraAccountingCode2(String contraAccountingCode2) {
         this.contraAccountingCode2 = contraAccountingCode2;
     }
+
+	public Boolean isManualCreationEnabled() {
+		return manualCreationEnabled;
+	}
+
+	public void setManualCreationEnabled(Boolean manualCreationEnabled) {
+		this.manualCreationEnabled = manualCreationEnabled;
+	}
+    
 }
