@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.catalog.EnableOfferTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.api.dto.catalog.ProductOfferTemplateDto;
 import org.meveo.api.dto.cpq.CustomerContextDTO;
@@ -599,4 +600,90 @@ public interface OfferTemplateRs extends IBaseRs {
 			}
 	)
     public Response dissociateProduct(@PathParam("offerCode") String offerCode, @QueryParam("validFrom") Date validFrom, @QueryParam("validTo") Date validTo, List<String> productCodes);
+    
+    /**
+     * Enable all offer templates match the filter
+     * 
+     * @param filters Map of filters
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/massEnable")
+	@Operation(
+			summary=" Enable all offer templates match the filter.  ",
+			tags = { "OfferTemplate" },
+			description=" Enable all offer templates match the filter.  ",
+			operationId="    PUT_OfferTemplate_massEnable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "Filters is required", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "No offer template match the filter", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Internat error while enabling all offer templates match the filter", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class)))
+			}
+	)
+    Response massEnable(@Parameter(description = "Map of filters") EnableOfferTemplateDto input);
+    
+    /**
+     * Disable all offer templates match the filter
+     * 
+     * @param filters Map of filters
+     * @return Request processing status
+     */
+    @PUT
+    @Path("/massDisable")
+	@Operation(
+			summary=" Disable all offer templates match the filter.  ",
+			tags = { "OfferTemplate" },
+			description=" Disable all offer templates match the filter.  ",
+			operationId="    PUT_OfferTemplate_massEnable",
+			responses= {
+				@ApiResponse(description=" Request processing status ",
+						content=@Content(
+									schema=@Schema(
+											implementation= ActionStatus.class
+											)
+								)
+				),
+				@ApiResponse(
+						responseCode = "412", 
+						description = "Filters is required", 
+						content = @Content(
+									schema = @Schema(
+											implementation = MissingParameterException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "No offer template match the filter", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class))),
+				@ApiResponse(
+						responseCode = "400", 
+						description = "Internat error while disabling all offer templates match the filter", 
+						content = @Content(
+									schema = @Schema(
+												implementation = BusinessException.class)))
+			}
+	)
+    Response massDisable(@Parameter(description = "Map of filters") EnableOfferTemplateDto input);
 }
