@@ -6461,20 +6461,6 @@
     </changeSet>
     
     <changeSet id="#INTRD-16859_20230626" author="aeljaouhari" />
-
-    <changeSet id="#INTRD-19853_20231212" author="zelmeliani">
-        <insert tableName="billing_accounting_code">
-            <column name="id" valueNumeric="-48" />
-            <column name="version" valueNumeric="0" />
-            <column name="created" valueDate="${db.current.time}" />
-            <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="code" value="416000000"></column>
-            <column name="description" value="Doubtful receivable - payment plan"></column>
-            <column name="chart_of_account_type" value="ASSETS"></column>
-            <column name="chart_of_account_view_type" value="REGULAR"></column>
-        </insert>
-    </changeSet>
-
     <changeSet id="INTRD-19853_20231213" author="zelmeliani" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
