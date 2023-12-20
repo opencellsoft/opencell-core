@@ -21585,5 +21585,116 @@ public class ImportJobNotification extends Script {
             <where>entity_class='org.meveo.model.billing.BillingAccount' and format_el='#{''CU-''.concat((mv:formatDate(null, ''YY''))).concat(generatedCode)}'</where>
         </update>
     </changeSet>
+
+	<changeSet id="INTRD-19853_20231213" author="zelmeliani">
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='CRD_SD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='CRD_TRS'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='DBT_TRS'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='DEB_SD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='EXP_WRT'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
+            <where>code='INV_DIS'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
+            <where>code='INV_REB'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
+            <where>code='INV_FEE'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_CHK'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_CRD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_DDT'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_SD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REF_TIP'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_CHK'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_CRD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_DDT'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_RCR'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_RDD'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='REJ_TIP'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='RND_EXP'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='RND_INC'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='TAX_VAT_00'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='TAX_VAT_05'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='TAX_VAT_10'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='TAX_VAT_20'</where>
+        </update>
+        <update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='PPL_CREATION'</where>
+        </update>
+		<update tableName="ar_occ_template">
+            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <where>code='PPL_INSTALLMENT'</where>
+        </update>
+    </changeSet>
 	        
 </databaseChangeLog>
