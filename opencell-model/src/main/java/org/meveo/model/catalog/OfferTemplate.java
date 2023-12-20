@@ -74,7 +74,8 @@ import org.meveo.model.document.Document;
         @NamedQuery(name = "OfferTemplate.getMimimumRTUsed", query = "select ot.minimumAmountEl from OfferTemplate ot where ot.minimumAmountEl is not null"),
         @NamedQuery(name = "OfferTemplate.countExpiring", query = "SELECT COUNT(*) FROM OfferTemplate WHERE :nowMinusXDay<validity.to and validity.to<=NOW() and businessOfferModel is not null"),
         @NamedQuery(name = "OfferTemplate.findByServiceTemplate", query = "SELECT t FROM OfferTemplate t JOIN t.offerServiceTemplates ost WHERE ost.serviceTemplate = :serviceTemplate", hints = @QueryHint(name = "org.hibernate.flushMode", value = "COMMIT")),
-        @NamedQuery(name = "OfferTemplate.findByTags", query = "select o from OfferTemplate o LEFT JOIN o.tags as tag WHERE tag.code IN (:tagCodes)")
+        @NamedQuery(name = "OfferTemplate.findByTags", query = "select o from OfferTemplate o LEFT JOIN o.tags as tag WHERE tag.code IN (:tagCodes)"),
+        @NamedQuery(name = "OfferTemplate.massEnableDisable", query = "update OfferTemplate o set o.disabled = :flag where o.id in (:ids)")
 })
 public class OfferTemplate extends ProductOffering implements IWFEntity, ISearchable {
     private static final long serialVersionUID = 1L;
