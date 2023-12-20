@@ -482,6 +482,14 @@ public class RecurringRatingService extends RatingService implements Serializabl
                             operationDate = chargeInstance.getTerminationDate();
                         }
 
+                        if(chargeInstance != null
+                                && chargeInstance.getSubscription() != null
+                                && chargeInstance.getSubscription().getSubscribedTillDate() != null) {
+                            effectiveChargeFromDate = chargeInstance.getSubscription().getSubscriptionDate();
+                            inputQuantity = computeProrate(chargeInstance, effectiveChargeFromDate,
+                                    effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, inputQuantity);
+                        }
+
                         RatingResult localRatingResult = rateChargeAndInstantiateTriggeredEDRs(chargeInstance, operationDate, inputQuantity, null,
                             orderNumberToOverride != null ? orderNumberToOverride : chargeInstance.getOrderNumber(), effectiveChargeFromDate, effectiveChargeToDate,
                             prorate ? new DatePeriod(currentPeriodFromDate, currentPeriodToDate) : null, chargeMode, null, null, forSchedule, isVirtual);
@@ -561,6 +569,24 @@ public class RecurringRatingService extends RatingService implements Serializabl
         }
 
         return ratingResult;
+    }
+
+    private BigDecimal computeProrate(RecurringChargeInstance chargeInstance,
+                                      Date effectiveChargeFromDate, Date effectiveChargeToDate,
+                                      Date currentPeriodFromDate, Date currentPeriodToDate, BigDecimal inputQuantity) {
+        BigDecimal prorata = DateUtils.calculateProrataRatio(effectiveChargeFromDate,
+                effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, false);
+        if (prorata == null) {
+            throw new RatingException("Failed to calculate prorating for charge id=" + chargeInstance.getId()
+                    + " : periodFrom=" + currentPeriodFromDate + ", periodTo=" + currentPeriodToDate
+                    + ", proratedFrom=" + effectiveChargeFromDate + ", proratedTo=" + effectiveChargeToDate);
+        }
+        inputQuantity = inputQuantity.multiply(prorata)
+                .setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
+        if(effectiveChargeFromDate.after(effectiveChargeToDate)) {
+            inputQuantity = inputQuantity.negate();
+        }
+        return inputQuantity;
     }
 
     private boolean isAlreadyInvoiced(WalletOperation walletOperation) {

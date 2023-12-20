@@ -3,7 +3,7 @@ package org.meveo.apiv2.dunning.impl;
 import org.meveo.apiv2.dunning.ImmutableDunningSettings;
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.model.article.AccountingArticle;
-import org.meveo.model.dunning.CustomerBalance;
+import org.meveo.model.payments.CustomerBalance;
 import org.meveo.model.dunning.DunningSettings;
 
 public class DunningSettingsMapper extends ResourceMapper<org.meveo.apiv2.dunning.DunningSettings, DunningSettings> {

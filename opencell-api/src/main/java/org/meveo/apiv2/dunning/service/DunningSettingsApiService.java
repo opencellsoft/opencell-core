@@ -13,7 +13,7 @@ import javax.ws.rs.ForbiddenException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.apiv2.ordering.services.ApiService;
-import org.meveo.model.dunning.CustomerBalance;
+import org.meveo.model.payments.CustomerBalance;
 import org.meveo.model.dunning.DunningCollectionPlan;
 import org.meveo.model.dunning.DunningModeEnum;
 import org.meveo.model.dunning.DunningSettings;
