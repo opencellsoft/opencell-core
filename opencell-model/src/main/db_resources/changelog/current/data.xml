@@ -7820,7 +7820,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" value="-3" />
 			<column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-63" />
@@ -7833,7 +7832,6 @@ public class CustomGatewayPaymentScript extends PaymentScript{
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" value="-3" />
 			<column name="manual_creation_enabled" value="0"/>
-            <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
 		</insert>
 	</changeSet>
 	
