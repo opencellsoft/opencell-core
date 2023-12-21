@@ -236,8 +236,16 @@ public abstract class Job {
     protected boolean closeExecutionResult(JobInstance jobInstance, JobExecutionResultImpl executionResult, boolean moreToProcess) {
         boolean serverShutdown = JobExecutionService.isServerIsInShutdownMode();
         boolean jobCanceled = serverShutdown ? true : jobExecutionService.isJobCancelled(jobInstance.getId());
-        executionResult.setStatus(serverShutdown ? JobExecutionResultStatusEnum.SHUTDOWN
-                : jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
+        boolean limitExceeded = executionResult.isLimitExceeded();
+        JobExecutionResultStatusEnum status = JobExecutionResultStatusEnum.COMPLETED;
+        if (serverShutdown) {
+            status = JobExecutionResultStatusEnum.SHUTDOWN;
+        } else if (jobCanceled && !limitExceeded) {
+            status = JobExecutionResultStatusEnum.CANCELLED;
+        } else if (moreToProcess) {
+            status = JobExecutionResultStatusEnum.COMPLETED_MORE;
+        }
+        executionResult.setStatus(status);
         if (serverShutdown) {
             executionResult.addReportToBeginning("Job cancelled due to the server was shutdown in the middle of job execution");
         }
