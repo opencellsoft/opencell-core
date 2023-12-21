@@ -20,7 +20,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.jpa.EntityManagerWrapper;
-import org.meveo.model.dunning.CustomerBalance;
+import org.meveo.model.payments.CustomerBalance;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.payments.impl.CustomerBalanceService;

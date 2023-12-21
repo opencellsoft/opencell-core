@@ -21,6 +21,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.apiv2.dunning.service.DunningSettingsApiService;
 import org.meveo.apiv2.dunning.service.GlobalSettingsVerifier;
 import org.meveo.model.dunning.DunningModeEnum;
+import org.meveo.model.payments.CustomerBalance;
 import org.meveo.service.payments.impl.CustomerBalanceService;
 import org.meveo.service.payments.impl.DunningCollectionPlanService;
 import org.meveo.service.payments.impl.DunningSettingsService;
@@ -28,8 +29,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import com.stripe.model.Charge.PaymentMethodDetails.CustomerBalance;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DunningSettingsApiServiceTest {
@@ -46,7 +45,7 @@ public class DunningSettingsApiServiceTest {
 
 	org.meveo.model.dunning.DunningSettings dunningSettings;
 	
-	org.meveo.model.dunning.CustomerBalance customerBalance;
+	CustomerBalance customerBalance;
 
 	@Mock
 	private GlobalSettingsVerifier globalSettingsVerifier;
@@ -59,7 +58,7 @@ public class DunningSettingsApiServiceTest {
     	dunningSettings.setApplyDunningChargeFxExchangeRate(true);
     	dunningSettings.setCode("CODD");
     	dunningSettings.setDunningMode(DunningModeEnum.CUSTOMER_LEVEL);
-    	customerBalance = new org.meveo.model.dunning.CustomerBalance();
+    	customerBalance = new CustomerBalance();
     	customerBalance.setId(1L);
     	customerBalance.setCode("CUSTOMER_BALANCE_1");
     	customerBalance.setDefaultBalance(true);

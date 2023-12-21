@@ -21,7 +21,9 @@ package org.meveo.service.job;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
@@ -52,6 +54,8 @@ import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.BaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class JobExecutionService.
@@ -68,6 +72,11 @@ public class JobExecutionService extends BaseService {
      * Number of times to repeat a job when it did not finish in a first/subsequent runs
      */
     private static final int MAX_TIMES_TO_RUN_INCOMPLETE_JOB = 50;
+
+    /**
+     * Tracks if server entered a shutdown mode
+     */
+    public static AtomicBoolean serverIsInShutdownMode = new AtomicBoolean(false);
 
     /**
      * job instance service.
@@ -163,7 +172,7 @@ public class JobExecutionService extends BaseService {
             }
         }
         // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only or was launched from a node that is not allowed to run on.
-        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API)
+        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API || jobLauncher == JobLauncherEnum.TRIGGER)
                 && (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.RUN_IN_PARALLEL
                         || ((jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE || jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES)
                                 && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
@@ -225,7 +234,7 @@ public class JobExecutionService extends BaseService {
                 JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
                 nextJob = PersistenceUtils.initializeAndUnproxy(nextJob);
                 log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
-                executeJob(nextJob, null, JobLauncherEnum.TRIGGER, false);
+                executeJob(nextJob, null, JobLauncherEnum.TRIGGER, true);
             }
         }
     }
@@ -501,5 +510,58 @@ public class JobExecutionService extends BaseService {
         log.error("Timedout while waiting for all nodes to finish executing a job {}. Last status received was {}.", jobInstanceId, status);
 
         return false;
+    }
+
+    /**
+     * Create JVM non-gracefull shutdown hooks to stop by force all running job threads, so job execution progress is logged
+     */
+    public static void addShutdownHooks() {
+
+        @SuppressWarnings("rawtypes")
+        Thread shutdownHook = new Thread(() -> {
+
+            JobExecutionService.markServerIsInShutdownMode();
+
+            Logger log = LoggerFactory.getLogger(JobExecutionService.class);
+
+            log.error("Stopping jobs because of server shutdown");
+
+            Map<Long, List<Future>> futureInfos = JobCacheContainerProvider.getJobExecutionThreads();
+
+            for (Entry<Long, List<Future>> futureInfo : futureInfos.entrySet()) {
+
+                IteratorBasedJobBean.markJobToStop(futureInfo.getKey());
+                IteratorBasedJobBean.releaseJobDataProcessingThreads(futureInfo.getKey());
+
+                int i = 1;
+                for (Future future : futureInfo.getValue()) {
+                    if (!future.isDone()) {
+                        boolean canceled = future.cancel(true);
+                        if (canceled) {
+                            log.info("Job {} thread #{} was canceled by force as server was shutting down", futureInfo.getKey(), i);
+                        } else {
+                            log.error("Failed to cancel a job {} thread #{} as server was shutting down", futureInfo.getKey(), i);
+                        }
+                    }
+                    i++;
+                }
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+    }
+
+    /**
+     * Mark that server is in shutdown mode
+     */
+    public static void markServerIsInShutdownMode() {
+        serverIsInShutdownMode.set(true);
+    }
+
+    /**
+     * 
+     * @return Is server operating in shutdown mode
+     */
+    public static boolean isServerIsInShutdownMode() {
+        return serverIsInShutdownMode.get();
     }
 }

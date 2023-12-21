@@ -37,7 +37,6 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.billing.AccountingCode;
-import org.meveo.model.dunning.CustomerBalance;
 
 import java.util.List;
 
@@ -99,7 +98,7 @@ public class OCCTemplate extends BusinessEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "manual_creation_enabled")
-    private boolean manualCreationEnabled;
+    private boolean manualCreationEnabled = true;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ar_customer_balance_templates",

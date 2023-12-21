@@ -216,6 +216,8 @@ public class BatchEntityService extends PersistenceService<BatchEntity> {
         if (!result) {
             filters.put("$filter0101", filter);
         }
+        filter.put("inList status", Set.of(WalletOperationStatusEnum.OPEN.name(), WalletOperationStatusEnum.F_TO_RERATE.name(),
+                WalletOperationStatusEnum.REJECTED.name()));
         return filters;
     }
 

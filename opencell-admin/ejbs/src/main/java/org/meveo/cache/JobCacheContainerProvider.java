@@ -557,6 +557,16 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     }
 
     /**
+     * Get a list of all running job futures/threads
+     * 
+     * @return A list of all currently job running futures/threads grouped by a job instance id
+     */
+    public static Map<Long, List<Future>> getJobExecutionThreads() {
+
+        return runningJobFutures;
+    }
+
+    /**
      * Mark job, identified by a job instance as "requested to stop"
      * 
      * @param jobInstance Job instance to stop

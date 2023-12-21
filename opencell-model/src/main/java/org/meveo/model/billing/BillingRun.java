@@ -43,6 +43,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -778,6 +779,7 @@ public class BillingRun extends EnableEntity implements ICustomFieldEntity, IRef
      * setting uuid if null
      */
     @PrePersist
+    @PreUpdate
     public void setUUIDIfNull() {
         if (uuid == null) {
             uuid = UUID.randomUUID().toString();

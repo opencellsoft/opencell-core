@@ -1,6 +1,5 @@
 package org.meveo.apiv2.accountreceivable.accountOperation;
 
-
 import java.util.Map;
 import java.util.Set;
 
@@ -107,4 +106,35 @@ public interface AccountReceivableResource {
 					@ApiResponse(responseCode = "400", description = "Matching action is failed")
 			})
 	Response unMatchOperations(UnMatchingAccountOperation unMatchingAO);
+
+	/**
+	 * @param accountOperationId account operation to set litigation
+	 * @param litigationInput      litigation input
+	 * @return Response
+	 */
+	@PUT
+	@Path("/{id}/litigation")
+	@Operation(summary = "Set litigation matching status on an account operation",
+			description = "Set litigation matching status on an account operation",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "litigation successfully set"),
+					@ApiResponse(responseCode = "404", description = "Account operations don't exist")})
+	Response setLitigation(@PathParam("id") Long accountOperationId,
+						   @Parameter(description = "Litigation dto", required = true) LitigationInput litigationInput);
+
+	/**
+	 * @param accountOperationId account operation id to remove litigation
+	 * @param litigationInput      litigation input
+	 * @return Response
+	 */
+	@POST
+	@Path("/{id}/litigation/remove")
+	@Operation(summary = "Remove litigation status on an account operation",
+			description = "Remove litigation status on an account operation",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "litigation successfully removed"),
+					@ApiResponse(responseCode = "400", description = "Account operation is not in litigation"),
+					@ApiResponse(responseCode = "404", description = "Account operations don't exist")})
+	Response removeLitigation(@PathParam("id") Long accountOperationId,
+						   @Parameter(description = "Litigation dto", required = true) LitigationInput litigationInput);
 }
