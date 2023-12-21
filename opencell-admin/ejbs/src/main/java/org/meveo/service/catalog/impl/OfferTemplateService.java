@@ -36,7 +36,10 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.generics.GenericRequestMapper;
+import org.meveo.api.generics.PersistenceServiceHelper;
 import org.meveo.commons.utils.PersistenceUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
@@ -547,5 +550,26 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     	}
 
     	return offers;
+    }
+    
+	@SuppressWarnings("unchecked")
+	public List<OfferTemplate> findByFilter(Map<String, Object> filters) {
+        PaginationConfiguration configuration = getPaginationConfigurationFromFilter(filters);
+        QueryBuilder query = getQuery(configuration);
+		return query.getQuery(getEntityManager()).getResultList();
+	}
+	
+    private PaginationConfiguration getPaginationConfigurationFromFilter(Map<String, Object> filters) {
+        GenericRequestMapper genericRequestMapper = new GenericRequestMapper(entityClass, PersistenceServiceHelper.getPersistenceService());
+        filters = genericRequestMapper.evaluateFilters(filters, entityClass);
+        return new PaginationConfiguration(filters);
+    }
+    
+    public int massEnableDisableByIds(List<Long> offerTemplateIds, boolean flag){
+        return getEntityManager()
+                .createNamedQuery("OfferTemplate.massEnableDisable")
+                .setParameter("ids", offerTemplateIds)
+                .setParameter("flag", flag)
+                .executeUpdate();
     }
 }
