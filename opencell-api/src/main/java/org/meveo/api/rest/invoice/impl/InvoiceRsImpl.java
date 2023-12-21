@@ -230,13 +230,13 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             //if true then validation is ignored, if false or missing then invoice goes through validation process (false as default value)
-            if(!putData.isSkipValidation()) {
+            if (!putData.isSkipValidation()) {
                 invoiceApi.validateAdjAmount(putData.getInvoiceId());
                 Invoice invoice = invoiceApi.rebuildInvoice(putData.getInvoiceId(), false);
-                if(invoice != null && (invoice.getStatus() == DRAFT || invoice.getStatus() == NEW)) {
+                if (invoice != null && (invoice.getStatus() == DRAFT || invoice.getStatus() == NEW)) {
                     invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);
                 }
-            }else {
+            } else {
                 invoiceApi.validateInvoice(putData.getInvoiceId(), putData.getGenerateAO(), putData.getRefreshExchangeRate(), true);
             }
         } catch (Exception e) {
