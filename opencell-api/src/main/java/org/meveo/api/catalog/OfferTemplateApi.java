@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -1251,4 +1253,25 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             all.add(dto.getSequence());
         }
     }
+
+    /**
+     * Enable or disable all offer templates match the filter.
+     * @param filters : map of filters
+     * @param flag : false to enable, true to disable
+     * @return total of offer templates returned by filter
+     */
+	public int massEnableDisable(Map<String, Object> filters, boolean flag) {
+		if (MapUtils.isEmpty(filters)) {
+			throw new InvalidParameterException("filters is required");
+		}
+		
+		List<OfferTemplate> offerTemplates = offerTemplateService.findByFilter(filters);
+		
+		if (offerTemplates == null || offerTemplates.isEmpty()) {
+			throw new BusinessException("No Offer template found for the provided filters");
+		}
+        List<Long> ids = offerTemplates.stream().map(OfferTemplate::getId).collect(Collectors.toList());
+
+		return offerTemplateService.massEnableDisableByIds(ids, flag);
+	}
 }
