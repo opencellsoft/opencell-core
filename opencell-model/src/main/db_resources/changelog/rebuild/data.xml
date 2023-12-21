@@ -12380,7 +12380,42 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 		    <column name="description" value="pricePlanFilters.enableValidityDate"/>
 		</insert>
 	</changeSet>
-	
+
+    <changeSet id="INTRD-19464_20231204_build" author="TarikFA.">
+        <insert tableName="meveo_job_instance">
+            <column name="id" valueSequenceNext="meveo_job_instance_seq" />
+            <column name="version" valueNumeric="1" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="job_category" value="MEDIATION" />
+            <column name="job_template" value="FlatFileProcessingJob" />
+            <column name="code" value="massWrittingOffInvoicesJob" />
+            <column name="description" value="mass writting off invoices job"/>
+            <column name="creator" value="opencell.admin" />
+            <column name="job_speed" value="NORMAL" />
+            <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
+            <column name="verbose_report" valueNumeric="1" />
+            <column name="disabled" valueNumeric="0" />
+            <column name="cf_values">
+                <![CDATA[
+				{"nbRuns": [{"long": 1}], "oneFilePerJob": [{"boolean": false}], "sortingOption": [{"string": "ALPHA"}], "waitingMillis": [{"long": 0}], "FlatFileProcessingJob_inputDir": [{"string": "/imports/writeOff/inputs"}], "FlatFileProcessingJob_outputDir": [{"string": "/imports/writeOff/outputs"}], "FlatFileProcessingJob_archiveDir": [{"string": "/imports/writeOff/archives"}], "FlatFileProcessingJob_errorAction": [{"string": "CONTINUE"}], "FlatFileProcessingJob_mappingConf": [{"string": "<beanio\r\n\txmlns=\"http://www.beanio.org/2012/03\"\r\n\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd\">\r\n\t<stream name=\"record\" format=\"csv\">\r\n\t\t<parser>\r\n\t\t\t<property name=\"delimiter\" value=\";\" />\r\n\t\t\t<property name=\"comments\" value=\"END\" />\r\n\t\t\t<property name=\"multilineEnabled\" value=\"true\" />\r\n\t\t</parser>\r\n\t\t<record name=\"header\" minOccurs=\"1\" maxOccurs=\"1\" class=\"map\">\r\n\t\t\t<field name=\"INVOICE_NUMBER\" ignore=\"true\"/>\r\n\t\t\t<field name=\"INVOICE_AMOUNT\" ignore=\"true\"/>\r\n\t\t\t<field name=\"UNCOLLECTIBILITY_CERTIFICATE_NUMBER\" ignore=\"true\"/>\r\n\t\t</record>\r\n\t\t<record name=\"details\" minOccurs=\"1\" maxOccurs=\"unbounded\" class=\"map\">\r\n\t\t\t<field name=\"INVOICE_NUMBER\" required=\"true\"/>\r\n\t\t\t<field name=\"INVOICE_AMOUNT\" required=\"true\"/>\r\n\t\t\t<field name=\"UNCOLLECTIBILITY_CERTIFICATE_NUMBER\" required=\"true\"/>\r\n\t\t</record>\r\n\t</stream>\r\n</beanio>"}], "FlatFileProcessingJob_scriptsFlow": [{"string": "org.meveo.service.script.MassWrittingOffInvoicesScript"}], "FlatFileProcessingJob_formatTransfo": [{"string": "None"}], "FlatFileProcessingJob_originFilename": [{"string": "origin_filename"}], "FlatFileProcessingJob_nbLinesToProcess": [{"long": 1}], "FlatFileProcessingJob_fileNameExtension": [{"string": "csv"}], "FlatFileProcessingJob_recordVariableName": [{"string": "record"}]}
+				]]>
+            </column>
+        </insert>
+
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="code" value="org.meveo.service.script.MassWrittingOffInvoicesScript" />
+            <column name="script">
+                <![CDATA[   package org.meveo.service.script;
+            		public class MassWrittingOffInvoicesScript extends MassWrittingOffInvoices {}]]>
+            </column>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="OPENCELL.ADMIN" />
+            <column name="version" valueNumeric="1" />
+            <column name="src_type" value="JAVA" />
+        </insert>
+    </changeSet>
+
 	<changeSet id="#INTRD-19685_20231208" author="AbdellatifBARI">
 		<insert tableName="com_message_template">
 			<column name="media" value="EMAIL" />
@@ -12423,7 +12458,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="sequence_id" valueNumeric="-4" />
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
 	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
@@ -12446,6 +12481,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-19093_20231109" author="aeljaouhari" />
     <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
 	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" dbms="postgresql" />
+    <changeSet id="INTRD-19464_20231204" author="TarikFA." />
 	<changeSet id="#INTRD-19685_20231130" author="AbdellatifBARI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
