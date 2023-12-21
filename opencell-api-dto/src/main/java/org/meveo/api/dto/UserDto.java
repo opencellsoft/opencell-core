@@ -69,7 +69,7 @@ public class UserDto extends AuditableEntityDto {
 
     /** The first name. */
     @Schema(description = "first name")
-    private String firstName;
+	    private String firstName;
 
     /** The last name. */
     @Schema(description = "last name")
