@@ -22432,4 +22432,209 @@ public class ImportJobNotification extends Script {
         </update>
     </changeSet>
 
+	<changeSet id="#INTRD-19862_20231220" author="zelmeliani">
+        <update tableName="ar_occ_template">       
+            <column name="account_code_client_side" value="411000000" />
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '758100000')" />
+            <where>code = 'RND_INC'</where>
+        </update>
+        <update tableName="ar_occ_template">      
+            <column name="account_code_client_side" value="411000000" />
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '658100000')" />
+            <where>code = 'RND_EXP'</where>
+        </update>
+        <update tableName="ar_occ_template">         
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '445510000')" />
+            <where>code = 'TAX_VAT_00'</where>
+        </update>
+        <update tableName="ar_occ_template">         
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '445510000')" />
+            <where>code = 'TAX_VAT_05'</where>
+        </update>
+        <update tableName="ar_occ_template">           
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '445510000')" />
+            <where>code = 'TAX_VAT_10'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '445510000')" />
+            <where>code = 'TAX_VAT_20'</where>
+        </update>
+        <update tableName="ar_occ_template">      
+            <column name="account_code_client_side" value="411000000" />
+			<column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511200000')" />
+            <where>code = 'REJ_CHK'</where>
+        </update>
+        <update tableName="ar_occ_template">   
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511011000')" />
+            <where>code = 'REJ_CRD'</where>
+        </update>
+        <update tableName="ar_occ_template">      
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512000000')" />
+            <where>code = 'REJ_DDT'</where>
+        </update>
+        <update tableName="ar_occ_template">       
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511011000')" />
+            <where>code = 'REJ_RCR'</where>
+        </update>
+        <update tableName="ar_occ_template">     
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512000000')" />
+            <where>code = 'REJ_RDD'</where>
+        </update>
+        <update tableName="ar_occ_template">
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511000610')" />
+            <where>code = 'REJ_TIP'</where>
+        </update>
+        <update tableName="ar_occ_template">     
+            <column name="account_code_client_side" value="419120000" />
+			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />
+            <where>code = 'PAY_REC'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="419120000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />
+            <where>code = 'PAY_NID'</where>
+        </update>
+        <update tableName="ar_occ_template">        
+            <column name="account_code_client_side" value="419110000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />
+            <where>code = 'PAY_DEP'</where>
+        </update>
+        <update tableName="ar_occ_template">       
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512000000')" />
+            <where>code = 'PAY_DDT'</where>
+        </update>
+        <update tableName="ar_occ_template">        
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511011000')" />
+            <where>code = 'PAY_CRD'</where>
+        </update>
+        <update tableName="ar_occ_template">        
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511200000')" />
+            <where>code = 'PAY_CHK'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511000610')" />
+            <where>code = 'PAY_TIP'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="null" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512000000')" />
+            <where>code = 'PAY_BATCH'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />
+            <where>code = 'REF_CASH'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511200000')" />
+            <where>code = 'REF_CHK'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511011000')" />
+            <where>code = 'REF_CRD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512000000')" />
+            <where>code = 'REF_DDT'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="512010000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511011000')" />
+            <where>code = 'REF_SD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511000610')" />
+            <where>code = 'REF_TIP'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="null" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
+            <where>code = 'INV_STD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="709000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
+            <where>code = 'INV_REB'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="763100000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
+            <where>code = 'INV_FEE'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="709000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
+            <where>code = 'INV_DIS'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="null" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
+            <where>code = 'INV_CRN'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="null" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
+            <where>code = 'INV_ADV'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="41100000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
+            <where>code = 'DEB_SD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="165000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
+            <where>code = 'CRD_SD'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
+            <where>code = 'CRD_TRS'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
+            <where>code = 'DBT_TRS'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
+            <where>code = 'EXP_WRT'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '658100000')" />
+            <where>code = 'RND_EXP'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="411000000" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '758100000')" />
+            <where>code = 'RND_INC'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="null" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '416000000')" />
+            <where>code = 'PPL_CREATION'</where>
+        </update>
+        <update tableName="ar_occ_template">    
+            <column name="account_code_client_side" value="null" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '416000000')" />
+            <where>code = 'PPL_INSTALLMENT'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
