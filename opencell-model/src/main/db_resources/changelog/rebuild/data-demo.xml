@@ -6515,6 +6515,7 @@
     <changeSet id="#INTRD-19367_20231212" author="aeljaouhari" />
     <changeSet id="INTRD-19853_20231213" author="zelmeliani" />
     <changeSet id="#INTRD-19862_20231214" author="zelmeliani" />
+    <changeSet id="#INTRD-19862_20231220" author="zelmeliani" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">
