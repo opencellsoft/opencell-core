@@ -60,16 +60,17 @@ public class UserService extends PersistenceService<User> {
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
     public void create(User user) throws UsernameAlreadyExistsException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
-        keycloakAdminClientService.createUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
-        super.create(user);
+	    if(canSynchroWithKC()) {
+		    keycloakAdminClientService.createUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
+	    }
+			super.create(user);
     }
 
     @Override
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
     public User update(User user) throws ElementNotFoundException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
-	    String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
-		if(lUserManagementSource.equalsIgnoreCase("KC")){
+		if(canSynchroWithKC()){
 			keycloakAdminClientService.updateUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
 		}
         if(user.getId() != null) {
@@ -82,8 +83,10 @@ public class UserService extends PersistenceService<User> {
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
     public void updateUserWithAttributes(User user, Map<String, String> attributes) throws ElementNotFoundException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
-        keycloakAdminClientService.updateUser(user.getUserName().toUpperCase(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), attributes);
-        if(user.getId() != null) {
+		if(canSynchroWithKC()) {
+			keycloakAdminClientService.updateUser(user.getUserName().toUpperCase(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), attributes);
+		}
+		 if(user.getId() != null) {
             super.update(user);
         }
     }
@@ -91,7 +94,9 @@ public class UserService extends PersistenceService<User> {
     @Override
     @RolesAllowed({ "userManagement", "apiUserManagement" })
     public void remove(User user) throws BusinessException {
-        keycloakAdminClientService.deleteUser(user.getUserName());
+	    if(canSynchroWithKC()) {
+            keycloakAdminClientService.deleteUser(user.getUserName());
+		}
         super.remove(user);
     }
 
@@ -119,8 +124,8 @@ public class UserService extends PersistenceService<User> {
 
         log.info("lUserManagementSource {}", lUserManagementSource);
         User lUser = null;
-
-        if(lUserManagementSource.equals("OC")) {
+	    
+	    if(!canSynchroWithKC()) {
             lUser = getUserFromDatabase(username);
 
             if (lUser != null && extendedInfo) {
@@ -146,11 +151,8 @@ public class UserService extends PersistenceService<User> {
 
     @Override
     public List<User> list(PaginationConfiguration config) {
-        String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
-
         List<User> users = new ArrayList<>();
-
-        if(lUserManagementSource.equals("OC")) {
+	    if(!canSynchroWithKC()) {
             String firstName = (String) config.getFilters().get("name.firstName");
             String lastName = (String) config.getFilters().get("name.lastName");
             String email = (String) config.getFilters().get("email");
@@ -194,11 +196,8 @@ public class UserService extends PersistenceService<User> {
 
     @Override
     public long count(PaginationConfiguration config) {
-        String userManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
-
         List<User> users;
-
-        if(userManagementSource.equals("OC")) {
+	    if(!canSynchroWithKC()) {
             String firstName = (String) config.getFilters().get("name.firstName");
             String lastName = (String) config.getFilters().get("name.lastName");
             String email = (String) config.getFilters().get("email");
@@ -227,9 +226,7 @@ public class UserService extends PersistenceService<User> {
     }
 
     public UserRepresentation getUserRepresentationByUsername(String username) throws ElementNotFoundException {
-        String userManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
-
-        if(userManagementSource.equals("KC")) {
+	    if(canSynchroWithKC()) {
             return keycloakAdminClientService.getUserRepresentationByUsername(username);
         } else {
             return null;
@@ -343,4 +340,9 @@ public class UserService extends PersistenceService<User> {
         }
         return null;
     }
+	
+	private boolean canSynchroWithKC(){
+		String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
+		return lUserManagementSource.equalsIgnoreCase("KC");
+	}
 }
