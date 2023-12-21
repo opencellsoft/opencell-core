@@ -15311,4 +15311,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             referencedColumnNames="id" referencedTableName="billing_tax" />
             
       </changeSet>
+      
+      
+    <changeSet id="#INTRD-19135_21122023" author="AbdelmounaimAkadid">
+		<createIndex indexName="crm_customer_address_book_idx" tableName="crm_customer">
+	      	<column name="address_book_id"/>
+	  	</createIndex>
+	</changeSet>
+      
 </databaseChangeLog>
