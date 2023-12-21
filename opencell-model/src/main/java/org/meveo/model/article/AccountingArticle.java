@@ -35,7 +35,7 @@ import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.UntdidAllowanceCode;
 import org.meveo.model.tax.TaxClass;
 
-@Entity@CustomFieldEntity(cftCodePrefix = "Article")
+@Entity@CustomFieldEntity(cftCodePrefix = "AccountingArticle")
 @Table(name = "billing_accounting_article", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = { @org.hibernate.annotations.Parameter(name = "sequence_name", value = "billing_accounting_article_seq"), })
