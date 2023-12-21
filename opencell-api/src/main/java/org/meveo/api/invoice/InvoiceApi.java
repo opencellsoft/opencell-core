@@ -26,7 +26,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +37,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.BadRequestException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
@@ -62,7 +62,6 @@ import org.meveo.api.dto.payment.PaymentScheduleInstancesDto;
 import org.meveo.api.dto.payment.RecordedInvoiceDto;
 import org.meveo.api.dto.response.InvoicesDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -79,7 +78,6 @@ import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.MatchingReturnObject;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.*;
 import org.meveo.model.catalog.DiscountPlan;
@@ -90,8 +88,6 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.generic.wf.WorkflowInstance;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentScheduleInstance;
@@ -589,9 +585,11 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("invoiceId");
         }
         handleMissingParameters();
-        serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, refreshExchangeRate);
-
         Invoice invoice = invoiceService.findById(invoiceId);
+        if(VALIDATED.equals(invoice.getStatus())) {
+            throw new BadRequestException("Invoice already validated");
+        }
+        serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, refreshExchangeRate);
         Boolean brGenerateAO = Optional.ofNullable(invoice.getBillingRun()).map(BillingRun::getGenerateAO).orElse(false);
         if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);

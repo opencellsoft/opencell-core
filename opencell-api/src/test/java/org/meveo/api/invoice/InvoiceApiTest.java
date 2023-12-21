@@ -1,16 +1,19 @@
 package org.meveo.api.invoice;
 
+import static org.junit.rules.ExpectedException.none;
+import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
+import static org.mockito.Mockito.when;
+
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceStatusEnum;
 import org.meveo.model.billing.InvoiceType;
-import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 import org.meveo.service.billing.impl.ServiceSingleton;
@@ -21,12 +24,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.ws.rs.BadRequestException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InvoiceApiTest {
+
+    @Rule
+    public final ExpectedException exception = none();
 
     @InjectMocks
     private InvoiceApi invoiceApi;
@@ -63,9 +70,9 @@ public class InvoiceApiTest {
         invoice.setAmountWithoutTax(BigDecimal.TEN);
         invoice.setInvoiceType(new InvoiceType());
 
-        Mockito.when(serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, true)).thenReturn(invoice);
-        Mockito.when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(invoice);
-        Mockito.when(invoiceService.findById(invoiceId)).thenReturn(invoice);
+        when(serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, true)).thenReturn(invoice);
+        when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(invoice);
+        when(invoiceService.findById(invoiceId)).thenReturn(invoice);
 
         try {
             String invNumber = invoiceApi.validateInvoice(invoiceId, false, true, true);
@@ -83,9 +90,9 @@ public class InvoiceApiTest {
         Invoice adjInv = buildInvoice(1L, typeAdj);
         adjInv.setAutoMatching(true);
 
-        Mockito.when(serviceSingleton.validateAndAssignInvoiceNumber(adjInv.getId(), true)).thenReturn(adjInv);
-        Mockito.when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(adjInv);
-        Mockito.when(invoiceService.findById(adjInv.getId())).thenReturn(adjInv);
+        when(serviceSingleton.validateAndAssignInvoiceNumber(adjInv.getId(), true)).thenReturn(adjInv);
+        when(invoiceService.refreshOrRetrieve(Mockito.any(Invoice.class))).thenReturn(adjInv);
+        when(invoiceService.findById(adjInv.getId())).thenReturn(adjInv);
         Mockito.doNothing().when(invoiceService).autoMatchingAdjInvoice(adjInv, null);
 
         try {
@@ -96,13 +103,17 @@ public class InvoiceApiTest {
         }
     }
 
-    private AccountOperation buildAccountOperation(long id) {
-        AccountOperation adjAo = new AccountOperation();
-        adjAo.setId(id);
-        adjAo.setUnMatchingAmount(BigDecimal.TEN);
-        adjAo.setMatchingStatus(MatchingStatusEnum.O);
-        adjAo.setCustomerAccount(new CustomerAccount());
-        return adjAo;
+    @Test
+    public void shouldThrowExceptionIfInvoiceAlreadyValidated() throws ImportInvoiceException, InvoiceExistException, IOException {
+        Invoice invoice = buildInvoice(1L, null);
+        invoice.setStatus(VALIDATED);
+
+        when(invoiceService.findById(1L)).thenReturn(invoice);
+
+        exception.expect(BadRequestException.class);
+        exception.expectMessage("Invoice already validated");
+
+        invoiceApi.validateInvoice(invoice.getId(), false, true, true);
     }
 
     private Invoice buildInvoice(long id, InvoiceType typeAdj) {
