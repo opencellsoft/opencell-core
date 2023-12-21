@@ -595,7 +595,7 @@
             <column name="id" valueNumeric="-1" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.046" />
-            <column name="account_code_client_side" value="511200000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_CHK" />
             <column name="description" value="Payment - check" />
             <column name="occ_category" value="CREDIT" />
@@ -609,7 +609,7 @@
             <column name="id" valueNumeric="-2" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.067" />
-            <column name="account_code_client_side" value="511000610" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_TIP" />
             <column name="description" value="Payment - TIP" />
             <column name="occ_category" value="CREDIT" />
@@ -623,7 +623,7 @@
             <column name="id" valueNumeric="-3" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.088" />
-            <column name="account_code_client_side" value="512000000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_DDT" />
             <column name="description" value="Payment - direct debit" />
             <column name="occ_category" value="CREDIT" />
@@ -638,114 +638,124 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.13" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
-            <column name="account_code_client_side" value="511200000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REJ_CHK" />
             <column name="description" value="Rejected payment - check" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511200000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-6" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.171" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
-            <column name="account_code_client_side" value="512000000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REJ_DDT" />
             <column name="description" value="Rejected payment - direct debit" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-7" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.192" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
-            <column name="account_code_client_side" value="511000610" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REJ_TIP" />
             <column name="description" value="Rejected payment - TIP" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511000610')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-8" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.215" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
-            <column name="account_code_client_side" value="512010000" />
+            <column name="account_code_client_side" value="419120000" />
             <column name="code" value="PAY_NID" />
             <column name="description" value="Other - unidentified payment" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-9" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.236" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
-            <column name="account_code_client_side" value="512010000" />
+            <column name="account_code_client_side" value="419120000" />
             <column name="code" value="PAY_REC" />
             <column name="description" value="Other - unidentified payment" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-10" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.257" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="511200000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REF_CHK" />
             <column name="description" value="Refund - check" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511200000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-11" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.278" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="512000000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REF_DDT" />
             <column name="description" value="Refund - direct debit" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-18" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.435" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="658000000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="RND_EXP" />
             <column name="description" value="Expense - payment rounding" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '658000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-19" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.456" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" /> 
-            <column name="account_code_client_side" value="758000000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="RND_INC" />
             <column name="description" value="Income - payment rounding" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '758000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-20" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.485" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
-            <column name="account_code_client_side" value="512010000" />
+            <column name="account_code_client_side" value="419110000" />
             <column name="code" value="PAY_DEP" />
             <column name="description" value="Other - deposit" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />
         </insert>
 
         <insert tableName="ar_occ_template">
@@ -753,11 +763,12 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="2015-03-19 00:04:20.578" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="701000000" />
+            <column name="account_code_client_side" value="763100000" />
             <column name="code" value="INV_FEE" />
             <column name="description" value="Fee - late payment" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
         </insert>
         <update tableName="ar_occ_template">            
             <column name="accounting_code_id" valueNumeric="-6" />
@@ -772,11 +783,12 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="511011000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REF_CRD" />
             <column name="description" value="Refund - card" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511011000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-31" />
@@ -789,6 +801,7 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'TAX')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '445510000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-32" />
@@ -801,6 +814,7 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'TAX')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '445510000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-33" />
@@ -813,6 +827,7 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'TAX')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '445510000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-34" />
@@ -825,63 +840,69 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'TAX')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '445510000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-35" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
-            <column name="account_code_client_side" value="511011000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REJ_CRD" />
             <column name="description" value="Rejected payment - card" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511011000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-36" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
-            <column name="account_code_client_side" value="511011000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REJ_RCR" />
             <column name="description" value="Rejected refund - card" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511011000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-37" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '419100000')" />
-            <column name="account_code_client_side" value="512000000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REJ_RDD" />
             <column name="description" value="Rejected refund - direct debit" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-38" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="701000000" />
+            <column name="account_code_client_side" value="709000000" />
             <column name="code" value="INV_REB" />
             <column name="description" value="Invoice - rebate sub-item" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-39" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="701000000" />
+            <column name="account_code_client_side" value="709000000" />
             <column name="code" value="INV_DIS" />
             <column name="description" value="Invoice - discount sub-item" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
         </insert>
         <update tableName="ar_occ_template">
             <column name="accounting_code_id" valueNumeric="-6" />
@@ -896,11 +917,12 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="511000610" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="REF_TIP" />
             <column name="description" value="Refund - TIP" />
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511000610')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-42" />
@@ -912,12 +934,13 @@
             <column name="description" value="Expense - bad debt write-off" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-43" />
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
-            <column name="account_code_client_side" value="511011000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="code" value="PAY_CRD" />
             <column name="description" value="Payment - card" />
             <column name="occ_category" value="CREDIT" />
@@ -938,6 +961,7 @@
             <column name="occ_category" value="DEBIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-45" />
@@ -950,6 +974,7 @@
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
         </insert>    
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-46" />
@@ -984,13 +1009,13 @@
             <column name="version" valueNumeric="0" />
             <column name="created" valueDate="${db.current.time}" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="account_code_client_side" value="512000000" />
             <column name="code" value="PAY_BATCH" />
             <column name="description" value="Payment from batch payment file" />
             <column name="occ_category" value="CREDIT" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-64" />
@@ -1000,10 +1025,10 @@
             <column name="code" value="REF_CASH" />
             <column name="description" value="Refund - cash" />
             <column name="occ_category" value="DEBIT" />
-            <column name="account_code_client_side" value="512010000" />
+            <column name="account_code_client_side" value="411000000" />
             <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
             <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='531100000')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='512010000')" />
             <column name="contra_accounting_code2_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code='419000000')" />
             <column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Dual entry scheme')" />
         </insert>
@@ -4443,12 +4468,13 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '512010000')" />
-			<column name="account_code_client_side" value="411000000" />
+			<column name="account_code_client_side" valueNumeric="165000000" />
 			<column name="code" value="CRD_SD" />
 			<column name="description" value="Credit for Security deposit transfer" />
 			<column name="occ_category" value="CREDIT" />
 			<column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'MSC')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-52" />
@@ -4456,25 +4482,27 @@
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="creator" value="opencell.admin" />
 			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701010000')" />
-			<column name="account_code_client_side" value="411000000" />
+			<column name="account_code_client_side" valueNumeric="41100000" />
 			<column name="code" value="DEB_SD" />
 			<column name="description" value="Debit for Security deposit transfer" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
 		</insert>
 		<insert tableName="ar_occ_template">
 			<column name="id" valueNumeric="-53" />
 			<column name="version" valueNumeric="0" />
 			<column name="created" valueDate="${db.current.time}" />
 			<column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
-			<column name="account_code_client_side" value="511011000" />
+			<column name="account_code_client_side" valueNumeric="512010000" />
 			<column name="code" value="REF_SD" />
 			<column name="description" value="Refund of Security deposit transfer" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'BAN')" />
 			<column name="creator" value="opencell.admin" />
             <column name="manual_creation_enabled" value="0"/>
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '511011000')" />
 		</insert>
 		<insert tableName="billing_seq_invoice">
 			<column name="id" valueNumeric="-6" />
