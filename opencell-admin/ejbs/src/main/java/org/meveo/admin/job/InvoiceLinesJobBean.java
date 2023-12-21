@@ -3,6 +3,7 @@ package org.meveo.admin.job;
 import static java.lang.Long.valueOf;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
+import static java.util.List.of;
 import static java.util.stream.Collectors.toList;
 
 import java.sql.Connection;
@@ -26,6 +27,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
+import org.hibernate.collection.internal.PersistentBag;
 import org.meveo.admin.async.SynchronizedIteratorGrouped;
 import org.meveo.admin.async.SynchronizedMultiItemIterator;
 import org.meveo.admin.exception.BusinessException;
@@ -162,6 +164,10 @@ public class InvoiceLinesJobBean extends IteratorBasedJobBean<List<Map<String, O
             billingRunExtensionService.updateBillingRun(billingRun.getId(), null, null, BillingRunStatusEnum.CREATING_INVOICE_LINES, null);
 
             // Determine aggregation options from Billing run
+            if(currentBillingRun.getAdditionalAggregationFields() != null
+                    && currentBillingRun.getAdditionalAggregationFields() instanceof PersistentBag) {
+                currentBillingRun = billingRunService.findById(currentBillingRun.getId(), of("additionalAggregationFields"));
+            }
             aggregationConfiguration = new AggregationConfiguration(currentBillingRun);
             aggregationConfiguration.setEnterprise(appProvider.isEntreprise());
 

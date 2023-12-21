@@ -69,7 +69,6 @@ public class InvoiceLineAggregationService implements Serializable {
     /**
      * Create a query object for IL aggregation lookup
      * 
-     * @param aggregationQuery Aggregation query
      * @param billingRun Billing run
      * @param statelessSession Stateless session for query creation
      * @param incrementalInvoiceLines Shall Invoice lines be created in incremental mode
@@ -97,7 +96,7 @@ public class InvoiceLineAggregationService implements Serializable {
         EntityManager em = emWrapper.getEntityManager();
 
         // Pass parameters to the aggregation query
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         // params.put("firstTransactionDate", new Date(0));
         if (billingRun.getLastTransactionDate() != null) {
             params.put("lastTransactionDate", billingRun.getLastTransactionDate());
@@ -182,13 +181,7 @@ public class InvoiceLineAggregationService implements Serializable {
     /**
      * Get a list of fields to retrieve
      * 
-     * @param billingRun Billing run
-     * @param usageDateAggregationFunction Usage date aggregation function
-     * @param unitAmountAggregationFunction Unit amount field aggregation function
-     * @param doNotAggregateBySubscription True if no aggregation should be done by subscription
-     * @param doNotAggregateByOrder True if no aggregation should be done by order
-     * @param aggregateByDescription Aggregate by description
-     * @param type Billing entity type
+     * @param aggregationConfiguration aggregation configuration
      * @return A list of fields
      */
     private List<String> buildAggregationFieldList(AggregationConfiguration aggregationConfiguration) {
@@ -232,6 +225,11 @@ public class InvoiceLineAggregationService implements Serializable {
             if (BILLINGACCOUNT != aggregationConfiguration.getType() || !aggregationConfiguration.isIgnoreSubscriptions()) {
                 fieldToFetch.add("subscription.id as subscription_id");
                 fieldToFetch.add("serviceInstance.id as service_instance_id");
+            }
+            if (aggregationConfiguration.getAdditionalAggregation() != null
+                    && !aggregationConfiguration.getAdditionalAggregation().isEmpty()) {
+                aggregationConfiguration.getAdditionalAggregation()
+                        .forEach(additionalField -> fieldToFetch.add(additionalField + " as " + additionalField));
             }
         }
 
@@ -295,7 +293,7 @@ public class InvoiceLineAggregationService implements Serializable {
             return null;
         }
 
-        Set<String> groupBy = new LinkedHashSet<String>();
+        Set<String> groupBy = new LinkedHashSet<>();
 
         groupBy.add("billingAccount.id");
         groupBy.add("offerTemplate");
@@ -339,6 +337,11 @@ public class InvoiceLineAggregationService implements Serializable {
             groupBy.add("accountingArticle.description");
         } else {
             groupBy.add("description");
+        }
+        if (aggregationConfiguration.getAdditionalAggregation() != null
+                && !aggregationConfiguration.getAdditionalAggregation().isEmpty()) {
+            aggregationConfiguration.getAdditionalAggregation()
+                    .forEach(additionalField -> groupBy.add(additionalField));
         }
 
         return groupBy;
