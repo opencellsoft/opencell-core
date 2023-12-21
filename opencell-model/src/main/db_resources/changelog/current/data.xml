@@ -22175,4 +22175,13 @@ public class ImportJobNotification extends Script {
             <column name="src_type" value="JAVA" />
         </insert>
     </changeSet>
+    <changeSet id="#INTRD-19464_20231220" author="TarikFA.">
+        <update tableName="meveo_script_instance" >
+            <column name="script">
+                <![CDATA[   package org.meveo.service.script;
+            		public class  MassWrittingOffInvoicesScript extends MassWrittingOffInvoices {}]]>
+            </column>
+            <where>code = 'org.meveo.service.script.MassWrittingOffInvoicesScript'</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>
