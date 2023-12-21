@@ -8514,6 +8514,9 @@
             <column name="occ_category" value="DEBIT" />
 			<column name="manual_creation_enabled" value="0"/>
 			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
         </insert>
         <insert tableName="ar_occ_template">
             <column name="id" valueNumeric="-40" />
@@ -8524,6 +8527,9 @@
             <column name="occ_category" value="CREDIT" />
 			<column name="manual_creation_enabled" value="0"/>
 			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'Invoice and Credit Note')" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
         </insert>
     </changeSet>
     
@@ -8562,6 +8568,9 @@
 			<column name="description" value="Call for advance payment" />
 			<column name="occ_category" value="DEBIT" />
 			<column name="accounting_scheme_id" valueComputed="(SELECT id FROM ar_accounting_scheme WHERE code = 'No accounting entry')" />
+            <column name="accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '411000000')" />
+            <column name="journal_id" valueComputed="(SELECT id FROM journal WHERE code = 'SAL')" />
+            <column name="contra_accounting_code_id" valueComputed="(SELECT id FROM billing_accounting_code WHERE code = '701000000')" />
 		</insert>
         <insert tableName="billing_invoice_type">
            <column name="id" valueNumeric="-5" />

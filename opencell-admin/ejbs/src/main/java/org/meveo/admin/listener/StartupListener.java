@@ -22,6 +22,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Startup
@@ -39,5 +40,7 @@ public class StartupListener {
         log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");
 
         applicationInitializer.init();
+
+        JobExecutionService.addShutdownHooks();
     }
 }
