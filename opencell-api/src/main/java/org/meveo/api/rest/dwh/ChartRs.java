@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.dwh;
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,7 +44,8 @@ import javax.ws.rs.core.MediaType;
 @Tag(name = "Chart", description = "@%Chart")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-
+@Deprecated
+@ApiOperation(value = "Obsolete. Use ChartApi instead")
 public interface ChartRs extends IBaseRs {
 
     /**
