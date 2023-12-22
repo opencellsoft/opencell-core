@@ -5473,6 +5473,18 @@
             <column name="company" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="legal_entity_type_id" type="bigint" />
             <column name="minimum_article_id" type="bigint" />
+            <column name="bank_code" type="varchar(5)" />
+            <column name="branch_code" type="varchar(5)" />
+            <column name="account_number" type="varchar(11)" />
+            <column name="hash_key" type="varchar(2)" />
+            <column name="iban" type="varchar(100)" />
+            <column name="bic" type="varchar(100)" />
+            <column name="account_owner" type="varchar(50)" />
+            <column name="bank_name" type="varchar(50)" />
+            <column name="bank_id" type="varchar(50)" />
+            <column name="issuer_number" type="varchar(50)" />
+            <column name="issuer_name" type="varchar(50)" />
+            <column name="ics" type="varchar(35)" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-252">
