@@ -548,6 +548,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                 try {
                     if ((durationLimit != null && durationLimit.get() <= 0) || (timeLimit != null && timeLimit.get() <= 0)) {
+                        jobExecutionResult.setLimitExceeded(true);
                         jobExecutionService.stopJob(jobInstance);
                     } else {
                         if ((durationLimit != null && durationLimit.get() < reportFrequency) || (timeLimit != null && timeLimit.get() < reportFrequency)) {
