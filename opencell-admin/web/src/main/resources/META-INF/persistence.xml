@@ -9,11 +9,11 @@
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
         <properties>
             <property name="hibernate.archive.autodetection" value="class" />
-            <property name="hibernate.hbm2ddl.auto" value="update" /> <!-- DB structure is managed by liquibase, not hibernate -->
-            <property name="hibernate.show_sql" value="true" />
-            <property name="format_sql" value="true" />
-            <property name="show_sql" value="true" />
-            <property name="use_sql_comments" value="true" />
+            <property name="hibernate.hbm2ddl.auto" value="validate" /> <!-- DB structure is managed by liquibase, not hibernate -->
+            <property name="hibernate.show_sql" value="false" />
+            <property name="format_sql" value="false" />
+            <property name="show_sql" value="false" />
+            <property name="use_sql_comments" value="false" />
             <!-- <property name="hibernate.default_schema" value="public" /> Disable for Mysql/mariaDB instalation -->
             <property name="hibernate.cache.use_second_level_cache" value="true" />
             <property name="hibernate.cache.use_query_cache" value="true" />
@@ -57,9 +57,9 @@
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
         <properties>
             <property name="hibernate.archive.autodetection" value="class" />
-            <property name="hibernate.show_sql" value="true" />
-            <property name="format_sql" value="true" />
-            <property name="use_sql_comments" value="true" />
+            <property name="hibernate.show_sql" value="false" />
+            <property name="format_sql" value="false" />
+            <property name="use_sql_comments" value="false" />
             <property name="hibernate.cache.use_second_level_cache" value="true" />
             <property name="hibernate.cache.use_query_cache" value="true" />
             <!-- <property name="hibernate.default_schema" value="public" /> -->
