@@ -53,7 +53,7 @@ import org.meveo.model.dwh.MeasurementPeriodEnum;
 @Tag(name = "MeasurableQuantity", description = "@%MeasurableQuantity")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-
+@Deprecated
 public interface MeasurableQuantityRs extends IBaseRs {
 
     /**
