@@ -184,6 +184,13 @@ public class JobExecutionResultImpl extends BaseEntity {
     @Transient
     private boolean moreToProcess = false;
 
+    /**
+     * Indicates that job has not completed fully because is reached the maximum number of items to process,
+     * the maximum run duration in minutes or the maximum time at which it must be stopped.
+     */
+    @Transient
+    private boolean limitExceeded = false;
+
     @Transient
     private Date cumulativeEndDate;
 
@@ -634,6 +641,22 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public void setParentJobExecutionResult(Long parentJobExecutionResult) {
         this.parentJobExecutionResult = parentJobExecutionResult;
+    }
+
+    /**
+     * @return True if the that job has not completed fully because is reached the maximum number of items to process,
+     * he maximum run duration in minutes or the maximum time at which it must be stopped.
+     */
+    public boolean isLimitExceeded() {
+        return limitExceeded;
+    }
+
+    /**
+     * @param limitExceeded Set to true to indicate that job has not completed fully because is reached the maximum number of items to process,
+     *                          the maximum run duration in minutes or the maximum time at which it must be stopped.
+     */
+    public void setLimitExceeded(boolean limitExceeded) {
+        this.limitExceeded = limitExceeded;
     }
 
     /**
