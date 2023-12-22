@@ -119,11 +119,17 @@ public class JobInstance extends EnableBusinessCFEntity {
     private JobInstance followingJob;
 
     /**
-     * What cluster nodes job could/should run on. A comma separated list of custer nodes. A job can/will be run on any node if value is null.
+     * What cluster nodes job could/should run on. An EL expression or a comma separated list of cluster nodes. A job can/will be run on any node if value is null.
      */
-    @Column(name = "run_on_nodes", length = 255)
+    @Column(name = "run_on_nodes", length = 500)
     @Size(max = 255)
     private String runOnNodes;
+
+    /**
+     * A maximum number of nodes should a job could be running on in parallel
+     */
+    @Column(name = "limit_to_nr_of_nodes")
+    private Integer limitToNrOfNodes;
 
     /**
      * Job execution behavior when running in a clustered environment
@@ -293,6 +299,19 @@ public class JobInstance extends EnableBusinessCFEntity {
     }
 
     /**
+     * Gets the run on nodes - either from job definition or from runtime parameters
+     *
+     * @return the run on nodes
+     */
+    public String getRunOnNodesResolved() {
+        String runOnNodesValue = (String) this.getParamValue("runOnNodes");
+        if (runOnNodesValue == null) {
+            runOnNodesValue = runOnNodes;
+        }
+        return runOnNodesValue;
+    }
+
+    /**
      * Sets the run on nodes.
      *
      * @param runOnNodes the new run on nodes
@@ -339,32 +358,6 @@ public class JobInstance extends EnableBusinessCFEntity {
 
         return false;
 
-    }
-
-    /**
-     * Check if job instance is runnable on a current cluster node.
-     *
-     * @param currentNode Current cluster node
-     * @return True if either current cluster node is unknown (non-clustered mode), runOnNodes is not specified or current cluster node matches any node in a list of nodes
-     */
-    public boolean isRunnableOnNode(String currentNode) {
-
-        String runOnNodesValue = (String) this.getParamValue("runOnNodes");
-        if (runOnNodesValue == null) {
-            runOnNodesValue = runOnNodes;
-        }
-
-        if (currentNode == null || runOnNodesValue == null) {
-            return true;
-        }
-        String[] nodes = runOnNodesValue.split(",");
-        for (String node : nodes) {
-            if (node.trim().equals(currentNode)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /*
@@ -514,5 +507,37 @@ public class JobInstance extends EnableBusinessCFEntity {
      */
     public void setJobStatusReportFrequency(int jobStatusReportFrequency) {
         this.jobStatusReportFrequency = jobStatusReportFrequency;
+    }
+
+    /**
+     * @return A maximum number of nodes should a job could be running on in parallel
+     */
+    public Integer getLimitToNrOfNodes() {
+        return limitToNrOfNodes;
+    }
+
+    /**
+     * @param limitToNrOfNodes A maximum number of nodes should a job could be running on in parallel
+     */
+    public void setLimitToNrOfNodes(Integer limitToNrOfNodes) {
+        this.limitToNrOfNodes = limitToNrOfNodes;
+    }
+
+    /**
+     * Resolve a number of nodes a job can be run on: <br/>
+     * - In cluster behavior limited to run on a single node, it will always return 1<br/>
+     * - When a current limitToNrOfNodes value is null, it will return 999<br/>
+     * - Otherwise it will return the current limitToNrOfNodes value
+     * 
+     * @return A maximum number of nodes should a job could be running on in parallel
+     */
+    public int getLimitToNrOfNodesResolved() {
+        if (clusterBehavior == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE) {
+            return 1;
+        } else if (limitToNrOfNodes == null) {
+            return 999;
+        } else {
+            return limitToNrOfNodes;
+        }
     }
 }

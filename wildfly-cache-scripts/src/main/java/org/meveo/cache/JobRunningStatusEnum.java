@@ -41,6 +41,11 @@ public enum JobRunningStatusEnum {
     LOCKED_OTHER,
 
     /**
+     * Failed to lock a node for job execution
+     */
+    LOCK_FAILED,
+
+    /**
      * Job was requested to stop
      */
     REQUEST_TO_STOP,
