@@ -696,5 +696,50 @@
         }
       }
     ]
+  },
+  {
+    "entityName": "CpqQuote",
+    "configs": [
+      {
+        "method": "find",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ObjectFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "applicantAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "method": "list",
+        "securedBusinessEntityConfig": {
+          "securedMethodConfig": {
+            "resultFilter": "org.meveo.api.security.filter.ListFilter"
+          },
+          "filterResultsConfig": {
+            "itemPropertiesToFilter": [
+              {
+                "property": "seller",
+                "entityClass": "org.meveo.model.admin.Seller"
+              },
+              {
+                "property": "applicantAccount",
+                "entityClass": "org.meveo.model.billing.BillingAccount"
+              }
+            ]
+          }
+        }
+      }
+    ]
   }
 ]
