@@ -182,7 +182,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
             }
 
             // Mark number of threads it will be running on
-            JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), futures);
+            JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, jobExecutionResult.getId(), futures);
 
             boolean wasKilled = false;
 
@@ -212,7 +212,7 @@ public class MediationReprocessingJobBean extends BaseJobBean {
 
                 // Mark that all threads are finished
             } else {
-                jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
+                jobStatus = jobExecutionService.markJobAsRunning(jobInstance, jobExecutionResult.getId(), null);
             }
 
             boolean wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;

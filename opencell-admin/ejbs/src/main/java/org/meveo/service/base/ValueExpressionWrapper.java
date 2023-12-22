@@ -296,6 +296,11 @@ public class ValueExpressionWrapper {
 	private static final String VAR_QUOTE_PRODUCT = "quoteProduct";
 	
 	private static final String VAR_INVOICE_LINE = "invoiceLine";
+	
+	/**
+	 * EL expression variable - current cluster node name  - 'currentNode'
+	 */
+	public static final String VAR_CURRENT_NODE = "currentNode";
 
 	private static final String VAR_CONTRACT = "contract";
 
