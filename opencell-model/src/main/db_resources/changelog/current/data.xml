@@ -3285,7 +3285,6 @@ public class SubscriptionImportScript extends GenericImportScript {
             <column name="code" value="ProcessCustomerPaymentsFileJob" />
             <column name="description" value="Process customer payments file job"/>
             <column name="creator" value="OPENCELL.ADMIN" />
-            <column name="job_speed" value="NORMAL" />
             <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
@@ -9068,7 +9067,6 @@ Only offer actually present on invoice will be tested."}'/>
 			<column name="job_template" value="MediationJobV2" />
 			<column name="creator" value="opencell.admin" />
 			<column name="updater" value="opencell.admin" />
-			<column name="job_speed" value="NORMAL" />
 			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 		</insert>
@@ -9648,7 +9646,6 @@ public class CdrMassImportScript extends GenericMassImportScript {
 			<column name="job_template" value="FlatFileProcessingJob" />
 			<column name="code" value="CsvImportCDR" />
 			<column name="creator" value="opencell.admin" />
-			<column name="job_speed" value="NORMAL" />
 			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
@@ -10562,7 +10559,6 @@ public class CustomerJobNotification extends Script {
 			<column name="job_template" value="FlatFileProcessingJob" />
 			<column name="code" value="massImportCustomerJob" />
 			<column name="creator" value="opencell.admin" />
-			<column name="job_speed" value="NORMAL" />
 			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
@@ -10582,7 +10578,6 @@ public class CustomerJobNotification extends Script {
 			<column name="job_template" value="FlatFileProcessingJob" />
 			<column name="code" value="massImportCustomerAccountJob" />
 			<column name="creator" value="opencell.admin" />
-			<column name="job_speed" value="NORMAL" />
 			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
@@ -10602,7 +10597,6 @@ public class CustomerJobNotification extends Script {
 			<column name="job_template" value="FlatFileProcessingJob" />
 			<column name="code" value="massImportPaymentMethodJob" />
 			<column name="creator" value="opencell.admin" />
-			<column name="job_speed" value="NORMAL" />
 			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
@@ -10622,7 +10616,6 @@ public class CustomerJobNotification extends Script {
 			<column name="job_template" value="FlatFileProcessingJob" />
 			<column name="code" value="massImportBillingAccountJob" />
 			<column name="creator" value="opencell.admin" />
-			<column name="job_speed" value="NORMAL" />
 			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
@@ -10642,7 +10635,6 @@ public class CustomerJobNotification extends Script {
 			<column name="job_template" value="FlatFileProcessingJob" />
 			<column name="code" value="massImportUserAccountJob" />
 			<column name="creator" value="opencell.admin" />
-			<column name="job_speed" value="NORMAL" />
 			<column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
 			<column name="verbose_report" valueNumeric="1" />
 			<column name="disabled" valueNumeric="0" />
@@ -11462,7 +11454,6 @@ public class SubscriptionJobNotification extends Script {
             <column name="job_template" value="FlatFileProcessingJob" />
             <column name="code" value="massImportSubscriptionJob" />
             <column name="creator" value="opencell.admin" />
-            <column name="job_speed" value="NORMAL" />
             <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
@@ -11482,7 +11473,6 @@ public class SubscriptionJobNotification extends Script {
             <column name="job_template" value="FlatFileProcessingJob" />
             <column name="code" value="massImportServiceInstanceJob" />
             <column name="creator" value="opencell.admin" />
-            <column name="job_speed" value="NORMAL" />
             <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
@@ -11502,7 +11492,6 @@ public class SubscriptionJobNotification extends Script {
             <column name="job_template" value="FlatFileProcessingJob" />
             <column name="code" value="massImportAttributeInstance" />
             <column name="creator" value="opencell.admin" />
-            <column name="job_speed" value="NORMAL" />
             <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
@@ -11522,7 +11511,6 @@ public class SubscriptionJobNotification extends Script {
             <column name="job_template" value="FlatFileProcessingJob" />
             <column name="code" value="massImportAccessPoint" />
             <column name="creator" value="opencell.admin" />
-            <column name="job_speed" value="NORMAL" />
             <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
@@ -22758,7 +22746,6 @@ public class ImportJobNotification extends Script {
             <column name="code" value="massWrittingOffInvoicesJob" />
             <column name="description" value="mass writting off invoices job"/>
             <column name="creator" value="opencell.admin" />
-            <column name="job_speed" value="NORMAL" />
             <column name="cluster_behavior" value="LIMIT_TO_SINGLE_NODE" />
             <column name="verbose_report" valueNumeric="1" />
             <column name="disabled" valueNumeric="0" />
