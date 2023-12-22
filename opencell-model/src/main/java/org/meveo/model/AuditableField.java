@@ -23,6 +23,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,6 +45,8 @@ import org.meveo.model.audit.ChangeOriginEnum;
 @Table(name = "audit_field_changes_history")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @org.hibernate.annotations.Parameter(name = "sequence_name", value = "audit_field_changes_history_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "AuditableField.purgeAuditableField", query = "delete from AuditableField a where a.created < :purgeDate")})
 public class AuditableField extends BaseEntity {
 
     private static final long serialVersionUID = -7263546632393279781L;

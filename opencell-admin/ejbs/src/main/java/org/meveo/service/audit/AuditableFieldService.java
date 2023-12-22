@@ -18,6 +18,7 @@
 
 package org.meveo.service.audit;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,5 +53,15 @@ public class AuditableFieldService extends PersistenceService<AuditableField> {
         filters.put("entityId", entity.getId());
         PaginationConfiguration config = new PaginationConfiguration(filters);
         return list(config);
+    }
+
+    /**
+     * Purge audit field changes history older than purge date.
+     *
+     * @param purgeDate the purge date
+     * @return Number of records deleted
+     */
+    public int purgeAuditableField(Date purgeDate) {
+        return getEntityManager().createNamedQuery("AuditableField.purgeAuditableField").setParameter("purgeDate", purgeDate).executeUpdate();
     }
 }
