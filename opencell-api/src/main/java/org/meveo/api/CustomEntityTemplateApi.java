@@ -36,6 +36,7 @@ import org.meveo.api.dto.CustomEntityTemplateDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.EntityCustomizationDto;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -245,6 +246,11 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
+        
+        if(!currentUser.hasRole(cet.getReadPermission())) {
+            throw new ActionForbiddenException("User does not have permission to read data from '" + cet.getReadPermission() + "'");
+        }
+        
         return convertCustomEntityTemplateToDTO(cet);
     }
 
@@ -269,7 +275,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         List<CustomEntityTemplateDto> cetDtos = new ArrayList<>();
 
-        for (CustomEntityTemplate cet : cets) {
+        for (CustomEntityTemplate cet : cets.stream().filter(x -> currentUser.hasRole(x.getReadPermission())).collect(Collectors.toList())) {
             cetDtos.add(convertCustomEntityTemplateToDTO(cet));
         }
 
