@@ -83,7 +83,9 @@ public class UserService extends PersistenceService<User> {
     public void updateUserWithAttributes(User user, Map<String, String> attributes) throws ElementNotFoundException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
 		if(canSynchroWithKC()) {
-			keycloakAdminClientService.updateUser(user.getUserName().toUpperCase(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), attributes);
+			String firstName = user.getName() != null ? user.getName().getFirstName() : null;
+			String lastName = user.getName() != null ? user.getName().getLastName() : null;
+			keycloakAdminClientService.updateUser(user.getUserName().toUpperCase(), firstName, lastName, user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), attributes);
 		}
 		 if(user.getId() != null) {
             super.update(user);
@@ -124,16 +126,16 @@ public class UserService extends PersistenceService<User> {
         log.info("lUserManagementSource {}", lUserManagementSource);
         User lUser = null;
 	    
-	    if(!canSynchroWithKC()) {
-            lUser = getUserFromDatabase(username);
-
-            if (lUser != null && extendedInfo) {
-                this.fillKeycloakUserInfo(lUser);
-            }
-        } else  {
-            lUser = keycloakAdminClientService.findUser(username, extendedInfo);
+	    if(canSynchroWithKC()) {
+		    lUser = keycloakAdminClientService.findUser(username, extendedInfo);
         }
-
+		if(lUser == null) {
+			lUser = getUserFromDatabase(username);
+			
+			if (lUser != null && extendedInfo) {
+				this.fillKeycloakUserInfo(lUser);
+			}
+		}
         return lUser;
     }
 
