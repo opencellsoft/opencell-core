@@ -2,6 +2,7 @@ package org.meveo.service.audit.logging;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -673,5 +674,25 @@ public class AuditDataLogService extends PersistenceService<AuditDataLog> {
         }
 
         return aggregatedLogs;
+    }
+
+    /**
+     * Purge audit data logs older than purge date.
+     *
+     * @param purgeDate the purge date
+     * @return Number of records deleted
+     */
+    public int purgeAuditDataLog(Date purgeDate) {
+        return getEntityManager().createNamedQuery("AuditDataLogRecord.purgeAuditDataLog").setParameter("purgeDate", purgeDate).executeUpdate();
+    }
+
+    /**
+     * Purge audit data log records older than purge date.
+     *
+     * @param purgeDate the purge date
+     * @return Number of records deleted
+     */
+    public int purgeAuditDataLogRecords(Date purgeDate) {
+        return getEntityManager().createNamedQuery("AuditDataLogRecord.purgeAuditDataLogRecords").setParameter("purgeDate", purgeDate).executeUpdate();
     }
 }

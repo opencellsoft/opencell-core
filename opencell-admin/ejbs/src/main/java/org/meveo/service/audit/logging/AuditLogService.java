@@ -89,4 +89,14 @@ public class AuditLogService extends PersistenceService<AuditLog> {
         }
         return currentUser.getUserName();
     }
+
+    /**
+     * Purge audit logs older than purge date.
+     *
+     * @param purgeDate the purge date
+     * @return Number of records deleted
+     */
+    public int purgeAuditLog(Date purgeDate) {
+        return getEntityManager().createNamedQuery("AuditLog.purgeAuditLog").setParameter("purgeDate", purgeDate).executeUpdate();
+    }
 }
