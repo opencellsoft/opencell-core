@@ -22986,4 +22986,44 @@ public class ImportJobNotification extends Script {
         <sql>update adm_currency set description_i18n = '{"ENG": "ADB Unit of Account", "FRA": "ADB Unit of Account"}', symbol = 'XUA' where currency_code = 'XUA'</sql>
         <sql>update adm_currency set description_i18n = '{"ENG": "Unknown Currency", "FRA": "devise inconnue ou non valide"}', symbol = '¤' where currency_code = 'XXX'</sql>
     </changeSet>
+
+    <changeSet id="#INTRD-19464_20231225" author="ZBARIKI">
+        <insert tableName="meveo_script_instance">
+            <column name="id" valueSequenceNext="meveo_script_instance_seq" />
+            <column name="version" valueNumeric="0" />
+            <column name="code" value="org.meveo.service.script.DummyPaymentGatewayScript" />
+            <column name="src_type" value="JAVA" />
+            <column name="description" value="Dummy payment pateway script"/>
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="script"><![CDATA[package org.meveo.service.script;
+package org.meveo.service.script;
+
+import org.meveo.admin.exception.BusinessException;
+
+import java.util.Map;
+
+
+public class DummyPaymentGatewayScript extends Script {
+
+    private static final String ERROR_MESSAGE
+            = "Dummy gateway for SEPA files generation (For now, its only purpose is to store rejection codes. Please continue to use DD requests for SEPA files)";
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+        throw new BusinessException(ERROR_MESSAGE);
+    }
+}]]></column>
+        </insert>
+        <insert tableName="ar_payment_gateway">
+            <column name="id" valueSequenceNext="ar_payment_gateway_seq" />
+            <column name="version" valueNumeric="1" />
+            <column name="created" valueDate="${db.current.time}" />
+            <column name="creator" value="applicationInitializer" />
+            <column name="code" value="SEPA_FILE" />
+            <column name="description"
+                    value="Dummy gateway for SEPA files generation (For now, its only purpose is to store rejection codes. Please continue to use DD requests for SEPA files)" />
+            <column name="payment_method" value="DIRECTDEBIT" />
+            <column name="type" value="NATIVE" />
+            <column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code = 'org.meveo.service.script.DummyPaymentGatewayScript')" />
+        </insert>
+    </changeSet>
 </databaseChangeLog>

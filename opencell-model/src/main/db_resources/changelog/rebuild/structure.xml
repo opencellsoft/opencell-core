@@ -492,6 +492,7 @@
         <createSequence sequenceName="pdp_status_history_seq" startValue="1"/>
         <createSequence sequenceName="batch_entity_seq" startValue="1"/>
         <createSequence sequenceName="advanced_settings_seq" startValue="1" />
+        <createSequence sequenceName="ar_payment_rejection_code_seq" startValue="1" />
     </changeSet>
 
 
@@ -13178,6 +13179,37 @@
         </createTable>
         <addUniqueConstraint columnNames="id,address_book_id,contact_id" constraintName="id_address_book_id_contact_id_UNIQUE" tableName="crm_address_book_contact" />
     </changeSet>
+
+    <changeSet author="ZBARIKI" id="rebuild-str-INTRD-19605_2023_12_25">
+        <createTable tableName="ar_payment_rejection_code">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="cf_values" type="${type.json}"/>
+            <column name="payment_gateway_id" type="bigint" />
+            <column name="description_i18n" type="${type.json}" />
+        </createTable>
+        <addPrimaryKey columnNames="code,payment_gateway_id"
+                       constraintName="ar_payment_rejection_code_pkey"
+                       tableName="ar_payment_rejection_code" />
+    </changeSet>
     
     <!-- start views -->
     <changeSet author="AbdelmounaimAkadid" id="rebuild-str-view-1" dbms="postgresql">
@@ -17989,6 +18021,12 @@
 			referencedColumnNames="id" referencedTableName="cpq_order_product" />
 	</changeSet>
 
+    <changeSet id="INTRD-19605_20231225-rebuild-fk" author="ZBARIKI">
+        <addForeignKeyConstraint baseColumnNames="payment_gateway_id" baseTableName="ar_payment_rejection_code"
+                                 constraintName="fk_ar_payment_rejection_code_payment_gateway_id"
+                                 referencedTableName="ar_payment_gateway"
+                                 referencedColumnNames="id"/>
+    </changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -21371,6 +21409,7 @@
     <changeSet id="#INTRD-19244_27102023" author="Mbarek-Ay" />
     <changeSet id="#INTRD-20460_20240104" author="zelmeliani" />
     <changeSet id="#INTRD-20501_20240104" author="AdilElJaouhari" />
+    <changeSet author="ZBARIKI" id="INTRD-19605_20231225" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

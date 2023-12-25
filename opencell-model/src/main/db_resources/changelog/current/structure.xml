@@ -8885,6 +8885,45 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="litigation_reason" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet author="ZBARIKI" id="INTRD-19605_20231225">
+        <createSequence sequenceName="ar_payment_rejection_code_seq" startValue="1" />
+        <createTable tableName="ar_payment_rejection_code">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" />
+            </column>
+            <column name="version" type="int4"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="cf_values" type="${type.json}"/>
+            <column name="payment_gateway_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description_i18n" type="${type.json}" />
+        </createTable>
+        <addPrimaryKey columnNames="code,payment_gateway_id"
+                       constraintName="ar_payment_rejection_code_pkey"
+                       tableName="ar_payment_rejection_code" />
+        <addForeignKeyConstraint baseColumnNames="payment_gateway_id"
+                                 baseTableName="ar_payment_rejection_code"
+                                 constraintName="fk_ar_payment_rejection_code_payment_gateway_id"
+                                 referencedTableName="ar_payment_gateway"
+                                 referencedColumnNames="id"/>
+    </changeSet>
     
     <changeSet id="#INTRD-20181_28122023" author="Mbarek-Ay" failOnError="false">
 	<addColumn tableName="cpq_attribute_allowed_values">

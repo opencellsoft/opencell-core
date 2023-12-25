@@ -30,6 +30,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PostPersist;
 import javax.persistence.Table;
@@ -49,6 +50,8 @@ import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.scripts.ScriptInstance;
+
+import java.util.List;
 
 /**
  * The PaymentGateway on opencell exists in 2 types {@link org.meveo.model.payments.PaymentGatewayTypeEnum PaymentGatewayTypeEnum}: &lt;ul&gt; &lt;li&gt;Custom: The administrator
@@ -209,6 +212,12 @@ public class PaymentGateway extends EnableBusinessCFEntity implements ISearchabl
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
+
+    /**
+     * Rejection code associated to payment gateway
+     */
+    @OneToMany(mappedBy = "paymentGateway", fetch = FetchType.LAZY)
+    private List<PaymentRejectionCode> paymentRejectionCodes;
     
     /**
      * Instantiates a new payment gateway
@@ -603,5 +612,13 @@ public class PaymentGateway extends EnableBusinessCFEntity implements ISearchabl
     public void setSeller(Seller seller) {
         this.seller = seller;
     }
-	
+
+
+    public List<PaymentRejectionCode> getPaymentRejectionCodes() {
+        return paymentRejectionCodes;
+    }
+
+    public void setPaymentRejectionCodes(List<PaymentRejectionCode> paymentRejectionCodes) {
+        this.paymentRejectionCodes = paymentRejectionCodes;
+    }
 }
