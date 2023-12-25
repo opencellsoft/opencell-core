@@ -36,6 +36,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.BusinessException.ErrorContextAttributeEnum;
 import org.meveo.admin.exception.ElementNotFoundException;
@@ -471,8 +472,9 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                         if(chargeInstance != null
                                 && chargeInstance.getSubscription() != null
-                                && chargeInstance.getSubscription().getSubscribedTillDate() != null) {
-                            effectiveChargeFromDate = chargeInstance.getSubscription().getSubscriptionDate();
+                                && chargeInstance.getSubscription().getSubscribedTillDate() != null
+                                && ( chargeInstance.getSubscription().getSubscribedTillDate().before(effectiveChargeToDate) || chargeInstance.getSubscription().getSubscribedTillDate().compareTo(effectiveChargeToDate) == 0)) {
+	                        effectiveChargeFromDate = operationDate;
                             inputQuantity = computeProrate(chargeInstance, effectiveChargeFromDate,
                                     effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, inputQuantity);
                         }
