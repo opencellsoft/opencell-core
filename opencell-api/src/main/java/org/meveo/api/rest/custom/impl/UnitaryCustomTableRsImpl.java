@@ -22,9 +22,12 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.custom.CustomTableApi;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.custom.IdentityResponseDTO;
 import org.meveo.api.dto.custom.UnitaryCustomTableDataDto;
+import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.custom.UnitaryCustomTableRS;
 import org.meveo.api.rest.impl.BaseRs;
@@ -38,13 +41,21 @@ public class UnitaryCustomTableRsImpl extends BaseRs implements UnitaryCustomTab
 
     @Override
     public IdentityResponseDTO create(UnitaryCustomTableDataDto dto) {
-        customTableApi.create(dto);
+        try {
+            customTableApi.create(dto);
+        } catch (Exception e) {
+            processException(e, new ActionStatus());
+        }
         return new IdentityResponseDTO(dto.getValue().getId());
     }
 
     @Override
     public IdentityResponseDTO update(UnitaryCustomTableDataDto dto) {
-        customTableApi.update(dto);
+        try {
+            customTableApi.update(dto);
+        } catch (Exception e) {
+            processException(e, new ActionStatus());
+        }
         return new IdentityResponseDTO(dto.getValue().getId());
     }
 
