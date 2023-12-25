@@ -695,11 +695,21 @@ public class UserBean extends CustomFieldBean<User> {
         DetailedSecuredEntity detailedSecuredEntity = null;
         BusinessEntity businessEntity = null;
         if (entity != null && entity.getSecuredEntities() != null) {
+            List<SecuredEntity> securedEntitiesNoLongerExistants = new ArrayList<>();
             for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
                 detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
                 businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
-                detailedSecuredEntity.setDescription(businessEntity.getDescription());
-                detailedSecuredEntities.add(detailedSecuredEntity);
+                if (businessEntity != null) {
+                    detailedSecuredEntity.setDescription(businessEntity.getDescription());
+                    detailedSecuredEntities.add(detailedSecuredEntity);
+                } else {
+                    securedEntitiesNoLongerExistants.add(securedEntity);
+                }
+            }
+            // add messages errors for eventual secured entities no longer existants
+            for (SecuredEntity securedEntity : securedEntitiesNoLongerExistants) {
+                messages.error("Data error to fix: Secured Entity " +securedEntity.getEntityClass() +
+                        " with code \""+securedEntity.getCode()+"\" is no longer existant!");
             }
         }
         return detailedSecuredEntities;
