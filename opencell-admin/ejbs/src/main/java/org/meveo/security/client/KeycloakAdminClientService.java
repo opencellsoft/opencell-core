@@ -84,6 +84,7 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserGroup;
 import org.meveo.security.keycloak.AuthenticationProvider;
+import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 
 /**
@@ -139,6 +140,9 @@ public class KeycloakAdminClientService implements Serializable {
      * A prefix to add to a role based policy
      */
     private static final String KC_POLICY_ROLE_PREFIX = "Role ";
+	
+	@Inject
+	private UserService userService;
 
     /**
      * Reads the configuration from system property.
@@ -335,8 +339,10 @@ public class KeycloakAdminClientService implements Serializable {
                 break;
             }
         }
-
-        if (isUpdate && user == null) {
+		User userFromDb = userService.getUserFromDatabase(userName);
+		if(userFromDb != null &&  user == null) {
+			isUpdate = false;
+		}else if (isUpdate && user == null) {
             throw new ElementNotFoundException("User with username " + userName + " not found");
 
         } else if (!isUpdate && user != null) {
