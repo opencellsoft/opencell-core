@@ -695,11 +695,24 @@ public class UserBean extends CustomFieldBean<User> {
         DetailedSecuredEntity detailedSecuredEntity = null;
         BusinessEntity businessEntity = null;
         if (entity != null && entity.getSecuredEntities() != null) {
+            List<SecuredEntity> securedEntitiesNoLongerExistants = new ArrayList<>();
             for (SecuredEntity securedEntity : entity.getSecuredEntities()) {
                 detailedSecuredEntity = new DetailedSecuredEntity(securedEntity);
                 businessEntity = securedBusinessEntityService.getEntityByCode(securedEntity.getEntityClass(), securedEntity.getCode());
-                detailedSecuredEntity.setDescription(businessEntity.getDescription());
-                detailedSecuredEntities.add(detailedSecuredEntity);
+                if (businessEntity != null) {
+                    detailedSecuredEntity.setDescription(businessEntity.getDescription());
+                    detailedSecuredEntities.add(detailedSecuredEntity);
+                } else {
+                    securedEntitiesNoLongerExistants.add(securedEntity);
+                }
+            }
+            // add messages errors for eventual secured entities no longer existants
+            if (!securedEntitiesNoLongerExistants.isEmpty()) {
+                for (SecuredEntity securedEntity : securedEntitiesNoLongerExistants) {
+                    log.error("Data error to fix: Secured Entity {} with code \"{}\" is no longer existant!",
+                            securedEntity.getEntityClass(), securedEntity.getCode());
+                }
+                throw new BusinessException("Secured entities data errors detected, and should be fixed! see error logs for more details.");
             }
         }
         return detailedSecuredEntities;
