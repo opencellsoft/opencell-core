@@ -8879,4 +8879,34 @@ public class AgedBalanceReporting extends ReportExtractScript {
         </addColumn>
     </changeSet>
     
+    <changeSet id="INTRD-20050_20231226" author="TarikFA.">
+        <createSequence sequenceName="account_registration_number_seq" />
+        <createTable tableName="account_registration_number">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="account_registration_number_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="registration_id" type="varchar(100)" />
+            <column name="icd_id" type="bigint" />
+            <column name="account_entity_id" type="bigint" />
+
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="icd_id" baseTableName="account_registration_number"
+                                 constraintName="fk_icd_id"
+                                 referencedTableName="iso_icd"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="account_entity_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_registration_number"
+                                 referencedTableName="account_entity"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
 </databaseChangeLog>
