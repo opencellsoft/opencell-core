@@ -2681,9 +2681,6 @@ public class SubscriptionApi extends BaseApi {
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode, postData.getSubscriptionValidityDate());
         }
-		if (subscription.getOffer().isDisabled()) {
-			throw new BusinessApiException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", subscription.getOffer().getCode()));
-		}
         // Checking if Customer exist :
         Customer customer = this.customerService.findByCode(customerCode);
         if (customer == null) {
