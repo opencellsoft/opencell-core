@@ -188,9 +188,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public Subscription update(Subscription subscription) throws BusinessException {
     	Subscription subscriptionOld = this.findById(subscription.getId());
     	OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
-    	if(offerTemplate.isDisabled()) {
-    		throw new BusinessException("Cannot subscribe to disabled offer");
-    	}
+    	if (offerTemplate.isDisabled()) {
+            throw new BusinessException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", offerTemplate.getCode()));
+        }
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
        
@@ -767,6 +767,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
         }
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         OfferTemplate offerTemplate = subscription.getOffer();
+        
+        if (offerTemplate.isDisabled() && subscription.getOrder() == null) {
+			throw new BusinessException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", offerTemplate.getCode()));
+		}
 
         // loop in selected Available services for subscription
         for (ServiceTemplate serviceTemplate : selectedItemsAsList) {
