@@ -8872,7 +8872,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>update ${db.schema.adapted}finance_settings set use_auxiliary_accounting = 0 where use_auxiliary_accounting is null;</sql>
         <sql>ALTER TABLE ${db.schema.adapted}finance_settings ALTER COLUMN use_auxiliary_accounting SET NOT NULL ;</sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-20273_20231219" author="AndriusKarpavicius">
         <addColumn tableName="meveo_job_instance">
             <column name="limit_to_nr_of_nodes" type="int"/>
@@ -9070,7 +9070,7 @@ public class AgedBalanceReporting extends ReportExtractScript {
             $$;
             ]]></sql>
     </changeSet>
-    
+
     <changeSet id="#INTRD-19244_27102023" author="Mbarek-Ay" failOnError="false">
 		<addColumn tableName="cpq_quote_price">
 			<column name="tax_id"  type="bigint" />
@@ -9078,12 +9078,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		<addColumn tableName="order_price">
 			<column name="tax_id"  type="bigint" />
 		</addColumn>
-	
+
 	   <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_tax"
             referencedColumnNames="id" referencedTableName="billing_tax" />
        <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="order_price" constraintName="fk_order_price_tax"
             referencedColumnNames="id" referencedTableName="billing_tax" />
-            
+
       </changeSet>
 
       <changeSet id="#INTRD-20460_20240104" author="zelmeliani">
@@ -9093,5 +9093,35 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="handle_accounting_periods" type="${type.boolean}" defaultValueNumeric="1" />
 		</addColumn>
 	</changeSet>
+
+    <changeSet id="INTRD-20050_20231226" author="TarikFA.">
+        <createSequence sequenceName="account_registration_number_seq" />
+        <createTable tableName="account_registration_number">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="account_registration_number_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="registration_id" type="varchar(100)" />
+            <column name="icd_id" type="bigint" />
+            <column name="account_entity_id" type="bigint" />
+
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="icd_id" baseTableName="account_registration_number"
+                                 constraintName="fk_icd_id"
+                                 referencedTableName="iso_icd"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="account_entity_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_registration_number"
+                                 referencedTableName="account_entity"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 
 </databaseChangeLog>

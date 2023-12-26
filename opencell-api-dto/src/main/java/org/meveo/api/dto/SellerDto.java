@@ -103,6 +103,8 @@ public class SellerDto extends BusinessEntityDto {
      * The iso ICD Code
      */
     private String isoICDCode;
+	
+	
 
     /**
      * Instantiates a new seller dto.
