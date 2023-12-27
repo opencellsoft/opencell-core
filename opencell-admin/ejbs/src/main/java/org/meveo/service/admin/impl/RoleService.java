@@ -194,14 +194,14 @@ public class RoleService extends PersistenceService<Role> {
     
     public Role findByName(String role) {
         QueryBuilder qb = new QueryBuilder(Role.class, "r", null);
-
-        try {
-            qb.addCriterion("name", "=", role, true);
-            return (Role) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException | NonUniqueResultException e) {
-            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
-            return null;
-        }
+	    
+	    try {
+		    qb.addCriterion("name", "=", role, true);
+		    return (Role) qb.getQuery(getEntityManager()).getSingleResult();
+	    } catch (NoResultException | NonUniqueResultException e) {
+		    log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
+		    return null;
+	    }
     }
 	
 	private boolean canSynchroWithKC() {
