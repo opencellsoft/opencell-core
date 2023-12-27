@@ -132,9 +132,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public void create(Subscription subscription) throws BusinessException {
     	
         OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
-        if(offerTemplate.isDisabled()) {
-        	throw new BusinessException("Cannot subscribe to disabled offer");
-        }
+		if (offerTemplate.isDisabled()) {
+			throw new BusinessException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", offerTemplate.getCode()));
+		}
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 
@@ -160,9 +160,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public void createWithoutNotif(Subscription subscription) throws BusinessException {
     	
         OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
-        if(offerTemplate.isDisabled()) {
-        	throw new BusinessException("Cannot subscribe to disabled offer");
-        }
+        if (offerTemplate.isDisabled()) {
+			throw new BusinessException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", offerTemplate.getCode()));
+		}
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
         updateSubscribedTillAndRenewalNotifyDates(subscription);
 

@@ -983,6 +983,10 @@ public class CpqQuoteApi extends BaseApi {
                     throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDto.getOfferCode());
             }
             
+			if (offerTemplate.isDisabled()) {
+				throw new MeveoApiException(String.format("OfferTemplate[code=%s] is disabled and cannot be sold. Please select another offer.", offerTemplate.getCode()));
+			}
+            
             final QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteOfferDto.getQuoteCode(), quoteOfferDto.getQuoteVersion());
             if (quoteVersion == null)
                 throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteOfferDto.getQuoteCode() + "," + quoteOfferDto.getQuoteVersion() + ")");
@@ -1065,8 +1069,12 @@ public class CpqQuoteApi extends BaseApi {
             // check offer template if exist
             if (quoteOfferDTO.getOfferId() != null) {
                 OfferTemplate offerTemplate = offerTemplateService.findById(quoteOfferDTO.getOfferId());
-                if (offerTemplate == null)
-                    throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferId());
+                if (offerTemplate == null) {
+					throw new EntityDoesNotExistsException(OfferTemplate.class, quoteOfferDTO.getOfferId());
+				}
+				if (offerTemplate.isDisabled()) {
+					throw new MeveoApiException(String.format("OfferTemplate[code=%s] is disabled and cannot be sold. Please select another offer.", offerTemplate.getCode()));
+				}
                 quoteOffer.setOfferTemplate(offerTemplate);
             }
 
@@ -1451,12 +1459,21 @@ public class CpqQuoteApi extends BaseApi {
         cpqQuote.setStatus(status);
         cpqQuote.setStatusDate(new Date());
 
+        List<QuoteVersion> quoteVersionsList = quoteVersionService.findLastVersionByCode(cpqQuote.getCode());
+        
         if (QuoteStatusEnum.APPROVED.toString().equalsIgnoreCase(status)) {
             if(quoteVersionService.findByQuoteCode(quoteCode).stream()
                     .filter(quoteVersion -> VersionStatusEnum.PUBLISHED.equals(quoteVersion.getStatus()))
                     .findAny().isEmpty()){
                 throw new BusinessException("APPROVE a QUOTE is not be possible if at least one QUOTE Version is not published");
             }
+            if (!quoteVersionsList.isEmpty()) {
+				quoteVersionsList.get(0).getQuoteOffers().forEach(quoteOffer -> {
+					if (quoteOffer.getOfferTemplate().isDisabled()) {
+						throw new MeveoApiException(String.format("OfferTemplate[code=%s] is disabled and cannot be sold. Please select another offer.", quoteOffer.getOfferTemplate().getCode()));
+					}
+				});
+			}
             cpqQuote = serviceSingleton.assignCpqQuoteNumber(cpqQuote);
         }
         try {
@@ -1479,7 +1496,16 @@ public class CpqQuoteApi extends BaseApi {
         QuoteVersion quoteVersion = quoteVersionService.findByQuoteAndVersion(quoteCode, currentVersion);
         if (quoteVersion == null)
             throw new EntityDoesNotExistsException(QuoteVersion.class, "(" + quoteCode + "," + currentVersion + ")");
-        if(quoteVersion.getQuoteOffers().isEmpty()) {
+        
+        if (VersionStatusEnum.PUBLISHED.equals(status)) {
+			quoteVersion.getQuoteOffers().forEach(quoteOffer -> {
+				if (quoteOffer.getOfferTemplate().isDisabled()) {
+					throw new MeveoApiException(String.format("OfferTemplate[code=%s] is disabled and cannot be sold. Please select another offer.", quoteOffer.getOfferTemplate().getCode()));
+				}
+			});
+        }
+        
+        if (quoteVersion.getQuoteOffers().isEmpty()) {
         	throw new MeveoApiException("link an offer to a version before publishing it");
         }
         if (!quoteVersion.getStatus().allowedTargets().contains(status)) {
