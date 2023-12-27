@@ -717,4 +717,11 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         log.trace("Job {} of Provider {} marked as requested to stop in job cache", jobInstanceId, currentProvider);
     }
+    
+    public void markJobException(JobInstance jobInstance, String jobException) {
+    	JobExecutionStatus jobStatus = getJobStatus(jobInstance.getId());
+    	if(jobStatus!=null) {
+    		jobStatus.setJobException(jobException);
+    	}
+    }
 }

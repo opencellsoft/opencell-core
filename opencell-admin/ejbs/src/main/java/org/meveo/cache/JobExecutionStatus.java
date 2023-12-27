@@ -48,6 +48,11 @@ public class JobExecutionStatus implements Serializable {
      * Cluster nodes (map key) and job instance runs threads (map value) the job is running on.
      */
     private Map<String, JobExecutionInfo> nodesAndThreads = new HashMap<>();
+    
+    /**
+     * Job unsaved exception
+     */
+    private String jobException;
 
     /**
      * Constructor
@@ -267,7 +272,15 @@ public class JobExecutionStatus implements Serializable {
         this.lockForNode = lockForNode;
     }
 
-    /**
+    public String getJobException() {
+		return jobException;
+	}
+
+	public void setJobException(String jobException) {
+		this.jobException = jobException;
+	}
+
+	/**
      * Tracks job execution per node run (JobExecutionResult entity equivalent)
      */
     public class JobExecutionInfo implements Serializable {

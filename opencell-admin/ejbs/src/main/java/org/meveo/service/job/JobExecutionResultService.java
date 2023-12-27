@@ -29,6 +29,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -48,6 +49,9 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
 
     @Inject
     private JobInstanceService jobInstanceService;
+    
+    @Inject
+    private JobCacheContainerProvider jobCacheContainerProvider;
 
     /**
      * Persist job execution results.
@@ -78,10 +82,14 @@ public class JobExecutionResultService extends PersistenceService<JobExecutionRe
             if (result.getStatus() != JobExecutionResultStatusEnum.RUNNING) {
                 log.info("Job execution finished {}", result);
             }
-            getEntityManager().createNamedQuery("JobExecutionResult.updateProgress").setParameter("id", result.getId()).setParameter("endDate", result.getEndDate())
-                .setParameter("nbItemsToProcess", result.getNbItemsToProcess()).setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed())
-                .setParameter("nbItemsProcessedWithError", result.getNbItemsProcessedWithError()).setParameter("nbItemsProcessedWithWarning", result.getNbItemsProcessedWithWarning())
-                .setParameter("report", result.getReport()).setParameter("status", result.getStatus()).executeUpdate();
+            try {
+	            getEntityManager().createNamedQuery("JobExecutionResult.updateProgress").setParameter("id", result.getId()).setParameter("endDate", result.getEndDate())
+	                .setParameter("nbItemsToProcess", result.getNbItemsToProcess()).setParameter("nbItemsCorrectlyProcessed", result.getNbItemsCorrectlyProcessed())
+	                .setParameter("nbItemsProcessedWithError", result.getNbItemsProcessedWithError()).setParameter("nbItemsProcessedWithWarning", result.getNbItemsProcessedWithWarning())
+	                .setParameter("report", result.getReport()).setParameter("status", result.getStatus()).executeUpdate();
+	        } catch (Exception e){
+				jobCacheContainerProvider.markJobException(result.getJobInstance(), e.getMessage());
+	    	}
         }
     }
 

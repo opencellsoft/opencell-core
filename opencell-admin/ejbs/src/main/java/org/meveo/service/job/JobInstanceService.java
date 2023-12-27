@@ -32,10 +32,13 @@ import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.util.VisibleForTesting;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CacheKeyLong;
 import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobExecutionStatus;
+import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -45,6 +48,7 @@ import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.report.query.QueryScheduler;
@@ -466,7 +470,23 @@ public class JobInstanceService extends BusinessService<JobInstance> {
      * @return A list of job instances
      */
     public List<JobInstance> findByJobTemplate(String jobTemplateName) {
-
+    	
         return getEntityManager().createNamedQuery("JobInstance.findByJobTemplate", JobInstance.class).setParameter("jobTemplate", jobTemplateName).getResultList();
     }
+    
+    public void cancelInvalidJobsFromCache() {
+        List<JobExecutionResultImpl> jobInstances = getEntityManager().createNamedQuery("JobExecutionResult.listUnfinishedJobs", JobExecutionResultImpl.class).getResultList();
+        if (!CollectionUtils.isEmpty(jobInstances)) {
+            jobInstances.forEach(jobInstance -> cancelJob(jobInstance));
+        }
+    }
+
+    private void cancelJob(JobExecutionResultImpl jobInstance) {
+        Long instanceId = jobInstance.getJobInstance().getId();
+        JobExecutionStatus jobStatus = jobCacheContainerProvider.getJobStatus(instanceId);
+        String report = "Job cancelled because processing did not complete correctly. Last exception was: "+jobStatus.getJobException()+"/n";
+        log.info("RUNNING JOB FOUND, id: {}, STATE: {}", instanceId, jobStatus);
+        getEntityManager().createNamedQuery("JobExecutionResult.cancelRunningJobById").setParameter("report", report).setParameter("id", instanceId).executeUpdate();
+    }
+
 }
