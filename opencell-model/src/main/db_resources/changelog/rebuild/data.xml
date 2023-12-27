@@ -13028,7 +13028,7 @@ public class DummyPaymentGatewayScript extends Script {
 			<column name="description"
 					value="Dummy gateway for SEPA files generation (For now, its only purpose is to store rejection codes. Please continue to use DD requests for SEPA files)" />
 			<column name="payment_method" value="DIRECTDEBIT" />
-			<column name="type" value="NATIVE" />
+			<column name="type" value="NATIF" />
 			<column name="script_instance_id" valueComputed="(SELECT id FROM meveo_script_instance WHERE code = 'org.meveo.service.script.DummyPaymentGatewayScript')" />
 		</insert>
 	</changeSet>

@@ -29,6 +29,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
@@ -56,6 +57,12 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.apiv2.models.Resource;
+import org.meveo.apiv2.payments.ClearingResponse;
+import org.meveo.apiv2.payments.ImmutableClearingResponse;
+import org.meveo.apiv2.payments.PaymentGatewayInput;
+import org.meveo.apiv2.payments.RejectionCode;
+import org.meveo.apiv2.payments.resource.RejectionCodeMapper;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ExchangeRate;
@@ -71,8 +78,10 @@ import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OtherCreditAndCharge;
 import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentRejectionCode;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.billing.impl.JournalService;
@@ -80,9 +89,13 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.payments.impl.PaymentHistoryService;
+import org.meveo.service.payments.impl.PaymentRejectionCodeService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * @author Edward P. Legaspi
@@ -94,9 +107,9 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class PaymentApi extends BaseApi {
 
-    private static final String DEFAULT_SORT_ORDER_ID = "id";
-    
-    @Inject
+	private static final String DEFAULT_SORT_ORDER_ID = "id";
+
+	@Inject
     private PaymentService paymentService;
 
     @Inject
@@ -119,6 +132,16 @@ public class PaymentApi extends BaseApi {
 
 	@Inject
 	private JournalService journalService;
+
+	@Inject
+	private PaymentGatewayService paymentGatewayService;
+
+	@Inject
+	private PaymentRejectionCodeService rejectionCodeService;
+
+	private static final String PAYMENT_GATEWAY_NOT_FOUND_ERROR_MESSAGE = "Payment gateway not found";
+	private static final String PAYMENT_REJECTION_CODE_NOT_FOUND_ERROR_MESSAGE = "Payment rejection code not found";
+	private final RejectionCodeMapper rejectionCodeMapper = new RejectionCodeMapper();
 
 	/**
      * @param paymentDto payment object which encapsulates the input data sent by client
@@ -605,4 +628,104 @@ public class PaymentApi extends BaseApi {
 
 		return paymentHistoryDto;
     }
+
+	/**
+	 * Create payment rejection code
+	 *
+	 * @param rejectionCode payment rejection code
+	 * @return RejectionCode id
+	 */
+	public Long createPaymentRejectionCode(RejectionCode rejectionCode) {
+		PaymentGateway paymentGateway =
+				rejectionCode.getPaymentGateway() != null ? loadPaymentGateway(rejectionCode.getPaymentGateway()) : null;
+		if (paymentGateway == null) {
+			throw new NotFoundException(PAYMENT_GATEWAY_NOT_FOUND_ERROR_MESSAGE);
+		}
+		PaymentRejectionCode paymentRejectionCode = rejectionCodeMapper.toEntity(rejectionCode, paymentGateway);
+		rejectionCodeService.create(paymentRejectionCode);
+		return paymentRejectionCode.getId();
+
+	}
+
+	private PaymentGateway loadPaymentGateway(Resource paymentGatewayResource) {
+		PaymentGateway paymentGateway;
+		if(paymentGatewayResource.getId() != null) {
+			paymentGateway = paymentGatewayService.findById(paymentGatewayResource.getId());
+			if(paymentGateway == null && paymentGatewayResource.getCode() != null) {
+				paymentGateway = paymentGatewayService.findByCode(paymentGatewayResource.getCode());
+			}
+		} else {
+			paymentGateway = paymentGatewayService.findByCode(paymentGatewayResource.getCode());
+		}
+		return paymentGateway;
+	}
+
+	/**
+	 * Update payment rejection code
+	 *
+	 * @param id payment rejection code id
+	 * @param resource payment rejection code
+	 * @return RejectionCode updated result
+	 */
+	public RejectionCode updatePaymentRejectionCode(Long id, RejectionCode resource) {
+		PaymentGateway paymentGateway = null;
+		if(resource.getPaymentGateway() != null) {
+			paymentGateway = loadPaymentGateway(resource.getPaymentGateway());
+			if (paymentGateway == null) {
+				throw new NotFoundException(PAYMENT_GATEWAY_NOT_FOUND_ERROR_MESSAGE);
+			}
+		}
+		PaymentRejectionCode rejectionCodeToUpdate = ofNullable(rejectionCodeService.findById(id))
+				.orElseThrow(() -> new NotFoundException(PAYMENT_REJECTION_CODE_NOT_FOUND_ERROR_MESSAGE));
+		ofNullable(resource.getCode()).ifPresent(rejectionCodeToUpdate::setCode);
+		ofNullable(resource.getDescription()).ifPresent(rejectionCodeToUpdate::setDescription);
+		ofNullable(resource.getDescriptionI18n()).ifPresent(rejectionCodeToUpdate::setDescriptionI18n);
+		ofNullable(paymentGateway).ifPresent(rejectionCodeToUpdate::setPaymentGateway);
+
+		return rejectionCodeMapper.toResource(rejectionCodeService.update(rejectionCodeToUpdate));
+	}
+
+	/**
+	 * Delete rejection code
+	 *
+	 * @param id payment rejection code id
+	 */
+	public void removeRejectionCode(Long id) {
+		PaymentRejectionCode rejectionCode = ofNullable(rejectionCodeService.findById(id))
+				.orElseThrow(() -> new NotFoundException(PAYMENT_REJECTION_CODE_NOT_FOUND_ERROR_MESSAGE));
+		rejectionCodeService.remove(rejectionCode);
+	}
+
+	/**
+	 * Clear rejectionCodes by gateway
+	 *
+	 * @param paymentGatewayInput payment gateway
+	 */
+	public ClearingResponse clearAll(PaymentGatewayInput paymentGatewayInput) {
+		PaymentGateway paymentGateway = null;
+		if(paymentGatewayInput != null && paymentGatewayInput.getPaymentGateway() != null) {
+			paymentGateway = ofNullable(loadPaymentGateway(paymentGatewayInput.getPaymentGateway()))
+					.orElseThrow(() -> new NotFoundException(PAYMENT_GATEWAY_NOT_FOUND_ERROR_MESSAGE));
+		}
+		return buildResponse(rejectionCodeService.clearAll(paymentGateway), paymentGateway);
+	}
+
+	private ClearingResponse buildResponse(int clearedCodesCount, PaymentGateway paymentGateway) {
+		ImmutableClearingResponse.Builder builder = ImmutableClearingResponse
+				.builder()
+				.status("SUCCESS")
+				.clearedCodesCount(clearedCodesCount);
+		if(paymentGateway != null) {
+			builder.associatedPaymentGatewayCode(paymentGateway.getCode());
+		}
+		if(clearedCodesCount == 0) {
+			return builder
+					.massage("No rejection code found to clear")
+					.build();
+		} else {
+			return builder
+					.massage("Rejection codes successfully cleared")
+					.build();
+		}
+	}
 }

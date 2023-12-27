@@ -1,21 +1,30 @@
 package org.meveo.apiv2.payments.resource;
 
+import static java.util.Optional.ofNullable;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.Response.Status.PRECONDITION_FAILED;
+import static javax.ws.rs.core.Response.ok;
+
 import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.PayByCardOrSepaDto;
+import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.PaymentApi;
+import org.meveo.apiv2.payments.PaymentGatewayInput;
+import org.meveo.apiv2.payments.RejectionCode;
 import org.meveo.apiv2.refund.CardRefund;
 import org.meveo.model.payments.CreditCardTypeEnum;
 
 @Interceptors({ WsRestApiInterceptor.class })
-public class PaymentResourceImpl implements PaymentResource{
+public class PaymentResourceImpl implements PaymentResource {
 
     @Inject
     private PaymentApi paymentApi;
@@ -27,7 +36,7 @@ public class PaymentResourceImpl implements PaymentResource{
             paymentApi.payByCard(payByCardDto);
             return Response.ok(new ActionStatus()).build();
         } catch (Exception e) {
-            throw new ClientErrorException(e.getMessage(), Response.Status.PRECONDITION_FAILED);
+            throw new ClientErrorException(e.getMessage(), PRECONDITION_FAILED);
         }
     }
     
@@ -38,7 +47,7 @@ public class PaymentResourceImpl implements PaymentResource{
             paymentApi.payBySepa(payByCardDto);
             return Response.ok(new ActionStatus()).build();
         } catch (Exception e) {
-            throw new ClientErrorException(e.getMessage(), Response.Status.PRECONDITION_FAILED);
+            throw new ClientErrorException(e.getMessage(), PRECONDITION_FAILED);
         }
     }
    
@@ -61,7 +70,78 @@ public class PaymentResourceImpl implements PaymentResource{
         return payByCardDto;
     }
 
+    /**
+     * Create payment rejection code
+     *
+     * @param rejectionCode payment rejection code
+     * @return RejectionCode id
+     */
+    @Override
+    public Response createRejectionCode(RejectionCode rejectionCode) {
+        try {
+            validateRejectionCodeInput(rejectionCode);
+            Long id = paymentApi.createPaymentRejectionCode(rejectionCode);
+            return ok()
+                    .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"" +
+                            ",\"message\":\"Rejection code successfully created\"},\"id\":" + id + "}")
+                    .build();
+        } catch (MissingParameterException missingParameterException) {
+            return Response.status(PRECONDITION_FAILED)
+                    .entity("{\"actionStatus\":{\"status\":\"FAIL\"" +
+                                    ",\"message\":\"" + missingParameterException.getMessage() + "\"}")
+                    .type(APPLICATION_JSON)
+                    .build();
+        } catch (Exception exception) {
+            throw new BadRequestException(exception);
+        }
+    }
 
+    private void validateRejectionCodeInput(RejectionCode rejectionCode) {
+        ofNullable(rejectionCode.getCode())
+                .orElseThrow(() -> new MissingParameterException("Code is mandatory"));
+        ofNullable(rejectionCode.getPaymentGateway())
+                .orElseThrow(() -> new MissingParameterException("Payment gateway is mandatory"));
+    }
 
+    /**
+     * Update payment rejection code
+     *
+     * @param id payment rejection code id
+     * @param rejectionCode rejection code input
+     * @return RejectionCode updated result
+     */
+    @Override
+    public Response updateRejectionCode(Long id, RejectionCode rejectionCode) {
+        RejectionCode result = paymentApi.updatePaymentRejectionCode(id, rejectionCode);
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"" +
+                        ",\"message\":\"Rejection code successfully updated\"},\"id\":" + result.getId() + "}")
+                .build();
+    }
 
+    /**
+     * Delete rejection code
+     *
+     * @param id payment rejection code id
+     */
+    @Override
+    public Response removeRejectionCode(Long id) {
+        paymentApi.removeRejectionCode(id);
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"" +
+                        ",\"message\":\"Rejection code successfully deleted\"}")
+                .build();
+    }
+
+    /**
+     * Clear rejection codes by gateway
+     *
+     * @param paymentGatewayInput payment gateway
+     */
+    @Override
+    public Response clearAll(PaymentGatewayInput paymentGatewayInput) {
+        return ok()
+                .entity(paymentApi.clearAll(paymentGatewayInput))
+                .build();
+    }
 }
