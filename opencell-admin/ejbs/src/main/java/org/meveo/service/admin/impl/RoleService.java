@@ -195,7 +195,7 @@ public class RoleService extends PersistenceService<Role> {
         try {
         	 role = getEntityManager().createNamedQuery("Role.getByName", Role.class).setParameter("name", name.toLowerCase()).getSingleResult();
         } catch (NoResultException ex) {
-          super.create(new Role(name, name, true, parentRole));
+          create(new Role(name, name, true, parentRole));
         }
         return role;
     }
