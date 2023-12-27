@@ -142,7 +142,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     
     public void create(Role role,Boolean replicateInKc) throws BusinessException {
-    	if(BooleanUtils.isTrue(replicateInKc) || canSynchroWithKC()) {
+    	if(BooleanUtils.isTrue(replicateInKc) && canSynchroWithKC()) {
     		if (role.getParentRole() == null) {
     			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
     		} else {
@@ -167,7 +167,7 @@ public class RoleService extends PersistenceService<Role> {
      
     public Role update(Role role,Boolean replicateInKc) throws BusinessException {
 	    
-	    if(BooleanUtils.isTrue(replicateInKc) || canSynchroWithKC()) {
+	    if(BooleanUtils.isTrue(replicateInKc) && canSynchroWithKC()) {
     		keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
     	}
     	role = super.update(role);
