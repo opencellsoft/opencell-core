@@ -308,13 +308,16 @@ public class DunningPolicyService extends PersistenceService<DunningPolicy> {
         }
         long daysDiff = TimeUnit.DAYS.convert((today.getTime() - dueDate.getTime()), TimeUnit.MILLISECONDS);
         if (policy.getDetermineLevelBy().equals(DunningDetermineLevelBy.DAYS_OVERDUE)) {
-            dayOverDueAndThresholdCondition = (dayOverDue.longValue() <= daysDiff);
+            BigDecimal minBalance = ofNullable(invoice.getRecordedInvoice())
+                    .map(RecordedInvoice::getUnMatchingAmount)
+                    .orElse(BigDecimal.ZERO);
+            dayOverDueAndThresholdCondition = (dayOverDue.longValue() <= daysDiff) && minBalance.compareTo(BigDecimal.ZERO) > 0;
         } else {
             BigDecimal minBalance = ofNullable(invoice.getRecordedInvoice())
                                             .map(RecordedInvoice::getUnMatchingAmount)
                                             .orElse(BigDecimal.ZERO);
             dayOverDueAndThresholdCondition =
-                    (dayOverDue.longValue() == daysDiff || minBalance.doubleValue() >= policy.getMinBalanceTrigger());
+                    (dayOverDue.longValue() == daysDiff || minBalance.doubleValue() >= policy.getMinBalanceTrigger()) && minBalance.compareTo(BigDecimal.ZERO) > 0;
         }
         return (invoice.getPaymentStatus().equals(UNPAID) || invoice.getPaymentStatus().equals(PENDING))
                 && collectionPlanService.findByInvoiceId(invoice.getId()).isEmpty()
