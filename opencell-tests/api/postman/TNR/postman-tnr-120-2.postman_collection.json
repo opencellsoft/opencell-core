@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "9953dec6-de6d-435c-a8e4-faa78899e321",
-		"name": "postman-tnr-120-1",
+		"_postman_id": "f22cec49-0e3f-4de1-a9d5-6472e9da08ba",
+		"name": "postman-tnr-120-2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "4396982"
 	},
@@ -256,7 +256,7 @@
 			"response": []
 		},
 		{
-			"name": "Update Invoicing_Job_V2",
+			"name": "Update Invoicing_Job_V3",
 			"event": [
 				{
 					"listen": "test",
@@ -284,7 +284,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"code\": \"Invoicing_Job_V2\",\r\n    \"description\": \"Invoicing Job V2\",\r\n    \"disabled\": false,\r\n    \"jobCategory\": \"INVOICING\",\r\n    \"jobTemplate\": \"InvoicingJobV2\",\r\n    \"active\": true,\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"waitingMillis\",\r\n                \"description\": \"Waiting before next launch (ms)\",\r\n                \"fieldType\": \"LONG\",\r\n                \"longValue\": 0,\r\n                \"guiPosition\": \"tab:Configuration:0;field:1\"\r\n            },\r\n            {\r\n                \"code\": \"nbRuns\",\r\n                \"description\": \"Number of parallel execution\",\r\n                \"fieldType\": \"LONG\",\r\n                \"longValue\": -1,\r\n                \"guiPosition\": \"tab:Configuration:0;field:0\"\r\n            }\r\n        ]\r\n    },\r\n    \"limitToSingleNode\": true,\r\n    \"verboseReport\": true,\r\n    \"followingJob\": \"7_XML\",\r\n    \"jobSpeed\": \"NORMAL\"\r\n}",
+					"raw": "{\r\n    \"code\": \"Invoicing_Job_V3\",\r\n    \"description\": \"Invoicing Job V3\",\r\n    \"disabled\": false,\r\n    \"jobCategory\": \"INVOICING\",\r\n    \"jobTemplate\": \"InvoicingJobV3\",\r\n    \"active\": true,\r\n    \"customFields\": {\r\n        \"customField\": [\r\n            {\r\n                \"code\": \"waitingMillis\",\r\n                \"description\": \"Waiting before next launch (ms)\",\r\n                \"fieldType\": \"LONG\",\r\n                \"longValue\": 0,\r\n                \"guiPosition\": \"tab:Configuration:0;field:1\"\r\n            },\r\n            {\r\n                \"code\": \"nbRuns\",\r\n                \"description\": \"Number of parallel execution\",\r\n                \"fieldType\": \"LONG\",\r\n                \"longValue\": -1,\r\n                \"guiPosition\": \"tab:Configuration:0;field:0\"\r\n            }\r\n        ]\r\n    },\r\n    \"limitToSingleNode\": true,\r\n    \"verboseReport\": true,\r\n    \"followingJob\": \"7_XML\",\r\n    \"jobSpeed\": \"NORMAL\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
