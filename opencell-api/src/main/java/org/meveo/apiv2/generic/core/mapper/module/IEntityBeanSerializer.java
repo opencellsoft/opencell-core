@@ -32,7 +32,6 @@ class IEntityBeanSerializer extends StdSerializer<IEntity> implements GenericSer
         boolean exists = sharedEntityToSerialize.stream().anyMatch(e -> isMatch(e, value));
         if (exists
                 || DATA_ROOT_ELEMENT.equals(outputContext.getCurrentName())
-                || (gen.getOutputContext().getParent() != null && gen.getOutputContext().getParent().getParent() != null && DATA_ROOT_ELEMENT.equals(gen.getOutputContext().getParent().getParent().getCurrentName()))
                 || isNestedEntityCandidate(getPathToRoot(gen), outputContext.getCurrentName())) {
             sharedEntityToSerialize.removeIf(e -> isMatch(e, value));
             this.defaultSerializer.serialize(value, gen, serializers);

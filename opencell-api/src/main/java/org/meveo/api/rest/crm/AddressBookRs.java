@@ -42,6 +42,7 @@ import org.meveo.api.rest.IBaseRs;
 @Tag(name = "AddressBook", description = "@%AddressBook")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Deprecated
 public interface AddressBookRs extends IBaseRs {
 
     /**

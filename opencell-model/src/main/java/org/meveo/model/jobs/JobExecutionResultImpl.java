@@ -59,8 +59,8 @@ import org.meveo.model.NotifiableEntity;
         @NamedQuery(name = "JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", query = "select count(*) FROM JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
         @NamedQuery(name = "JobExecutionResult.purgeHistoryByDateAndJobInstance", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
         @NamedQuery(name = "JobExecutionResult.updateProgress", query = "update JobExecutionResultImpl set endDate=:endDate, nbItemsToProcess=:nbItemsToProcess, nbItemsCorrectlyProcessed=:nbItemsCorrectlyProcessed, nbItemsProcessedWithError=:nbItemsProcessedWithError, nbItemsProcessedWithWarning=:nbItemsProcessedWithWarning, report=:report, status=:status where id=:id"),
-        @NamedQuery(name = "JobExecutionResult.cancelUnfinishedJobsByNode", query = "update JobExecutionResultImpl je set je.status='CANCELLED', je.endDate=NOW(), je.report='job cancelled due to the server was shutdown in the middle of job execution' where je.status = 'RUNNING' and je.nodeName=:nodeName"),
-        @NamedQuery(name = "JobExecutionResult.listUnfinishedJobs", query = "select jr from JobExecutionResultImpl jr where jr.id in (select distinct (case when je.parentJobExecutionResult is null then je.id else je.parentJobExecutionResult end) from JobExecutionResultImpl je where je.status = 'RUNNING')") })
+        @NamedQuery(name = "JobExecutionResult.cancelUnfinishedJobsByNode", query = "update JobExecutionResultImpl je set je.status='SHUTDOWN', je.endDate=NOW(), je.report=CONCAT('Job cancelled due to the server was shutdown in the middle of job execution/n', je.report) where je.status = 'RUNNING' and je.nodeName=:nodeName"),
+        @NamedQuery(name = "JobExecutionResult.listUnfinishedJobs", query = "select jr from JobExecutionResultImpl jr where jr.id in (select distinct (case when je.parentJobExecutionResult is null then je.id else je.parentJobExecutionResult end) from JobExecutionResultImpl je where je.status = 'RUNNING' or je.status = 'SHUTDOWN')") })
 
 public class JobExecutionResultImpl extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
@@ -160,6 +160,13 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     @Transient
     private boolean moreToProcess = false;
+
+    /**
+     * Indicates that job has not completed fully because is reached the maximum number of items to process,
+     * the maximum run duration in minutes or the maximum time at which it must be stopped.
+     */
+    @Transient
+    private boolean limitExceeded = false;
 
     @Transient
     private Date cumulativeEndDate;
@@ -611,6 +618,22 @@ public class JobExecutionResultImpl extends BaseEntity {
      */
     public void setParentJobExecutionResult(Long parentJobExecutionResult) {
         this.parentJobExecutionResult = parentJobExecutionResult;
+    }
+
+    /**
+     * @return True if the that job has not completed fully because is reached the maximum number of items to process,
+     * he maximum run duration in minutes or the maximum time at which it must be stopped.
+     */
+    public boolean isLimitExceeded() {
+        return limitExceeded;
+    }
+
+    /**
+     * @param limitExceeded Set to true to indicate that job has not completed fully because is reached the maximum number of items to process,
+     *                          the maximum run duration in minutes or the maximum time at which it must be stopped.
+     */
+    public void setLimitExceeded(boolean limitExceeded) {
+        this.limitExceeded = limitExceeded;
     }
 
     /**

@@ -19,7 +19,9 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
             "#{gca.code.substring(0, 3)}#{ca.isCompany ? ca.description : ca.name.lastName}";
     protected static final String AUXILIARY_ACCOUNTING_DEFAULT_LABEL_EL =
             "#{ca.isCompany ? ca.description : ca.name.firstName.concat(' ').concat(ca.name.lastName)}";
-    @Override protected org.meveo.apiv2.securityDeposit.FinanceSettings toResource(FinanceSettings entity) {
+
+	@Override
+	protected org.meveo.apiv2.securityDeposit.FinanceSettings toResource(FinanceSettings entity) {
         ImmutableFinanceSettings.Builder builder = ImmutableFinanceSettings.builder()
                 .id(entity.getId())
                 .useSecurityDeposit(entity.isUseSecurityDeposit())
@@ -36,13 +38,14 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                 .woPartitionPeriod(entity.getWoPartitionPeriod())
                 .rtPartitionPeriod(entity.getRtPartitionPeriod())
                 .edrPartitionPeriod(entity.getEdrPartitionPeriod());
-        if(entity.getAuxiliaryAccounting() != null) {
+        
+        if (entity.getAuxiliaryAccounting() != null) {
             builder.useAuxiliaryAccounting(entity.getAuxiliaryAccounting().isUseAuxiliaryAccounting())
                     .auxiliaryAccountCodeEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountCodeEl())
                     .auxiliaryAccountLabelEl(entity.getAuxiliaryAccounting().getAuxiliaryAccountLabelEl());
         }
 
-         if(entity.getOpenOrderSetting() != null) {
+        if (entity.getOpenOrderSetting() != null) {
             builder.openOrderSetting(openOrderSettingMapper.toResource(entity.getOpenOrderSetting()));
         }
 
@@ -56,25 +59,30 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
         return builder.build();
     }
 
-    @Override protected FinanceSettings toEntity(org.meveo.apiv2.securityDeposit.FinanceSettings resource) {
-        return toEntity(new FinanceSettings(), resource);
-    }
+	@Override
+	protected FinanceSettings toEntity(org.meveo.apiv2.securityDeposit.FinanceSettings resource) {
+		return toEntity(new FinanceSettings(), resource);
+	}
 
      protected FinanceSettings toEntity(FinanceSettings financeSettings, org.meveo.apiv2.securityDeposit.FinanceSettings resource) {
+         if (resource.getMaxAmountPerSecurityDeposit() != null) {
+        	financeSettings.setMaxAmountPerSecurityDeposit(resource.getMaxAmountPerSecurityDeposit());
+         }
+         if (resource.getMaxAmountPerCustomer() != null) {
+        	financeSettings.setMaxAmountPerCustomer(resource.getMaxAmountPerCustomer());
+         }
          financeSettings.setUseSecurityDeposit(resource.getUseSecurityDeposit());
-         financeSettings.setMaxAmountPerSecurityDeposit(resource.getMaxAmountPerSecurityDeposit());
-         financeSettings.setMaxAmountPerCustomer(resource.getMaxAmountPerCustomer());
          financeSettings.setAutoRefund(resource.getAutoRefund());
          AuxiliaryAccounting auxiliaryAccounting = new AuxiliaryAccounting();
          auxiliaryAccounting.setUseAuxiliaryAccounting(resource.getUseAuxiliaryAccounting());
          auxiliaryAccounting.setAuxiliaryAccountCodeEl(resource.getAuxiliaryAccountCodeEl());
          auxiliaryAccounting.setAuxiliaryAccountLabelEl(resource.getAuxiliaryAccountLabelEl());
-         if(auxiliaryAccounting.isUseAuxiliaryAccounting()
+         if (auxiliaryAccounting.isUseAuxiliaryAccounting()
                  && (auxiliaryAccounting.getAuxiliaryAccountCodeEl() == null
                  || auxiliaryAccounting.getAuxiliaryAccountCodeEl().isBlank())) {
              auxiliaryAccounting.setAuxiliaryAccountCodeEl(AUXILIARY_ACCOUNTING_CODE_DEFAULT_EL);
          }
-         if(auxiliaryAccounting.isUseAuxiliaryAccounting()
+         if (auxiliaryAccounting.isUseAuxiliaryAccounting()
                  && (auxiliaryAccounting.getAuxiliaryAccountLabelEl() == null
                  || auxiliaryAccounting.getAuxiliaryAccountLabelEl().isBlank())) {
              auxiliaryAccounting.setAuxiliaryAccountLabelEl(AUXILIARY_ACCOUNTING_DEFAULT_LABEL_EL);
@@ -84,20 +92,28 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          financeSettings.setEnableBillingRedirectionRules(resource.getEnableBillingRedirectionRules());
          financeSettings.setDiscountAdvancedMode(resource.getDiscountAdvancedMode());
          financeSettings.setEnablePriceList(resource.getEnablePriceList());
-	     if(resource.getArticleSelectionMode() != null) {
+	     if (resource.getArticleSelectionMode() != null) {
 		     financeSettings.setArticleSelectionMode(resource.getArticleSelectionMode());
 	     }
 	     // Set the entitiesWithHugeVolume field
-	     Map<String, org.meveo.apiv2.securityDeposit.HugeEntity> entitiesWithHugeVolume = resource.getEntitiesWithHugeVolume();
-         Map<String, HugeEntity> hugeEntitiesSettings = entitiesWithHugeVolume.entrySet()
-                                                                              .stream()
-                                                                              .map(e -> Map.entry(e.getKey(), toHugeEntity(e.getValue())))
-                                                                              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-         financeSettings.setEntitiesWithHugeVolume(hugeEntitiesSettings);
+	     if (resource.getEntitiesWithHugeVolume() != null) {
+		    Map<String, org.meveo.apiv2.securityDeposit.HugeEntity> entitiesWithHugeVolume = resource.getEntitiesWithHugeVolume();
+	        Map<String, HugeEntity> hugeEntitiesSettings = entitiesWithHugeVolume.entrySet()
+	                                                                             .stream()
+	                                                                             .map(e -> Map.entry(e.getKey(), toHugeEntity(e.getValue())))
+	                                                                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+	        financeSettings.setEntitiesWithHugeVolume(hugeEntitiesSettings);
+	     }
          financeSettings.setBillingRunProcessWarning(resource.getBillingRunProcessWarning());
-         financeSettings.setNbPartitionsToKeep(resource.getNbPartitionsToKeep());
-         financeSettings.setSynchronousMassActionLimit(resource.getSynchronousMassActionLimit());
+
+         if (resource.getNbPartitionsToKeep() != null) {
+        	 financeSettings.setNbPartitionsToKeep(resource.getNbPartitionsToKeep());
+         }
          
+         if (resource.getSynchronousMassActionLimit() != null) {
+        	 financeSettings.setSynchronousMassActionLimit(resource.getSynchronousMassActionLimit());
+         }
+                  
          financeSettings.setWoPartitionPeriod(resource.getWoPartitionPeriod());
          if(financeSettings.getWoPartitionPeriod() != null && financeSettings.getWoPartitionPeriod() == 0) {
              financeSettings.setWoPartitionPeriod(null);

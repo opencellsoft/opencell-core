@@ -1,24 +1,26 @@
-package org.meveo.apiv2.dunning.impl;
+package org.meveo.apiv2.payments.resource;
 
-import org.meveo.apiv2.dunning.CustomerBalance;
+import org.meveo.apiv2.payments.CustomerBalance;
 import org.meveo.apiv2.generic.ResourceMapper;
 import org.meveo.model.payments.OCCTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerBalanceMapper extends ResourceMapper<CustomerBalance, org.meveo.model.dunning.CustomerBalance> {
+public class CustomerBalanceMapper extends ResourceMapper<CustomerBalance, org.meveo.model.payments.CustomerBalance> {
 
     @Override
-    protected CustomerBalance toResource(org.meveo.model.dunning.CustomerBalance entity) {
+    protected CustomerBalance toResource(org.meveo.model.payments.CustomerBalance entity) {
         return null;
     }
 
     @Override
-    protected org.meveo.model.dunning.CustomerBalance toEntity(CustomerBalance resource) {
-        org.meveo.model.dunning.CustomerBalance customerBalance = new org.meveo.model.dunning.CustomerBalance();
+    public org.meveo.model.payments.CustomerBalance toEntity(CustomerBalance resource) {
+        org.meveo.model.payments.CustomerBalance customerBalance = new org.meveo.model.payments.CustomerBalance();
         customerBalance.setCode(resource.getCode());
-        customerBalance.setDescription(resource.getLabel());
+        if(resource.getLabel() != null) {
+            customerBalance.setDescription(resource.getLabel());
+        }
         customerBalance.setDefaultBalance(resource.getDefaultBalance());
         if(resource.getOccTemplates() != null) {
             List<OCCTemplate> templates = new ArrayList<>();

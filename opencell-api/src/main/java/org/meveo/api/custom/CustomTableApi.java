@@ -56,6 +56,7 @@ import org.meveo.api.dto.custom.CustomTableRecordDto;
 import org.meveo.api.dto.custom.CustomTableWrapperDto;
 import org.meveo.api.dto.custom.UnitaryCustomTableDataDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -67,6 +68,8 @@ import org.meveo.jpa.MeveoJpa;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomTableService;
@@ -90,6 +93,10 @@ public class CustomTableApi extends BaseApi {
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     /**
      * Create new records in a custom table with an option of deleting existing data first
      *
@@ -103,6 +110,9 @@ public class CustomTableApi extends BaseApi {
         validateParams("customTableCode", dto.getCustomTableCode(), "values", dto.getValues());
 
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+
+        checkCustomEntityUpdatePermissions(cet);
+
         if (dto.getOverwrite() == null) {
             dto.setOverwrite(false);
         }
@@ -115,6 +125,7 @@ public class CustomTableApi extends BaseApi {
         validateParams("customTableCode", dto.getCustomTableCode(), "value", dto.getValue());
 
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+        checkCustomEntityUpdatePermissions(cet);
         Map<String, CustomFieldTemplate> cfts = customTableService.retrieveAndValidateCfts(cet, false);
         Map<String, Object> values = customTableService.convertValue(dto.getRowValues(), cfts.values(), false, null);
         Long id = customTableService.create(cet.getDbTablename(), values);
@@ -134,6 +145,9 @@ public class CustomTableApi extends BaseApi {
         validateParams("customTableCode", dto.getCustomTableCode(), "values", dto.getValues());
 
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+
+        checkCustomEntityUpdatePermissions(cet);
+
         Map<String, CustomFieldTemplate> cfts = customTableService.retrieveAndValidateCfts(cet, false);
 
         Map<Boolean, List<CustomTableRecordDto>> partitionedById = dto.getValues().stream().collect(Collectors.partitioningBy(x -> x.getValues().get(FIELD_ID) != null));
@@ -153,11 +167,22 @@ public class CustomTableApi extends BaseApi {
         validateParams("customTableCode", dto.getCustomTableCode(), "value", dto.getValue(), "id", id);
 
         CustomEntityTemplate cet = customTableService.getCET(dto.getCustomTableCode());
+        checkCustomEntityUpdatePermissions(cet);
         Map<String, CustomFieldTemplate> cfts = customTableService.retrieveAndValidateCfts(cet, false);
         LinkedHashMap<String, Object> rowValues = dto.getRowValues();
         rowValues.put(FIELD_ID, id);
         List<Map<String, Object>> values = customTableService.convertValues(Arrays.asList(rowValues), cfts.values(), false);
         customTableService.update(cet.getDbTablename(), values.get(0));
+    }
+
+    /**
+     * Check if the permissions CE_{CustomEntityTemplate.code}-modify is assigned to the {@link CurrentUser}
+     * @param cet : CustomEntityTemplate instance
+     */
+    private void checkCustomEntityUpdatePermissions(CustomEntityTemplate cet) {
+        if (!currentUser.hasRoles(cet.getModifyPermission())) {
+            throw new ActionForbiddenException("User does not have permission to update data on '" + cet.getModifyPermission() + "'");
+        }
     }
 
     /**

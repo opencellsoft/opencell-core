@@ -151,6 +151,9 @@ public class PaymentApi extends BaseApi {
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
         }
+        if (!occTemplate.isManualCreationEnabled()) {
+            throw new BusinessException(String.format("Creation is prohibited; occTemplate %s is not allowed for manual creation", paymentDto.getOccTemplateCode()));
+        }
 
         Payment payment = new Payment();
 		paymentService.calculateAmountsByTransactionCurrency(payment, customerAccount,

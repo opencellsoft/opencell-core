@@ -1,10 +1,9 @@
-package org.meveo.model.dunning;
+package org.meveo.model.payments;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
-import org.meveo.model.payments.OCCTemplate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +30,7 @@ public class CustomerBalance extends BusinessEntity {
 
     @Type(type = "numeric_boolean")
     @Column(name = "default_balance")
-    private boolean defaultBalance = false;
+    private boolean defaultBalance;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "ar_customer_balance_templates",

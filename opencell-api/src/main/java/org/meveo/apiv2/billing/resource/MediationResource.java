@@ -32,20 +32,20 @@ public interface MediationResource {
 
     @POST
     @Path("/registerCdrList")
-    @Operation(summary = "Accepts a list of CDR lines, parses them and creates EDRs. CDR accepts the same format as in mediation job", tags = { "Mediation", "CDR", "EDR" }, responses = {
+    @Operation(summary = "Accepts a list of CDR lines, parses them and creates EDRs. CDR accepts the same format as in mediation job", tags = { "CDR" }, responses = {
             @ApiResponse(responseCode = "200", description = "A list of EDRs, preserving the order of incomming CDRs"), @ApiResponse(responseCode = "400", description = "bad request on register CDR list") })
     ProcessCdrListResult registerCdrList(@Parameter(description = "the CdrListInput object", required = true) CdrListInput cdrListInput);
 
     @POST
     @Path("/reserveCdrList")
-    @Operation(summary = "Accepts a list of CDR lines, parses them, creates EDRs and reserves. CDR accepts the same format as in mediation job", tags = { "Mediation", "CDR", "EDR" }, responses = {
+    @Operation(summary = "Accepts a list of CDR lines, parses them, creates EDRs and reserves. CDR accepts the same format as in mediation job", tags = { "CDR" }, responses = {
             @ApiResponse(responseCode = "200", description = "A list of EDRs and reservations, preserving the order of incomming CDRs"),
             @ApiResponse(responseCode = "400", description = "bad request on reserve CDR list") })
     ProcessCdrListResult reserveCdrList(@Parameter(description = "the CdrListInput object", required = true) CdrListInput cdrListInput);
 
     @POST
     @Path("/chargeCdrList")
-    @Operation(summary = "Accepts a list of CDR lines, parses them, creates EDRs and rates them. . CDR is same format use in mediation job", tags = { "Mediation", "CDR", "EDR" }, responses = {
+    @Operation(summary = "Accepts a list of CDR lines, parses them, creates EDRs and rates them. . CDR is same format use in mediation job", tags = { "CDR" }, responses = {
             @ApiResponse(responseCode = "200", description = "A list of rated wallet operations, preserving the order of incomming CDRs"),
             @ApiResponse(responseCode = "400", description = "bad request on register CDR list") })
     ProcessCdrListResult chargeCdrList(@Parameter(description = "the ChargeCdrListInput object", required = true) ChargeCdrListInput cdrListInput);
