@@ -112,6 +112,8 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          
          if (resource.getSynchronousMassActionLimit() != null) {
         	 financeSettings.setSynchronousMassActionLimit(resource.getSynchronousMassActionLimit());
+         } else if (financeSettings.getId() == null) {
+        	 financeSettings.setSynchronousMassActionLimit(10000);
          }
                   
          financeSettings.setWoPartitionPeriod(resource.getWoPartitionPeriod());
