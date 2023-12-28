@@ -600,8 +600,7 @@ public class FlatFileValidator {
         } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS) {
             return false;
         } else {
-            String nodeToCheck = EjbUtils.getCurrentClusterNode();
-            return jobInstance.isRunnableOnNode(nodeToCheck);
+            return JobExecutionService.isRunnableOnNode(jobInstance.getRunOnNodesResolved());
         }
     }
 }

@@ -178,11 +178,9 @@ public abstract class Job {
         auditOrigin.setAuditOrigin(ChangeOriginEnum.JOB);
         auditOrigin.setAuditOriginName(jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
 
-        JobRunningStatusEnum jobRunningStatus = jobExecutionService.markJobAsRunning(jobInstance, jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE,
-            executionResult != null ? executionResult.getId() : null, null);
+        JobRunningStatusEnum jobRunningStatus = jobExecutionService.markJobAsRunning(jobInstance, executionResult != null ? executionResult.getId() : null, null);
 
-        if (jobRunningStatus == JobRunningStatusEnum.NOT_RUNNING || jobRunningStatus == JobRunningStatusEnum.LOCKED_THIS
-                || (jobInstance.getClusterBehavior() != JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && (jobRunningStatus == JobRunningStatusEnum.RUNNING_OTHER || jobRunningStatus == JobRunningStatusEnum.LOCKED_OTHER))) {
+        if (jobRunningStatus == JobRunningStatusEnum.RUNNING_THIS) {
 
             log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser,
                 Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());

@@ -110,6 +110,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         jobInstance.setCode(postData.getCode());
         jobInstance.setDescription(postData.getDescription());
         jobInstance.setRunOnNodes(postData.getRunOnNodes());
+        jobInstance.setLimitToNrOfNodes(postData.getLimitToNrOfNodes());
         
         if (postData.getClusterBehavior()!=null) {
             jobInstance.setClusterBehavior(postData.getClusterBehavior());
@@ -220,6 +221,8 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         if (postData.getVerboseReport() != null) {
             jobInstance.setVerboseReport(postData.getVerboseReport());
         }
+        
+        jobInstance.setLimitToNrOfNodes(postData.getLimitToNrOfNodes());
 
         if (!StringUtils.isBlank(postData.getTimerCode())) {
             TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode());

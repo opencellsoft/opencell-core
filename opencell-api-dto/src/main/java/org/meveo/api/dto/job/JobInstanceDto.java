@@ -106,6 +106,12 @@ public class JobInstanceDto extends EnableBusinessDto {
     private Integer jobStatusReportFrequency;
 
     /**
+     * A maximum number of nodes should a job could be running on in parallel
+     */
+    @Schema(description = "A maximum number of nodes should a job could be running on in parallel")
+    private Integer limitToNrOfNodes;
+
+    /**
      * Instantiate a new JobInstance DTO
      */
     public JobInstanceDto() {
@@ -140,6 +146,7 @@ public class JobInstanceDto extends EnableBusinessDto {
         }
         verboseReport = jobInstance.isVerboseReport();
         jobStatusReportFrequency = jobInstance.getJobStatusReportFrequency();
+        limitToNrOfNodes = jobInstance.getLimitToNrOfNodes();
     }
 
     /**
@@ -344,5 +351,19 @@ public class JobInstanceDto extends EnableBusinessDto {
      */
     public void setClusterBehavior(JobClusterBehaviorEnum clusterBehavior) {
         this.clusterBehavior = clusterBehavior;
+    }
+
+    /**
+     * @return A maximum number of nodes should a job could be running on in parallel
+     */
+    public Integer getLimitToNrOfNodes() {
+        return limitToNrOfNodes;
+    }
+
+    /**
+     * @param limitToNrOfNodes A maximum number of nodes should a job could be running on in parallel
+     */
+    public void setLimitToNrOfNodes(Integer limitToNrOfNodes) {
+        this.limitToNrOfNodes = limitToNrOfNodes;
     }
 }
