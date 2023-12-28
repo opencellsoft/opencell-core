@@ -132,7 +132,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public void create(Subscription subscription) throws BusinessException {
     	
         OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
-		if (offerTemplate.isDisabled()) {
+		if (offerTemplate.isDisabled() && subscription.getOrder() == null) {
 			throw new BusinessException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", offerTemplate.getCode()));
 		}
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
@@ -160,7 +160,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public void createWithoutNotif(Subscription subscription) throws BusinessException {
     	
         OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(subscription.getOffer());
-        if (offerTemplate.isDisabled()) {
+        if (offerTemplate.isDisabled() && subscription.getOrder() == null) {
 			throw new BusinessException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", offerTemplate.getCode()));
 		}
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
@@ -188,7 +188,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
     public Subscription update(Subscription subscription) throws BusinessException {
     	Subscription subscriptionOld = this.findById(subscription.getId());
     	OfferTemplate offerTemplate = offerTemplateService.retrieveIfNotManaged(subscription.getOffer());
-    	if (offerTemplate.isDisabled()) {
+    	if (offerTemplate.isDisabled() && subscription.getOrder() == null) {
             throw new BusinessException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", offerTemplate.getCode()));
         }
         checkSubscriptionPaymentMethod(subscription, subscription.getUserAccount().getBillingAccount().getCustomerAccount().getPaymentMethods());
