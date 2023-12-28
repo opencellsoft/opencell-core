@@ -142,7 +142,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     
     public void create(Role role,Boolean replicateInKc) throws BusinessException {
-    	if(BooleanUtils.isTrue(replicateInKc) || canSynchroWithKC()) {
+    	if(BooleanUtils.isTrue(replicateInKc) && canSynchroWithKC()) {
     		if (role.getParentRole() == null) {
     			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
     		} else {
@@ -167,7 +167,7 @@ public class RoleService extends PersistenceService<Role> {
      
     public Role update(Role role,Boolean replicateInKc) throws BusinessException {
 	    
-	    if(BooleanUtils.isTrue(replicateInKc) || canSynchroWithKC()) {
+	    if(BooleanUtils.isTrue(replicateInKc) && canSynchroWithKC()) {
     		keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
     	}
     	role = super.update(role);
@@ -194,14 +194,14 @@ public class RoleService extends PersistenceService<Role> {
     
     public Role findByName(String role) {
         QueryBuilder qb = new QueryBuilder(Role.class, "r", null);
-
-        try {
-            qb.addCriterion("name", "=", role, true);
-            return (Role) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException | NonUniqueResultException e) {
-            log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
-            return null;
-        }
+	    
+	    try {
+		    qb.addCriterion("name", "=", role, true);
+		    return (Role) qb.getQuery(getEntityManager()).getSingleResult();
+	    } catch (NoResultException | NonUniqueResultException e) {
+		    log.trace("No role {} was found. Reason {}", role, e.getClass().getSimpleName());
+		    return null;
+	    }
     }
 	
 	private boolean canSynchroWithKC() {
