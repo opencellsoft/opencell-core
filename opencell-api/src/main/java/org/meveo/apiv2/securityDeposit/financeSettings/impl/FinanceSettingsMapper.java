@@ -97,18 +97,22 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
          financeSettings.setBillingRunProcessWarning(resource.getBillingRunProcessWarning());
          financeSettings.setNbPartitionsToKeep(resource.getNbPartitionsToKeep());
          financeSettings.setSynchronousMassActionLimit(resource.getSynchronousMassActionLimit());
+         
          financeSettings.setWoPartitionPeriod(resource.getWoPartitionPeriod());
-         if(financeSettings.getWoPartitionPeriod() == 0) {
+         if(financeSettings.getWoPartitionPeriod() != null && financeSettings.getWoPartitionPeriod() == 0) {
              financeSettings.setWoPartitionPeriod(null);
          }
+         
          financeSettings.setRtPartitionPeriod(resource.getRtPartitionPeriod());
-         if(financeSettings.getRtPartitionPeriod() == 0) {
+         if(financeSettings.getRtPartitionPeriod() != null && financeSettings.getRtPartitionPeriod() == 0) {
              financeSettings.setRtPartitionPeriod(null);
          }
+         
          financeSettings.setEdrPartitionPeriod(resource.getEdrPartitionPeriod());
-         if(financeSettings.getEdrPartitionPeriod() == 0) {
+         if(financeSettings.getEdrPartitionPeriod() != null && financeSettings.getEdrPartitionPeriod() == 0) {
              financeSettings.setEdrPartitionPeriod(null);
          }
+         
          return financeSettings;
     }
 
