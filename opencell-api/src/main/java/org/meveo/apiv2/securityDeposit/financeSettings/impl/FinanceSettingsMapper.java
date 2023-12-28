@@ -84,9 +84,22 @@ public class FinanceSettingsMapper  extends ResourceMapper<org.meveo.apiv2.secur
                                                                               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
          financeSettings.setEntitiesWithHugeVolume(hugeEntitiesSettings);
          financeSettings.setNbPartitionsToKeep(resource.getNbPartitionsToKeep());
+         
          financeSettings.setWoPartitionPeriod(resource.getWoPartitionPeriod());
+         if(financeSettings.getWoPartitionPeriod() != null && financeSettings.getWoPartitionPeriod() == 0) {
+             financeSettings.setWoPartitionPeriod(null);
+         }
+         
          financeSettings.setRtPartitionPeriod(resource.getRtPartitionPeriod());
+         if(financeSettings.getRtPartitionPeriod() != null && financeSettings.getRtPartitionPeriod() == 0) {
+             financeSettings.setRtPartitionPeriod(null);
+         }
+         
          financeSettings.setEdrPartitionPeriod(resource.getEdrPartitionPeriod());
+         if(financeSettings.getEdrPartitionPeriod() != null && financeSettings.getEdrPartitionPeriod() == 0) {
+             financeSettings.setEdrPartitionPeriod(null);
+         }
+         
          return financeSettings;
     }
 

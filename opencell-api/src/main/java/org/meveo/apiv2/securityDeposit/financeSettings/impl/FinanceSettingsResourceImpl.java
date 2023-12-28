@@ -2,6 +2,7 @@ package org.meveo.apiv2.securityDeposit.financeSettings.impl;
 
 import static java.util.Optional.ofNullable;
 
+import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.apiv2.securityDeposit.FinanceSettings;
 import org.meveo.apiv2.securityDeposit.financeSettings.FinanceSettingsResource;
@@ -30,6 +31,8 @@ public class FinanceSettingsResourceImpl implements FinanceSettingsResource {
     @Override
     public Response create(FinanceSettings financeSettings) {
         org.meveo.model.securityDeposit.FinanceSettings financeSettingsModel = financeSettingsMapper.toEntity(financeSettings);
+        checkPartitionSettings(financeSettingsModel);
+
         financeSettingsService.create(financeSettingsModel);
         if(financeSettings.getOpenOrderSetting() != null) {
             financeSettingsModel.setOpenOrderSetting(createOpenOrderSetting(financeSettings.getOpenOrderSetting()));
@@ -57,6 +60,7 @@ public class FinanceSettingsResourceImpl implements FinanceSettingsResource {
             financeSettingsToUpdate.setOpenOrderSetting(createOpenOrderSetting(financeSettings.getOpenOrderSetting()));
         }
         financeSettingsToUpdate = financeSettingsMapper.toEntity(financeSettingsToUpdate, financeSettings);
+        checkPartitionSettings(financeSettingsToUpdate);
         financeSettingsService.update(financeSettingsToUpdate);
         return Response.ok().entity(buildResponse(financeSettingsMapper.toResource(financeSettingsToUpdate))).build();
     }
@@ -65,6 +69,18 @@ public class FinanceSettingsResourceImpl implements FinanceSettingsResource {
         OpenOrderSetting openOrderSetting = openOrderSettingMapper.toEntity(openOrderSettingResource);
         openOrderSettingService.create(openOrderSetting);
         return openOrderSetting;
+    }
+    
+    private static void checkPartitionSettings(org.meveo.model.securityDeposit.FinanceSettings financeSettings) {
+        if(financeSettings.getRtPartitionPeriod() != null
+                && (financeSettings.getWoPartitionPeriod() == null || financeSettings.getRtPartitionPeriod().compareTo(financeSettings.getWoPartitionPeriod()) < 0)) {
+            throw new BusinessApiException("RT Partition period must be greater than WO partition period");
+        }
+
+        if(financeSettings.getWoPartitionPeriod() != null
+                && (financeSettings.getEdrPartitionPeriod() == null || financeSettings.getWoPartitionPeriod().compareTo(financeSettings.getEdrPartitionPeriod()) < 0)) {
+            throw new BusinessApiException("WO Partition period must be greater than EDR partition period");
+        }
     }
 
     private Map<String, Object> buildResponse(FinanceSettings financeSettings) {
