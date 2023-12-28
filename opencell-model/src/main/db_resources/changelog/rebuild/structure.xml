@@ -6243,7 +6243,7 @@
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
-            <column name="run_on_nodes" type="VARCHAR(100)" />
+            <column name="run_on_nodes" type="VARCHAR(500)" />
             <column name="cf_values" type="${type.json}" />
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
@@ -6252,6 +6252,7 @@
             <column name="query_scheduler_id" type="bigint" />
             <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
             <column name="status_report_freq" type="int" defaultValueNumeric="60" />
+            <column name="limit_to_nr_of_nodes" type="int" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -21164,6 +21165,7 @@
     <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi" />
     <changeSet id="#INTRD-20056_finance_settings" author="a.rouaguebe" />
     <changeSet id="#INTRD-19574_20230712" author="zbariki" />
+    <changeSet id="#INTRD-20273_20231219" author="AndriusKarpavicius"/>
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

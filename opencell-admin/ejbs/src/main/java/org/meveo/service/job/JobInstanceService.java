@@ -47,6 +47,7 @@ import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
+import org.meveo.model.jobs.JobClusterBehaviorEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
 import org.meveo.model.report.query.QueryScheduler;
@@ -82,7 +83,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
         for (Class<?> jobClass : classes) {
             Job job = (Job) EjbUtils.getServiceInterface(jobClass.getSimpleName());
-            if(job != null) {
+            if (job != null) {
                 registerJob(job);
             }
         }
@@ -194,6 +195,11 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
     @Override
     public void create(JobInstance jobInstance) throws BusinessException {
+
+        if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE) {
+            jobInstance.setLimitToNrOfNodes(1);
+        }
+
         super.create(jobInstance);
         jobCacheContainerProvider.addUpdateJobInstance(jobInstance, true);
         scheduleJob(jobInstance, null);
@@ -203,7 +209,12 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
     @Override
     public JobInstance update(JobInstance jobInstance) throws BusinessException {
-        super.update(jobInstance);
+
+        if (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE) {
+            jobInstance.setLimitToNrOfNodes(1);
+        }
+
+        jobInstance = super.update(jobInstance);
         jobCacheContainerProvider.addUpdateJobInstance(jobInstance, true);
         scheduleUnscheduleJob(jobInstance);
 
@@ -279,9 +290,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
      */
     private boolean scheduleJob(JobInstance jobInstance, Job job) {
 
-        String currentNode = EjbUtils.getCurrentClusterNode();
-
-        if (jobInstance.isActive() && jobInstance.getTimerEntity() != null && jobInstance.isRunnableOnNode(currentNode)) {
+        if (jobInstance.isActive() && jobInstance.getTimerEntity() != null && JobExecutionService.isRunnableOnNode(jobInstance.getRunOnNodesResolved())) {
             if (job == null) {
                 job = getJobByName(jobInstance.getJobTemplate());
             }
@@ -299,8 +308,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             return true;
 
         } else {
-            log.info("Job {} of type {} is inactive, has no timer or is not destined to run on node {} and will not be scheduled", jobInstance.getCode(),
-                jobInstance.getJobTemplate(), currentNode);
+            log.info("Job {} of type {} is inactive, has no timer or is not destined to run on node {} and will not be scheduled", jobInstance.getCode(), jobInstance.getJobTemplate(), EjbUtils.getCurrentClusterNode());
         }
 
         return false;
@@ -415,7 +423,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
      * Gets the parameter CF value if found , otherwise return CF value from customFieldInstanceService
      *
      * @param jobInstance the job instance
-     * @param cfCode      the cf code
+     * @param cfCode the cf code
      * @return the param or CF value
      */
     public Object getParamOrCFValue(JobInstance jobInstance, String cfCode) {
