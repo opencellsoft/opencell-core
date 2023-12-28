@@ -401,7 +401,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     }
     protected CustomEntityTemplate saveOrUpdate(CustomEntityTemplate entity) throws BusinessException {
         if (entity.isTransient()) {
-            getPersistenceService().create(entity, false);
+            getPersistenceService().create(entity, true);
 
         } else {
             entity = getPersistenceService().update(entity);
