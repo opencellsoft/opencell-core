@@ -503,7 +503,10 @@ public class KeycloakAdminClientService implements Serializable {
                     RoleRepresentation tempRole = rolesResource.get(role).toRepresentation();
                     rolesToAdd.add(tempRole);
                 } catch (NotFoundException e) {
-                    throw new InvalidParameterException("Role " + role + " was not found");
+                	if("KC".equals(ParamBean.getInstance().getProperty("userManagement.master", "KC"))) {
+                		throw new InvalidParameterException("Role " + role + " was not found");
+                	}
+                    
                 }
             }
         }

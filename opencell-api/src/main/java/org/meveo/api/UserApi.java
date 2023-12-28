@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -143,6 +144,7 @@ public class UserApi extends BaseApi {
                 super.populateCustomFields(postData.getCustomFields(), user, true, true);
             }
             userService.create(user);
+            addUserRoles(user.getId(), postData.getRoles());
 
             // Save secured entities
             securedBusinessEntityService.syncSecuredEntitiesForUser(securedEntities, postData.getUsername());
@@ -217,6 +219,8 @@ public class UserApi extends BaseApi {
         }
 
         userService.updateUserWithAttributes(user, postData.getAttributes());
+        
+        addUserRoles(user.getId(), postData.getRoles());
 
         // Save secured entities
         if (securedEntities != null) {
@@ -446,6 +450,24 @@ public class UserApi extends BaseApi {
                         throw new EntityDoesNotExistsException(Role.class, roleId);
                     return role;
                 }).collect(Collectors.toSet());
+        user.getUserRoles().addAll(roles);
+        userService.update(user);
+    }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addUserRoles(Long userId, List<String> roleCodes){
+        User user = userService.findById(userId);
+        if(user == null)
+            throw new EntityDoesNotExistsException(User.class, userId);
+        Set<Role> roles = roleCodes.stream()
+                .map(roleCode -> {
+                    Role role = roleService.findByName(roleCode);
+                    if (role == null && !userService.canSynchroWithKC()) //throw an exception only when the master is OC
+                        throw new EntityDoesNotExistsException(Role.class, roleCode);
+                    return role;
+                }).collect(Collectors.toSet());
+        roles.removeIf(Objects::isNull);
         user.getUserRoles().addAll(roles);
         userService.update(user);
     }
