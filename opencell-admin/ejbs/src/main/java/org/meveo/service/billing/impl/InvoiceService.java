@@ -7013,7 +7013,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
     
     public Invoice duplicateByType(Invoice invoice, List<Long> invoiceLinesIds, boolean isAdjustment) {
-        invoice = refreshOrRetrieve(invoice);
 
         if (invoice.getOrders() != null) {
             invoice.getOrders().size();
@@ -7040,7 +7039,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 			invoice.getLinkedInvoices().size();
 		}
 
-        detach(invoice);
 
         var duplicateInvoice = new Invoice(invoice);
         this.create(duplicateInvoice);
@@ -7081,8 +7079,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             InvoiceLine duplicateInvoiceLine = new InvoiceLine(invoiceLine, duplicateInvoice);
             duplicateInvoiceLine.setAdjustmentStatus(AdjustmentStatusEnum.NOT_ADJUSTED);
             duplicateInvoiceLine.setLinkedInvoiceLine(invoiceLine); // Add linked adjusted invoiceLine
-            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, invoice, true);
-            duplicateInvoice.getInvoiceLines().add(duplicateInvoiceLine);
+            invoiceLinesService.createInvoiceLineWithInvoice(duplicateInvoiceLine, duplicateInvoice, true);
         }
 
         return duplicateInvoice;
@@ -7112,6 +7109,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice createAdjustment(Invoice invoice, InvoiceLinesToReplicate invoiceLinesToReplicate) {
 
+        invoice = findById(invoice.getId());
+                
         List<InvoiceLineRTs> invoiceLineRTs = invoiceLinesToReplicate.getInvoiceLinesRTs();
         InvoiceType invoiceType = null;
 
@@ -7181,6 +7180,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Invoice createAdjustment(Invoice invoice, List<Long> invoiceLinesIds, InvoiceType type) {
+        
+        invoice = findById(invoice.getId());
+        
         Invoice adjustmentInvoice = duplicateByType(invoice, invoiceLinesIds, true);
         addLinkedInvoice(invoice, adjustmentInvoice);
         populateAdjustmentInvoice(adjustmentInvoice, type, invoice);
