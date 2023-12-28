@@ -47,7 +47,7 @@ public class OfferTemplateAttributeDTO {
 	private AttributeTypeEnum attributeType;
 
 	@Schema(description = "Corresponding to predefined allowed values")
-	private Set<String> allowedValues;
+	private List<String> allowedValues;
 
 	@Schema(description = "diplay the attribute")
 	private boolean display;
@@ -357,10 +357,10 @@ public class OfferTemplateAttributeDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Set<String> getAllowedValues() {
+	public List<String> getAllowedValues() {
 		return allowedValues;
 	}
-	public void setAllowedValues(Set<String> allowedValues) {
+	public void setAllowedValues(List<String> allowedValues) {
 		this.allowedValues = allowedValues;
 	}
 	public List<String> getChargeTemplateCodes() {

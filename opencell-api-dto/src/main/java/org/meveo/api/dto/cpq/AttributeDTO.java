@@ -67,7 +67,7 @@ public class AttributeDTO extends EnableBusinessDto {
      * Corresponding to predefined allowed values
      */
     @Schema(description = "Corresponding to predefined allowed values")
-    protected Set<String> allowedValues;
+    protected List<String> allowedValues;
     
     /**
      * The lower number, the higher the priority is
@@ -180,7 +180,7 @@ public class AttributeDTO extends EnableBusinessDto {
 	/**
 	 * @return the allowedValues
 	 */
-	public Set<String> getAllowedValues() {
+	public List<String> getAllowedValues() {
 		return allowedValues;
 	}
 
@@ -189,7 +189,7 @@ public class AttributeDTO extends EnableBusinessDto {
 	/**
 	 * @param allowedValues the allowedValues to set
 	 */
-	public void setAllowedValues(Set<String> allowedValues) {
+	public void setAllowedValues(List<String> allowedValues) {
 		this.allowedValues = allowedValues;
 	}
 
