@@ -99,7 +99,7 @@ public class ContractApi extends BaseApi{
 	private BillingRuleMapper billingRuleMapper = new BillingRuleMapper();
 	
 	private static final String CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN = "Date end (%s) must be great than date begin (%s)";
-	private static final String CONTRACt_STAT_DIFF_TO_DRAFT = "Only Draft status of contract can be edit";
+	private static final String CONTRACT_STATUS_CLOSED = "Closed status of contract cannot be edited";
 
 	private static final String DEFAULT_SORT_ORDER_ID = "id";
 
@@ -186,44 +186,39 @@ public class ContractApi extends BaseApi{
 		}
 		//get the current contract
 		Contract contract = contractService.findByCode(dto.getCode());
-		if(contract == null)
+		if (contract == null) {
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
+		}		
 		//check the status of the contract
-		if(!ContractStatusEnum.DRAFT.equals(contract.getStatus())) {
-			throw new MeveoApiException(CONTRACt_STAT_DIFF_TO_DRAFT);
-		}else {
+		if (ContractStatusEnum.CLOSED.equals(contract.getStatus())) {
+			throw new MeveoApiException(CONTRACT_STATUS_CLOSED);
+		} else if (ContractStatusEnum.ACTIVE.equals(contract.getStatus())) {
+			contract.setEndDate(dto.getEndDate());
+		} else {
 			contract.setStatus(dto.getStatus());
-		}
-		/*if(ProductStatusEnum.ACTIVE.equals(contract.getStatus())) {
-			if(ProductStatusEnum.DRAFT.equals(dto.getStatus())) {
-				throw new MeveoApiException("Current Contract is active, can not be DRAFT anymore");
-			}
-			contract.setStatus(dto.getStatus());
-		}else if(ProductStatusEnum.CLOSED.equals(contract.getStatus())) {
-			throw new MeveoApiException("Current Contract is already close");
-		}*/
-		contract.setCode(dto.getCode());
-		contract.setBeginDate(dto.getBeginDate());
-		contract.setEndDate(dto.getEndDate());
-		contract.setContractDate(dto.getContractDate());
-		contract.setRenewal(dto.isRenewal());
-		contract.setContractDuration(dto.getContractDuration());
-		contract.setDescription(dto.getDescription());
-		
-		contract.setBillingAccount(null);
-		contract.setSeller(null);
-		contract.setCustomer(null);
-		contract.setCustomerAccount(null);
-		changeAccountLevel(dto, contract);
-		
-		// update billing rules
-		if(dto.getBillingRules() != null) {
-			contract.getBillingRules().clear();
-			for (BillingRuleDto brDto : dto.getBillingRules()) {
-				BillingRule br = billingRuleMapper.toEntity(brDto);
-				br.setContract(contract);
-				billingRuleService.create(br);
-				contract.getBillingRules().add(br);
+			contract.setCode(dto.getCode());
+			contract.setBeginDate(dto.getBeginDate());
+			contract.setEndDate(dto.getEndDate());
+			contract.setContractDate(dto.getContractDate());
+			contract.setRenewal(dto.isRenewal());
+			contract.setContractDuration(dto.getContractDuration());
+			contract.setDescription(dto.getDescription());
+
+			contract.setBillingAccount(null);
+			contract.setSeller(null);
+			contract.setCustomer(null);
+			contract.setCustomerAccount(null);
+			changeAccountLevel(dto, contract);
+
+			// update billing rules
+			if (dto.getBillingRules() != null) {
+				contract.getBillingRules().clear();
+				for (BillingRuleDto brDto : dto.getBillingRules()) {
+					BillingRule br = billingRuleMapper.toEntity(brDto);
+					br.setContract(contract);
+					billingRuleService.create(br);
+					contract.getBillingRules().add(br);
+				}
 			}
 		}
 
