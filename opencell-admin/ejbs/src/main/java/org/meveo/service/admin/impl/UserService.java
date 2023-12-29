@@ -332,7 +332,7 @@ public class UserService extends PersistenceService<User> {
         return null;
     }
 	
-	private boolean canSynchroWithKC(){
+	public boolean canSynchroWithKC(){
 		String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
 		return lUserManagementSource.equalsIgnoreCase("KC");
 	}
