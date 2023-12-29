@@ -344,7 +344,7 @@ public class PricePlanMatrixColumnService extends BusinessService<PricePlanMatri
 		return pricePlanMatrixLinesDto;
 	}
 
-	private boolean inAllowedValues(boolean isNumericType, Set<String> allowedValues, String value)
+	private boolean inAllowedValues(boolean isNumericType, List<String> allowedValues, String value)
 	{
 		if(value != null && !value.isEmpty() && allowedValues!= null && !allowedValues.isEmpty())
 		{

@@ -10060,6 +10060,7 @@
         <createTable tableName="cpq_attribute_allowed_values">
             <column name="attribute_id" type="bigint" />
             <column name="allowed_values" type="varchar(100)" />
+            <column name="order_idx"  type="int4"/>
         </createTable>
         <addPrimaryKey columnNames="attribute_id,allowed_values" constraintName="cpq_attribute_allowed_values_pkey" tableName="cpq_attribute_allowed_values" />
     </changeSet>
@@ -21166,6 +21167,7 @@
     <changeSet id="#INTRD-20056_finance_settings" author="a.rouaguebe" />
     <changeSet id="#INTRD-19574_20230712" author="zbariki" />
     <changeSet id="#INTRD-20273_20231219" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-20181_28122023" author="Mbarek-Ay" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
