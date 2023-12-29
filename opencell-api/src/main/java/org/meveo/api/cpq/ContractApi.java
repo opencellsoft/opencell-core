@@ -230,43 +230,43 @@ public class ContractApi extends BaseApi{
 		if (contract == null) {
 			contract = contractService.findByCode(dto.getCode());
 		}
-		if (contract == null)
+		if (contract == null) {
 			throw new EntityDoesNotExistsException(Contract.class, dto.getCode());
-		//check the status of the contract
-		if(contract.getStatus().equalsIgnoreCase(ContractStatusEnum.ACTIVE.toString())) {
-			throw new BusinessException(String.format(CONTRACT_ACTIVE_CAN_NOT_UPDATE, contract.getCode(), contract.getStatus()));
 		}
+		
 		if (ContractStatusEnum.CLOSED.toString().equals(contract.getStatus())) {
 			throw new MeveoApiException(CONTRACT_STATUS_CLOSED);
-		}
-		if(!StringUtils.isBlank(dto.getStatus())) {
-			checkStatus(dto.getStatus());
-			contract.setStatus(dto.getStatus());
-		}
-		if(dto.isDisabled()!=null) {
-			contract.setDisabled(dto.isDisabled());
-		}
-		if(dto.getBeginDate()!=null) {
-			contract.setBeginDate(dto.getBeginDate());
-		}
-		if(dto.getEndDate()!=null) {
+		} else if (ContractStatusEnum.ACTIVE.toString().equals(contract.getStatus()) && dto.getEndDate() != null) {
 			contract.setEndDate(dto.getEndDate());
-		}
-		if(dto.getContractDate()!=null) {
-			contract.setContractDate(dto.getContractDate());
-		}
-		if(dto.getRenewal()!=null) {
-			contract.setRenewal(dto.getRenewal());
-		}
-		if(dto.getContractDuration()!=null) {
-			contract.setContractDuration(dto.getContractDuration());
-		}
-		if(!StringUtils.isBlank(dto.getDescription())) {
-			contract.setDescription(dto.getDescription());
-		}
-		if(!StringUtils.isBlank(dto.getApplicationEl())) {
-			contract.setApplicationEl(dto.getApplicationEl());
-		}
+		} else {
+			if (!StringUtils.isBlank(dto.getStatus())) {
+				checkStatus(dto.getStatus());
+				contract.setStatus(dto.getStatus());
+			}
+			if (dto.isDisabled() != null) {
+				contract.setDisabled(dto.isDisabled());
+			}
+			if (dto.getBeginDate() != null) {
+				contract.setBeginDate(dto.getBeginDate());
+			}
+			if (dto.getEndDate() != null) {
+				contract.setEndDate(dto.getEndDate());
+			}
+			if (dto.getContractDate() != null) {
+				contract.setContractDate(dto.getContractDate());
+			}
+			if (dto.getRenewal() != null) {
+				contract.setRenewal(dto.getRenewal());
+			}
+			if (dto.getContractDuration() != null) {
+				contract.setContractDuration(dto.getContractDuration());
+			}
+			if (!StringUtils.isBlank(dto.getDescription())) {
+				contract.setDescription(dto.getDescription());
+			}
+			if (!StringUtils.isBlank(dto.getApplicationEl())) {
+				contract.setApplicationEl(dto.getApplicationEl());
+			}
 			changeAccountLevel(dto, contract);
 
 			// update billing rules
@@ -279,8 +279,8 @@ public class ContractApi extends BaseApi{
 					contract.getBillingRules().add(br);
 				}
 			}
-		
 
+		}
 		try {
 			populateCustomFields(dto.getCustomFields(), contract, false);
 			contractService.update(contract);
