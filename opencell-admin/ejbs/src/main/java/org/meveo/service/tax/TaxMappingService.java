@@ -18,6 +18,7 @@
 
 package org.meveo.service.tax;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -373,39 +374,44 @@ public class TaxMappingService extends PersistenceService<TaxMapping> {
         try {
             TaxInfo taxInfo = new TaxInfo();
             taxInfo.taxClass = taxClass;
-
+			log.info("TaxClass : on determin tax : " + taxClass);
             Tax tax = defaultTax;
 
             if (checkExoneration && billingAccountService.isExonerated(billingAccount)) {
                 tax = taxService.getZeroTax();
-
+				log.info("tax is exonerated : " + tax);
             } else {
 
                 TaxCategory taxCategory = getTaxCategory(billingAccount);
                 taxInfo.taxCategory = taxCategory;
+				log.info("taxCategory : " + taxCategory);
                 
                 date = DateUtils.truncateTime(date);
+				log.info("date operation : " + date != null ? new SimpleDateFormat("dd/MM/yyyy").format(date) : "");
 
                 TaxMapping taxMapping = findBestTaxMappingMatch(taxCategory, taxClass, seller, billingAccount, date,walletoperation);
+				log.info("result finding best tax mappinf : " + taxMapping);
 
                 if (taxMapping.getTaxEL() != null) {
                     tax = evaluateTaxExpression(taxMapping.getTaxEL(), seller, billingAccount, taxCategory, taxClass, date,walletoperation);
-
+					log.info("taxmapping has el : " + taxMapping.getTaxEL() + ", and after evaluate tax : " + tax);
                 } else if (taxMapping.getTaxScript() != null) {
-
+					log.info("taxmapping has script : {}", taxMapping.getTaxScript().getCode());
                     List<Tax> taxes = taxScriptService.computeTaxesIfApplicable(taxMapping.getTaxScript().getCode(), userAccount, seller, taxClass, date, walletoperation);
+					log.info("result of tax script : {}", taxes != null ? taxes.size() : 0);
                     if (taxes != null && !taxes.isEmpty()) {
                         tax = taxes.get(0);
                     }
                 }
-
+				log.info("is tax still null : {}", tax);
                 if (tax == null) {
                     tax = taxMapping.getTax();
+					log.info("tax retrieve from tax mapping : {}", tax);
                 }
             }
 
             taxInfo.tax = tax;
-
+			log.info("tax info : tax : {}, taxClass : {}, taxCategory : {}", taxInfo.tax, taxInfo.taxClass, taxInfo.taxCategory);
             return taxInfo;
 
         } catch (BusinessException e) {
