@@ -25,6 +25,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -82,8 +83,9 @@ public class Attribute extends EnableBusinessCFEntity{
 	@ElementCollection(fetch = FetchType.LAZY)
 	@Column(name = "allowed_values")
 	@CollectionTable(name = "cpq_attribute_allowed_values", joinColumns = @JoinColumn(name = "attribute_id", referencedColumnName = "id"))
+	@OrderColumn(name = "order_idx")
 	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	private Set<String> allowedValues=new HashSet<>();
+	private List<String> allowedValues=new ArrayList<>();
 	
 	
 	   /**
@@ -170,14 +172,14 @@ public class Attribute extends EnableBusinessCFEntity{
 	/**
 	 * @return the allowedValues
 	 */
-	public Set<String> getAllowedValues() {
+	public List<String> getAllowedValues() {
 		return allowedValues;
 	}
 
 	/**
-	 * @param allowedValues the allowedValues to set
+	 * @param allowedValues the allowedValues to list
 	 */
-	public void setAllowedValues(Set<String> allowedValues) {
+	public void setAllowedValues(List<String> allowedValues) {
 		this.allowedValues = allowedValues;
 	}
 
