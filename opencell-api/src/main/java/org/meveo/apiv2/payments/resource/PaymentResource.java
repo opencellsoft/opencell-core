@@ -13,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.meveo.apiv2.payments.ImportRejectionCodeInput;
 import org.meveo.apiv2.payments.PaymentGatewayInput;
 import org.meveo.apiv2.payments.RejectionCode;
 import org.meveo.apiv2.refund.CardRefund;
@@ -108,4 +109,28 @@ public interface PaymentResource {
                     @ApiResponse(responseCode = "400", description = "RejectionCode clearing failed")
             })
     Response clearAll(@Parameter(required = true) PaymentGatewayInput paymentGatewayInput);
+
+    @POST
+    @Path("/rejectionCodes/import")
+    @Operation(summary = "Import rejectionsCodes by gateway",
+            tags = {"Payment"},
+            description = "Import rejectionsCodes by gateway",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "success"),
+                    @ApiResponse(responseCode = "404", description = "Gateway does not exist"),
+                    @ApiResponse(responseCode = "400", description = "Error occurred during import")
+            })
+    Response importRejectionCodes(@Parameter(required = true) ImportRejectionCodeInput importRejectionCodeInput);
+
+    @POST
+    @Path("/rejectionCodes/export")
+    @Operation(summary = "Export rejectionsCodes by gateway",
+            tags = {"Payment"},
+            description = "Export rejectionsCodes by gateway",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "success"),
+                    @ApiResponse(responseCode = "404", description = "Gateway does not exist"),
+                    @ApiResponse(responseCode = "400", description = "Error occurred during export")
+            })
+    Response export(@Parameter(required = true) PaymentGatewayInput paymentGateway);
 }

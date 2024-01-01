@@ -56,7 +56,9 @@ import org.meveo.model.ObservableEntity;
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
         @NamedQuery(name = "TradingLanguage.findAll", query = "from TradingLanguage tr left join fetch tr.language"),
         @NamedQuery(name = "TradingLanguage.languageCodes", query = "select distinct la.languageCode from TradingLanguage tr left join tr.language la order by la.languageCode", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "TradingLanguage.findLanguageDetails", query = "SELECT tr.id, tr.language.id, tr.language.languageCode, tr.language.descriptionEn from TradingLanguage tr"),
+})
 public class TradingLanguage extends EnableEntity {
     private static final long serialVersionUID = 1L;
 

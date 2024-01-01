@@ -18,6 +18,12 @@
 
 package org.meveo.api.payment;
 
+import static java.util.Optional.ofNullable;
+import static org.meveo.commons.utils.StringUtils.isBlank;
+import static org.meveo.service.payments.impl.PaymentRejectionCodeService.ENCODED_FILE_RESULT_LABEL;
+import static org.meveo.service.payments.impl.PaymentRejectionCodeService.EXPORT_SIZE_RESULT_LABEL;
+import static org.meveo.service.payments.impl.PaymentRejectionCodeService.FILE_PATH_RESULT_LABEL;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -60,10 +67,14 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.payments.ClearingResponse;
 import org.meveo.apiv2.payments.ImmutableClearingResponse;
+import org.meveo.apiv2.payments.ImmutableRejectionCodesExportResult;
+import org.meveo.apiv2.payments.ImmutableRejectionCodesImportResult;
+import org.meveo.apiv2.payments.ImportRejectionCodeInput;
 import org.meveo.apiv2.payments.PaymentGatewayInput;
 import org.meveo.apiv2.payments.RejectionCode;
+import org.meveo.apiv2.payments.RejectionCodesExportResult;
+import org.meveo.apiv2.payments.RejectionCodesImportResult;
 import org.meveo.apiv2.payments.resource.RejectionCodeMapper;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ExchangeRate;
 import org.meveo.model.billing.TradingCurrency;
@@ -87,6 +98,7 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
+import org.meveo.service.payments.impl.ImportRejectionCodeConfig;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
@@ -94,8 +106,7 @@ import org.meveo.service.payments.impl.PaymentHistoryService;
 import org.meveo.service.payments.impl.PaymentRejectionCodeService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
-
-import static java.util.Optional.ofNullable;
+import org.meveo.service.payments.impl.RejectionCodeImportResult;
 
 /**
  * @author Edward P. Legaspi
@@ -155,16 +166,16 @@ public class PaymentApi extends BaseApi {
         log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
                 + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
 
-        if (StringUtils.isBlank(paymentDto.getAmount())) {
+        if (isBlank(paymentDto.getAmount())) {
             missingParameters.add("amount");
         }
-        if (StringUtils.isBlank(paymentDto.getOccTemplateCode())) {
+        if (isBlank(paymentDto.getOccTemplateCode())) {
             missingParameters.add("occTemplateCode");
         }
-        if (StringUtils.isBlank(paymentDto.getReference())) {
+        if (isBlank(paymentDto.getReference())) {
             missingParameters.add("reference");
         }
-        if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
+        if (isBlank(paymentDto.getPaymentMethod())) {
             missingParameters.add("paymentMethod");
         }
         handleMissingParameters();
@@ -186,7 +197,7 @@ public class PaymentApi extends BaseApi {
         payment.setPaymentMethod(paymentDto.getPaymentMethod());
         payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setCode(occTemplate.getCode());
-        payment.setDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
+        payment.setDescription(isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
         payment.setTransactionCategory(occTemplate.getOccCategory());
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setCustomerAccount(customerAccount);
@@ -251,7 +262,7 @@ public class PaymentApi extends BaseApi {
 	}
 
 	private void checkTransactionalCurrency(String transactionalcurrency, TradingCurrency tradingCurrency) {
-		if (tradingCurrency == null || StringUtils.isBlank(tradingCurrency)) {
+		if (tradingCurrency == null || isBlank(tradingCurrency)) {
 			throw new InvalidParameterException("Currency " + transactionalcurrency +
 					" is not recorded a trading currency in Opencell. Only currencies declared as trading currencies can be used to record account operations.");
 		}
@@ -423,11 +434,11 @@ public class PaymentApi extends BaseApi {
 	public PaymentResponseDto payBySepa(PayByCardOrSepaDto sepaPaymentRequestDto)
 			throws Exception {
 
-		if (StringUtils.isBlank(sepaPaymentRequestDto.getCtsAmount())) {
+		if (isBlank(sepaPaymentRequestDto.getCtsAmount())) {
 			missingParameters.add("ctsAmount");
 		}
 
-		if (StringUtils.isBlank(sepaPaymentRequestDto.getCustomerAccountCode())) {
+		if (isBlank(sepaPaymentRequestDto.getCustomerAccountCode())) {
 			missingParameters.add("customerAccountCode");
 		}
 
@@ -464,30 +475,30 @@ public class PaymentApi extends BaseApi {
 	public PaymentResponseDto payByCard(PayByCardOrSepaDto cardPaymentRequestDto)
 			throws Exception {
 
-		if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
+		if (isBlank(cardPaymentRequestDto.getCtsAmount())) {
 			missingParameters.add("ctsAmount");
 		}
 
-		if (StringUtils.isBlank(cardPaymentRequestDto.getCustomerAccountCode())) {
+		if (isBlank(cardPaymentRequestDto.getCustomerAccountCode())) {
 			missingParameters.add("customerAccountCode");
 		}
 		boolean useCard = false;
 
 		// case card payment
-		if (!StringUtils.isBlank(cardPaymentRequestDto.getCardNumber())) {
+		if (!isBlank(cardPaymentRequestDto.getCardNumber())) {
 			useCard = true;
-			if (StringUtils.isBlank(cardPaymentRequestDto.getCvv())) {
+			if (isBlank(cardPaymentRequestDto.getCvv())) {
 				missingParameters.add("cvv");
 			}
-			if (StringUtils.isBlank(cardPaymentRequestDto.getExpiryDate()) || cardPaymentRequestDto.getExpiryDate().length() != 4
+			if (isBlank(cardPaymentRequestDto.getExpiryDate()) || cardPaymentRequestDto.getExpiryDate().length() != 4
 					|| !org.apache.commons.lang3.StringUtils.isNumeric(cardPaymentRequestDto.getExpiryDate())) {
 
 				missingParameters.add("expiryDate");
 			}
-			if (StringUtils.isBlank(cardPaymentRequestDto.getOwnerName())) {
+			if (isBlank(cardPaymentRequestDto.getOwnerName())) {
 				missingParameters.add("ownerName");
 			}
-			if (StringUtils.isBlank(cardPaymentRequestDto.getCardType())) {
+			if (isBlank(cardPaymentRequestDto.getCardType())) {
 				missingParameters.add("cardType");
 			}
 		}
@@ -649,9 +660,9 @@ public class PaymentApi extends BaseApi {
 
 	private PaymentGateway loadPaymentGateway(Resource paymentGatewayResource) {
 		PaymentGateway paymentGateway;
-		if(paymentGatewayResource.getId() != null) {
+		if (paymentGatewayResource.getId() != null) {
 			paymentGateway = paymentGatewayService.findById(paymentGatewayResource.getId());
-			if(paymentGateway == null && paymentGatewayResource.getCode() != null) {
+			if (paymentGateway == null && paymentGatewayResource.getCode() != null) {
 				paymentGateway = paymentGatewayService.findByCode(paymentGatewayResource.getCode());
 			}
 		} else {
@@ -663,13 +674,13 @@ public class PaymentApi extends BaseApi {
 	/**
 	 * Update payment rejection code
 	 *
-	 * @param id payment rejection code id
+	 * @param id       payment rejection code id
 	 * @param resource payment rejection code
 	 * @return RejectionCode updated result
 	 */
 	public RejectionCode updatePaymentRejectionCode(Long id, RejectionCode resource) {
 		PaymentGateway paymentGateway = null;
-		if(resource.getPaymentGateway() != null) {
+		if (resource.getPaymentGateway() != null) {
 			paymentGateway = loadPaymentGateway(resource.getPaymentGateway());
 			if (paymentGateway == null) {
 				throw new NotFoundException(PAYMENT_GATEWAY_NOT_FOUND_ERROR_MESSAGE);
@@ -703,7 +714,7 @@ public class PaymentApi extends BaseApi {
 	 */
 	public ClearingResponse clearAll(PaymentGatewayInput paymentGatewayInput) {
 		PaymentGateway paymentGateway = null;
-		if(paymentGatewayInput != null && paymentGatewayInput.getPaymentGateway() != null) {
+		if (paymentGatewayInput != null && paymentGatewayInput.getPaymentGateway() != null) {
 			paymentGateway = ofNullable(loadPaymentGateway(paymentGatewayInput.getPaymentGateway()))
 					.orElseThrow(() -> new NotFoundException(PAYMENT_GATEWAY_NOT_FOUND_ERROR_MESSAGE));
 		}
@@ -727,5 +738,50 @@ public class PaymentApi extends BaseApi {
 					.massage("Rejection codes successfully cleared")
 					.build();
 		}
+	}
+
+	/**
+	 * Export rejection codes by payment gateway
+	 *
+	 * @param paymentGatewayResource payment gateway
+	 * @return RejectionCodesExportResult
+	 */
+	public RejectionCodesExportResult export(PaymentGatewayInput paymentGatewayResource) {
+		PaymentGateway paymentGateway = null;
+		if (paymentGatewayResource != null && paymentGatewayResource.getPaymentGateway() != null) {
+			paymentGateway = ofNullable(loadPaymentGateway(paymentGatewayResource.getPaymentGateway()))
+					.orElseThrow(() -> new NotFoundException(PAYMENT_GATEWAY_NOT_FOUND_ERROR_MESSAGE));
+		}
+		Map<String, Object> exportResult = rejectionCodeService.export(paymentGateway);
+		return ImmutableRejectionCodesExportResult.builder()
+				.exportSize((Integer) exportResult.get(EXPORT_SIZE_RESULT_LABEL))
+				.fileFullPath((String) exportResult.get(FILE_PATH_RESULT_LABEL))
+				.encodedFile((String) exportResult.get(ENCODED_FILE_RESULT_LABEL))
+				.build();
+	}
+
+	/**
+	 * Import rejection codes by payment gateway
+	 *
+	 * @param importRejectionCodeInput Import data
+	 * @return RejectionCodesExportResult
+	 */
+	public RejectionCodesImportResult importRejectionCodes(ImportRejectionCodeInput importRejectionCodeInput) {
+		if (isBlank(importRejectionCodeInput.getBase64csv())) {
+			throw new BusinessException("Encoded file should not be null or empty");
+		}
+		ImportRejectionCodeConfig config =
+				new ImportRejectionCodeConfig(importRejectionCodeInput.getBase64csv(),
+						importRejectionCodeInput.getIgnoreLanguageErrors(),
+						importRejectionCodeInput.getMode());
+		RejectionCodeImportResult importResult = rejectionCodeService.importRejectionCodes(config);
+		return ImmutableRejectionCodesImportResult.builder()
+				.linesCount(importResult.getLineToImportCount())
+				.successfullyImportedCodes(importResult.getSuccessCount())
+				.errorCount(importResult.getErrorCount())
+				.errors(importResult.getErrors())
+				.importedFile(importRejectionCodeInput.getBase64csv())
+				.importMode(importRejectionCodeInput.getMode())
+				.build();
 	}
 }

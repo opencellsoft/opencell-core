@@ -27,7 +27,8 @@ import java.util.Map;
 @NamedQueries({
         @NamedQuery(name = "PaymentRejectionCode.findByCodeAndPaymentGateway", query = "SELECT rc from PaymentRejectionCode rc where rc.code = :code and rc.paymentGateway.id = :paymentGatewayId"),
         @NamedQuery(name = "PaymentRejectionCode.clearAllByPaymentGateway", query = "DELETE from PaymentRejectionCode rc where rc.paymentGateway.id = :paymentGatewayId"),
-        @NamedQuery(name = "PaymentRejectionCode.clearAll", query = "DELETE from PaymentRejectionCode")
+        @NamedQuery(name = "PaymentRejectionCode.clearAll", query = "DELETE from PaymentRejectionCode"),
+        @NamedQuery(name = "PaymentRejectionCode.findByPaymentGateway", query = "SELECT rc from PaymentRejectionCode rc where rc.paymentGateway.id = :paymentGatewayId")
 })
 public class PaymentRejectionCode extends BusinessCFEntity {
 

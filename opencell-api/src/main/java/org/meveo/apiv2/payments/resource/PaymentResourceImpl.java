@@ -18,6 +18,7 @@ import org.meveo.api.dto.payment.PayByCardOrSepaDto;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.PaymentApi;
+import org.meveo.apiv2.payments.ImportRejectionCodeInput;
 import org.meveo.apiv2.payments.PaymentGatewayInput;
 import org.meveo.apiv2.payments.RejectionCode;
 import org.meveo.apiv2.refund.CardRefund;
@@ -142,6 +143,31 @@ public class PaymentResourceImpl implements PaymentResource {
     public Response clearAll(PaymentGatewayInput paymentGatewayInput) {
         return ok()
                 .entity(paymentApi.clearAll(paymentGatewayInput))
+                .build();
+    }
+
+    /**
+     * Import rejectionsCodes
+     *
+     * @param importRejectionCodeInput rejection code import input
+     */
+    @Override
+    public Response importRejectionCodes(ImportRejectionCodeInput importRejectionCodeInput) {
+        return ok()
+                .entity(paymentApi.importRejectionCodes(importRejectionCodeInput))
+                .build();
+    }
+
+    /**
+     * Export rejectionsCodes by gateway
+     *
+     * @param paymentGateway payment gateway
+     */
+    @Override
+    public Response export(PaymentGatewayInput paymentGateway) {
+        paymentApi.export(paymentGateway);
+        return ok()
+                .entity(paymentApi.export(paymentGateway))
                 .build();
     }
 }
