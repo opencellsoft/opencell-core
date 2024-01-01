@@ -138,7 +138,9 @@ public class UserApi extends BaseApi {
             user.setPassword(postData.getPassword());
             user.setEmail((postData.getEmail()));
             user.setName(new Name(null, postData.getFirstName(), postData.getLastName()));
-            user.setRoles(new HashSet<>(postData.getRoles()));
+            if(postData.getRoles()!=null && !postData.getRoles().isEmpty()) {
+            	 user.setRoles(new HashSet<>(postData.getRoles()));
+            }
             user.setUserLevel(postData.getUserLevel());
             if (postData.getCustomFields() != null) {
                 super.populateCustomFields(postData.getCustomFields(), user, true, true);
@@ -207,7 +209,7 @@ public class UserApi extends BaseApi {
                 user.getName().setLastName(postData.getLastName());
             }
         }
-        if (postData.getRoles() != null) {
+        if(postData.getRoles()!=null && !postData.getRoles().isEmpty()) {
             user.setRoles(new HashSet<>(postData.getRoles()));
         }
 
@@ -457,19 +459,22 @@ public class UserApi extends BaseApi {
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void addUserRoles(Long userId, List<String> roleCodes){
-        User user = userService.findById(userId);
-        if(user == null)
-            throw new EntityDoesNotExistsException(User.class, userId);
-        Set<Role> roles = roleCodes.stream()
-                .map(roleCode -> {
-                    Role role = roleService.findByName(roleCode);
-                    if (role == null && !userService.canSynchroWithKC()) //throw an exception only when the master is OC
-                        throw new EntityDoesNotExistsException(Role.class, roleCode);
-                    return role;
-                }).collect(Collectors.toSet());
-        roles.removeIf(Objects::isNull);
-        user.getUserRoles().addAll(roles);
-        userService.update(user);
+    	if(roleCodes!=null && !roleCodes.isEmpty()) {
+    		 User user = userService.findById(userId);
+    	        if(user == null)
+    	            throw new EntityDoesNotExistsException(User.class, userId);
+    	        Set<Role> roles = roleCodes.stream()
+    	                .map(roleCode -> {
+    	                    Role role = roleService.findByName(roleCode);
+    	                    if (role == null && !userService.canSynchroWithKC()) //throw an exception only when the master is OC
+    	                        throw new EntityDoesNotExistsException(Role.class, roleCode);
+    	                    return role;
+    	                }).collect(Collectors.toSet());
+    	        roles.removeIf(Objects::isNull);
+    	        user.getUserRoles().addAll(roles);
+    	        userService.update(user);
+    	}
+       
     }
 	
 	@JpaAmpNewTx
