@@ -10,6 +10,18 @@ import org.meveo.cache.JobRunningStatusEnum;
  */
 public class JobCacheScripts {
 
+    /**
+     * Return a cache remapping function to mark job as running on a given node. Version 1.
+     * 
+     * @param currentNode Cluster node
+     * @param limitToSingleNode Is job allowed to run simultaneously on one node only
+     * @param jobInstanceId Job instance id
+     * @param jobInstanceCode Job instance code
+     * @param jobExecutionResultId Job execution result id
+     * @param nrOfThreads Number of threads that job is running on
+     * @return Cache value remapping function
+     */
+    @Deprecated
     public static SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> getMarkJobAsRunningFunction(String currentNode, boolean limitToSingleNode, Long jobInstanceId,
             String jobInstanceCode, Long jobExecutionResultId, Integer nrOfThreads) {
 
@@ -63,6 +75,57 @@ public class JobCacheScripts {
         return remappingFunction;
     }
 
+    /**
+     * Return a cache remapping function to mark job as running on a given node. Version 2.
+     * 
+     * @param currentNode Cluster node
+     * @param limitToNrOfNodes How many nodes job is allowed to run simultaneously on
+     * @param jobInstanceId Job instance id
+     * @param jobInstanceCode Job instance code
+     * @param jobExecutionResultId Job execution result id
+     * @param nrOfThreads Number of threads that job is running on
+     * @return Cache value remapping function
+     */
+    public static SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> getMarkJobAsRunningFunctionV2(String currentNode, int limitToNrOfNodes, Long jobInstanceId, String jobInstanceCode,
+            Long jobExecutionResultId, Integer nrOfThreads) {
+
+        SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = (jobInstIdFullKey, jobExecutionStatusOld) -> {
+
+            if (jobExecutionStatusOld == null) {
+
+                // No change is status when job was requested to stop
+            } else if (jobExecutionStatusOld.isRequestedToStop()) {
+                return jobExecutionStatusOld;
+
+                // No change in status when job was not locked earlier and is already running/locked on more nodes than allowed
+            } else if (!jobExecutionStatusOld.isLockedOrRunning(currentNode) && jobExecutionStatusOld.getNumberOfNodesLockedOrRunning() >= limitToNrOfNodes) {
+                return jobExecutionStatusOld;
+            }
+
+            JobExecutionStatus jobExecutionStatus = null;
+            if (jobExecutionStatusOld == null) {
+                jobExecutionStatus = new JobExecutionStatus(jobInstanceId, jobInstanceCode);
+            } else {
+                jobExecutionStatus = jobExecutionStatusOld.clone();
+            }
+
+            jobExecutionStatus.markAsRunningOn(currentNode, jobExecutionResultId, nrOfThreads);
+
+            return jobExecutionStatus;
+        };
+
+        return remappingFunction;
+    }
+
+    /**
+     * Return a cache remapping function to mark job as completed running on a given node.
+     * 
+     * @param currentNode Cluster node
+     * @param jobInstanceId Job instance id
+     * @param jobInstanceCode Job instance code
+     * @param isClusterMode Is application running in cluster mode. In multi cluster environment remove "requested to stop" flag only when ALL clusters are finished running a job
+     * @return Cache value remapping function
+     */
     public static SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> getMarkAsFinishedFunction(String currentNode, Long jobInstanceId, String jobInstanceCode, boolean isClusterMode) {
         SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = (jobInstIdFullKey, jobExecutionStatusOld) -> {
 
@@ -84,6 +147,13 @@ public class JobCacheScripts {
         return remappingFunction;
     }
 
+    /**
+     * Return a cache remapping function to mark job as requested to stop
+     * 
+     * @param jobInstanceId Job instance id
+     * @param jobInstanceCode Job instance code
+     * @return Cache value remapping function
+     */
     public static SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> getResetJobRunningStatusFunction(Long jobInstanceId, String jobInstanceCode) {
 
         SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = (jobInstIdFullKey, jobExecutionStatusOld) -> {
@@ -117,6 +187,16 @@ public class JobCacheScripts {
         return remappingFunction;
     }
 
+    /**
+     * Return a cache remapping function to mark job as locked for running on a given node. Version 1.
+     * 
+     * @param jobInstanceId Job instance id
+     * @param jobInstanceCode Job instance code
+     * @param currentNode Node that it should be locked on
+     * @param limitToSingleNode Is job allowed to run simultaneously on one node only
+     * @return Cache value remapping function
+     */
+    @Deprecated
     public static SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> getLockForRunningFunction(Long jobInstanceId, String jobInstanceCode, String currentNode,
             boolean limitToSingleNode) {
 
@@ -170,6 +250,57 @@ public class JobCacheScripts {
         return remappingFunction;
     }
 
+    /**
+     * Return a cache remapping function to mark job as locked for running on a given node. Version 2.
+     * 
+     * @param jobInstanceId Job instance id
+     * @param jobInstanceCode Job instance code
+     * @param currentNode Node that it should be locked on
+     * @param limitToNrOfNodes How many nodes job is allowed to run simultaneously on
+     * @return Cache value remapping function
+     */
+    public static SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> getLockForRunningFunctionV2(Long jobInstanceId, String jobInstanceCode, String currentNode, int limitToNrOfNodes) {
+
+        SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = (jobInstIdFullKey, jobExecutionStatusOld) -> {
+
+            if (jobExecutionStatusOld == null) {
+
+                // No change in status when job was requested to stop
+            } else if (jobExecutionStatusOld.isRequestedToStop()) {
+                return jobExecutionStatusOld;
+
+                // No change in status when job was already running on more nodes than allowed
+            } else if (jobExecutionStatusOld.getNumberOfNodesLockedOrRunning() >= limitToNrOfNodes) {
+                return jobExecutionStatusOld;
+
+                // No change in status when job was already marked as locked or running
+            } else if (jobExecutionStatusOld.isLockedOrRunning(currentNode)) {
+                return jobExecutionStatusOld;
+            }
+
+            JobExecutionStatus jobExecutionStatus = null;
+            if (jobExecutionStatusOld == null) {
+                jobExecutionStatus = new JobExecutionStatus(jobInstanceId, jobInstanceCode);
+            } else {
+                jobExecutionStatus = jobExecutionStatusOld.clone();
+            }
+
+            jobExecutionStatus.markAsLockedOn(currentNode);
+
+            return jobExecutionStatus;
+
+        };
+
+        return remappingFunction;
+    }
+
+    /**
+     * Return a cache remapping function to mark job to stop
+     * 
+     * @param jobInstanceId Job instance id
+     * @param jobInstanceCode Job instance code
+     * @return Cache value remapping function
+     */
     public static SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> getMarkJobToStopFunction(Long jobInstanceId, String jobInstanceCode) {
 
         SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = (jobInstIdFullKey, jobExecutionStatusOld) -> {

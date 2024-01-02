@@ -224,6 +224,9 @@ public class CommercialOrderService extends PersistenceService<CommercialOrder>{
 				subscription.setOrderOffer(offer);
 				subscription.setContract((offer.getContract() != null)? offer.getContract() : order.getContract());
 				OfferTemplate offerTemplate = offerTemplateService.refreshOrRetrieve(offer.getOfferTemplate());
+				if (offerTemplate != null && offerTemplate.isDisabled() && offer.getQuoteOffer() == null && !orderCompleted) {
+		            throw new BusinessException(String.format("OfferTemplate[code=%s] is disabled and cannot be ordered. Please select another offer.", offerTemplate.getCode()));
+		        }
 				subscription.setSubscriptionRenewal(offerTemplate != null ? offerTemplate.getSubscriptionRenewal().copy() : null);
 				subscription.setSalesPersonName(order.getSalesPersonName());
 				if(offer.getOfferTemplate() != null) {

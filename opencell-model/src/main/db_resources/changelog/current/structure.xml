@@ -8873,12 +8873,33 @@ public class AgedBalanceReporting extends ReportExtractScript {
         <sql>ALTER TABLE ${db.schema.adapted}finance_settings ALTER COLUMN use_auxiliary_accounting SET NOT NULL ;</sql>
     </changeSet>
 
+    <changeSet id="#INTRD-20273_20231219" author="AndriusKarpavicius">
+        <addColumn tableName="meveo_job_instance">
+            <column name="limit_to_nr_of_nodes" type="int"/>
+        </addColumn>
+        <modifyDataType tableName="meveo_job_instance" columnName="run_on_nodes" newDataType="VARCHAR(500)"/>
+    </changeSet>
+
     <changeSet id="#INTRD-19574_20230712" author="zbariki">
         <addColumn tableName="ar_account_operation">
             <column name="litigation_reason" type="varchar(2000)"/>
         </addColumn>
     </changeSet>
-    
+
+    <changeSet id="#INTRD-20181_28122023" author="Mbarek-Ay" failOnError="false">
+	<addColumn tableName="cpq_attribute_allowed_values">
+		<column name="order_idx" type="int4"/>
+	</addColumn>
+	<sql>UPDATE cpq_attribute_allowed_values AS attr
+		SET order_idx = subquery.new_order_idx FROM (SELECT attribute_id, allowed_values,
+		ROW_NUMBER() OVER (PARTITION BY attribute_id ORDER BY allowed_values)
+		AS new_order_idx
+		FROM cpq_attribute_allowed_values
+		) AS subquery WHERE attr.attribute_id = subquery.attribute_id AND attr.allowed_values = subquery.allowed_values;
+	</sql>
+
+  </changeSet>
+
     <changeSet id="INTRD-20050_20231226" author="TarikFA.">
         <createSequence sequenceName="account_registration_number_seq" startValue="1" />
         <createTable tableName="account_registration_number">
@@ -8928,5 +8949,5 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="billing_user_account"
                                  referencedColumnNames="id"/>
     </changeSet>
-    
+
 </databaseChangeLog>

@@ -18,6 +18,7 @@
 
 package org.meveo.api.invoice;
 
+import static java.util.Optional.ofNullable;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.PENDING;
 import static org.meveo.model.billing.InvoicePaymentStatusEnum.UNPAID;
 import static org.meveo.model.billing.InvoiceStatusEnum.VALIDATED;
@@ -585,12 +586,13 @@ public class InvoiceApi extends BaseApi {
             missingParameters.add("invoiceId");
         }
         handleMissingParameters();
-        Invoice invoice = invoiceService.findById(invoiceId);
+        Invoice invoice = ofNullable(invoiceService.findById(invoiceId))
+                .orElseThrow(() -> new EntityDoesNotExistsException("Invoice does not exists"));
         if(VALIDATED.equals(invoice.getStatus())) {
             throw new BadRequestException("Invoice already validated");
         }
         serviceSingleton.validateAndAssignInvoiceNumber(invoiceId, refreshExchangeRate);
-        Boolean brGenerateAO = Optional.ofNullable(invoice.getBillingRun()).map(BillingRun::getGenerateAO).orElse(false);
+        Boolean brGenerateAO = ofNullable(invoice.getBillingRun()).map(BillingRun::getGenerateAO).orElse(false);
         if(brGenerateAO || generateAO) {
             invoiceService.generateRecordedInvoiceAO(invoiceId);
         }

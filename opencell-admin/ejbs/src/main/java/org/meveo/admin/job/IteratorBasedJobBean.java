@@ -353,7 +353,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             }
 
             // Mark number of threads it will be running on
-            JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), futures);
+            JobRunningStatusEnum jobStatus = jobExecutionService.markJobAsRunning(jobInstance, jobExecutionResult.getId(), futures);
 
             // Job manager launches worker jobs in other cluster nodes
             if (isRunningAsJobManager && spreadOverCluster) {
@@ -403,7 +403,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                 // Mark that all threads are finished
             } else {
-                jobStatus = jobExecutionService.markJobAsRunning(jobInstance, false, jobExecutionResult.getId(), null);
+                jobStatus = jobExecutionService.markJobAsRunning(jobInstance, jobExecutionResult.getId(), null);
             }
 
             wasCanceled = wasKilled || jobStatus == JobRunningStatusEnum.REQUEST_TO_STOP;

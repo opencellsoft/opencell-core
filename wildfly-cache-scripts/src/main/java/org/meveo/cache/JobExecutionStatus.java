@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -41,9 +42,9 @@ public class JobExecutionStatus implements Serializable {
     private boolean requestedToStop;
 
     /**
-     * A request was made to run on a specific node - applies when job can be executed on a single node only.
+     * A request was made to run on a specific node
      */
-    private String lockForNode;
+    private Set<String> lockForNode = new HashSet<String>();
 
     /**
      * Cluster nodes (map key) and job instance runs threads (map value) the job is running on.
@@ -137,11 +138,12 @@ public class JobExecutionStatus implements Serializable {
      * Mark as running on a cluster node. Remove lock.
      * 
      * @param node Cluster node name
+     * @param jobExecutionResultId Job execution result id
      * @param numberOfThreads A number of threads/futures that are running a job
      */
     public void markAsRunningOn(String node, Long jobExecutionResultId, Integer numberOfThreads) {
 
-        this.lockForNode = null;
+        this.lockForNode.remove(node);
         if (jobExecutionResultId == null && numberOfThreads == null) {
             this.nodesAndThreads.put(node, new JobExecutionInfo());
         } else {
@@ -155,7 +157,7 @@ public class JobExecutionStatus implements Serializable {
      * @param node Cluster node name
      */
     public void markAsFinished(String node) {
-        this.lockForNode = null;
+        this.lockForNode.remove(node);
         this.nodesAndThreads.remove(node);
 
         // In multi cluster environment remove "requested to stop" flag only when ALL clusters are finished running a job
@@ -170,7 +172,7 @@ public class JobExecutionStatus implements Serializable {
      * @param node Cluster node to run on
      */
     public void markAsLockedOn(String currentNode) {
-        lockForNode = currentNode;
+        lockForNode.add(currentNode);
     }
 
     /**
@@ -192,10 +194,23 @@ public class JobExecutionStatus implements Serializable {
         return this.nodesAndThreads.containsKey(node);
     }
 
+    /**
+     * Get a total number of nodes that job is running or is locked for running on
+     * 
+     * @return A number of nodes
+     */
+    public int getNumberOfNodesLockedOrRunning() {
+        int lockedNr = lockForNode.size();
+        int runningNr = nodesAndThreads.size();
+
+        return lockedNr + runningNr;
+
+    }
+
     public JobExecutionStatus clone() {
 
         JobExecutionStatus clone = new JobExecutionStatus(jobId, jobCode);
-        clone.setLockForNode(lockForNode);
+        clone.getLockForNode().addAll(this.lockForNode);
         clone.setRequestedToStop(requestedToStop);
         clone.setStartedOn(startedOn);
         clone.getNodesAndThreads().putAll(this.nodesAndThreads);
@@ -211,7 +226,7 @@ public class JobExecutionStatus implements Serializable {
         }
 
         return jobId + "/" + jobCode + (startedOn != null ? ", started on " + JobExecutionStatus.formatAsTime(startedOn) : "") + (requestedToStop ? ", stopping" : "")
-                + (lockForNode != null ? ", locked for " + lockForNode : "") + (!nodesAndThreads.isEmpty() ? ", running on " + nodeInfo : "");
+                + (!lockForNode.isEmpty() ? ", locked for " + lockForNode : "") + (!nodesAndThreads.isEmpty() ? ", running on " + nodeInfo : "");
     }
 
     /**
@@ -255,17 +270,57 @@ public class JobExecutionStatus implements Serializable {
     }
 
     /**
-     * @return A request was made to run on a specific node - applies when job can be executed on a single node only.
+     * @return A request was made to run on a specific node
      */
-    public String getLockForNode() {
+    public Set<String> getLockForNode() {
         return lockForNode;
     }
 
     /**
-     * @param lockForNode A request was made to run on a specific node - applies when job can be executed on a single node only.
+     * @param lockForNode A request was made to run on a specific node
      */
-    public void setLockForNode(String lockForNode) {
+    public void setLockForNode(Set<String> lockForNode) {
         this.lockForNode = lockForNode;
+    }
+
+    /**
+     * Is job locked by any cluster node
+     * 
+     * @param node Cluster node name
+     * @return True if job is locked on this cluster node
+     */
+    public boolean isLocked() {
+        return !lockForNode.isEmpty();
+    }
+
+    /**
+     * Is job locked on this cluster node
+     * 
+     * @param node Cluster node name
+     * @return True if job is locked on this cluster node
+     */
+    public boolean isLocked(String node) {
+        return lockForNode.contains(node);
+    }
+
+    /**
+     * Is job locked to run or is running on this cluster node
+     * 
+     * @param node Cluster node name
+     * @return True if job is locked to run or is running on this cluster node
+     */
+    public boolean isLockedOrRunning(String node) {
+        return lockForNode.contains(node) || nodesAndThreads.containsKey(node);
+    }
+
+    /**
+     * Is job locked to run or is running on any cluster node
+     * 
+     * @param node Cluster node name
+     * @return True if job is locked to run or is running on this cluster node
+     */
+    public boolean isLockedOrRunning() {
+        return !lockForNode.isEmpty() || !nodesAndThreads.isEmpty();
     }
 
     /**

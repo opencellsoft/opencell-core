@@ -527,6 +527,12 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 				throw new MeveoApiException("The Order is not yet complete");
 			
 		}else if(statusTarget.equalsIgnoreCase(CommercialOrderEnum.FINALIZED.toString())){
+			order.getOffers().stream().forEach(orderOffer -> {
+				if (orderOffer.getOrderLineType() == OfferLineTypeEnum.CREATE && orderOffer.getOfferTemplate().isDisabled() && orderOffer.getQuoteOffer() == null) {
+					throw new MeveoApiException(String.format("OfferTemplate[code=%s] is disabled and cannot be ordered. Please select another offer.",	orderOffer.getOfferTemplate().getCode()));
+				}
+			});
+			
             order = serviceSingleton.assignCommercialOrderNumber(order);
 			if(order.getInvoicingPlan() != null &&
 				order.getInvoicingPlan().getInvoicingPlanItems().stream()
@@ -861,6 +867,9 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
 		if (offerTemplate == null) {
 			throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
 		}
+        if (offerTemplate.isDisabled() && orderOfferDto.getOrderLineType() == OfferLineTypeEnum.CREATE) {
+            throw new MeveoApiException(String.format("OfferTemplate[code=%s] is disabled and cannot be ordered. Please select another offer.", offerTemplate.getCode()));
+        }
 		UserAccount userAccount=null;
 		if(!StringUtils.isBlank(orderOfferDto.getUserAccountCode())) {
 			userAccount = userAccountService.findByCode(orderOfferDto.getUserAccountCode());
@@ -1014,7 +1023,10 @@ final CommercialOrder order = commercialOrderService.findById(orderDto.getId());
     		 offerTemplate = offerTemplateService.findByCode(orderOfferDto.getOfferTemplateCode());
         	if (offerTemplate == null) {
         		throw new EntityDoesNotExistsException(OfferTemplate.class, orderOfferDto.getOfferTemplateCode());
-        	}	
+        	}
+        	if (offerTemplate.isDisabled() && orderOfferDto.getOrderLineType() == OfferLineTypeEnum.CREATE) {
+                throw new MeveoApiException(String.format("OfferTemplate[code=%s] is disabled and cannot be ordered. Please select another offer.", offerTemplate.getCode()));
+            }
         	orderOffer.setOfferTemplate(offerTemplate);
     	}
 

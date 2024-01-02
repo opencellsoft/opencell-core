@@ -2868,7 +2868,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (offerTemplate.isDisabled()) {
-            throw new MeveoApiException("Cannot subscribe to disabled offer");
+            throw new BusinessApiException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", offerTemplate.getCode()));
         }
 
         Seller seller = null;
