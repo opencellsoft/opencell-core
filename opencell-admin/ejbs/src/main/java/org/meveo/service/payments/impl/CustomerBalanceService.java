@@ -2,7 +2,7 @@ package org.meveo.service.payments.impl;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.model.dunning.CustomerBalance;
+import org.meveo.model.payments.CustomerBalance;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
@@ -72,6 +72,9 @@ public class CustomerBalanceService extends BusinessService<CustomerBalance> {
         final int maxLimitCustomerBalance = paramBeanFactory
                 .getInstance()
                 .getPropertyAsInteger("max.customer.balance", 6);
+        if(entity.getDescription() == null) {
+            throw new BusinessException("Customer balance description is mandatory");
+        }
         if (entity.isDefaultBalance() && findDefaultCustomerBalance().isPresent()) {
             throw new BusinessException("One default balance already exists");
         }

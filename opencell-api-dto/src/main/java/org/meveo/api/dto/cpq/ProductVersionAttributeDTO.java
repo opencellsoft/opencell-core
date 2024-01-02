@@ -46,7 +46,7 @@ public class ProductVersionAttributeDTO {
 	private AttributeTypeEnum attributeType;
 
 	@Schema(description = "Corresponding to predefined allowed values")
-	private Set<String> allowedValues;
+	private List<String> allowedValues;
 
 	@Schema(description = "diplay the attribute")
 	private boolean display;
@@ -137,7 +137,7 @@ public class ProductVersionAttributeDTO {
 			this.description = attribute.getDescription();
 			this.disabled = attribute.isDisabled();
 			this.attributeType = attribute.getAttributeType();
-			this.allowedValues = new HashSet<>(attribute.getAllowedValues());
+			this.allowedValues = new ArrayList<>(attribute.getAllowedValues());
 			this.priority = attribute.getPriority();
 			this.display = attributebaseEntity.isDisplay();
 			this.mandatory = attributebaseEntity.isMandatory();
@@ -422,10 +422,10 @@ public class ProductVersionAttributeDTO {
 	public void setAttributeType(AttributeTypeEnum attributeType) {
 		this.attributeType = attributeType;
 	}
-	public Set<String> getAllowedValues() {
+	public List<String> getAllowedValues() {
 		return allowedValues;
 	}
-	public void setAllowedValues(Set<String> allowedValues) {
+	public void setAllowedValues(List<String> allowedValues) {
 		this.allowedValues = allowedValues;
 	}
 	public Integer getUnitNbDecimal() {

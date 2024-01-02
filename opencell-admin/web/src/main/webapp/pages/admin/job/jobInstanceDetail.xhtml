@@ -63,8 +63,9 @@
 						</hftl:decorateFormField>
 						<hftl:formField label="#{messages['jobInstance.jobStatusReportFrequency']}" field="jobStatusReportFrequency" />
 
-						<hftl:formField label="#{messages['jobInstance.clusterBehavior']}" field="clusterBehavior" newLine="true" />
+						<hftl:formField label="#{messages['jobInstance.clusterBehavior']}" field="clusterBehavior" newLine="true" listenerUpdate="@form"/>
 						<hftl:formField label="#{messages['jobInstance.runOnNodes']}" field="runOnNodes" />
+						<hftl:formField id="limitNrOfNodes" label="#{messages['jobInstance.limitToNrOfNodes']}" field="limitToNrOfNodes" rendered="#{jobInstanceBean.entity.clusterBehavior!='LIMIT_TO_SINGLE_NODE'}" />
 
 						<hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!jobInstanceBean.entity.transient}">
 							<h:outputText value="#{jobInstanceBean.getPartOfModules()}" />

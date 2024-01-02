@@ -22,7 +22,7 @@ public interface ContactCategoryResource {
 	@Path("")
 	@Operation(
 		summary = "Create a ContactCategory",
-		tags = { "contact", "contact_category", "crm" },
+		tags = { "Contact" },
 		responses = {
             @ApiResponse(responseCode = "200", description = "the contactCategory successfully created"),
             @ApiResponse(responseCode = "400", description = "An error happened when trying to create a contactCategory")
@@ -34,7 +34,7 @@ public interface ContactCategoryResource {
 	@Path("/{contactCategoryCode}")
 	@Operation(
 		summary = "Update a ContactCategory",
-		tags = { "contact", "contact_category", "crm" },
+		tags = { "Contact" },
 		responses = {
             @ApiResponse(responseCode = "200", description = "the contactCategory successfully created"),
             @ApiResponse(responseCode = "404", description = "The contactCategoryCode does not exists"),
@@ -47,7 +47,7 @@ public interface ContactCategoryResource {
 	@Path("/{contactCategoryCode}")
 	@Operation(
 		summary = "Delete a ContactCategory",
-		tags = { "contact", "contact_category", "crm" },
+		tags = { "Contact" },
 		responses = {
             @ApiResponse(responseCode = "200", description = "the contactCategory successfully created"),
             @ApiResponse(responseCode = "404", description = "The contactCategoryCode does not exists"),

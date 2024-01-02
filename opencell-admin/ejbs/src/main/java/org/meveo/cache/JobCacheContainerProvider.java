@@ -44,6 +44,7 @@ import org.meveo.commons.utils.ThreadUtils;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionInterceptor;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
 import org.slf4j.Logger;
 
@@ -149,37 +150,27 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     private JobRunningStatusEnum getJobRunningStatus(JobExecutionStatus jobExecutionStatus) {
 
+        String node = EjbUtils.getCurrentClusterNode();
         if (jobExecutionStatus == null) {
             return JobRunningStatusEnum.NOT_RUNNING;
 
         } else if (jobExecutionStatus.isRequestedToStop()) {
             return JobRunningStatusEnum.REQUEST_TO_STOP;
 
-        } else if (jobExecutionStatus.getLockForNode() != null) {
-            String nodeToCheck = EjbUtils.getCurrentClusterNode();
+        } else if (jobExecutionStatus.isLocked(node)) {
+            return JobRunningStatusEnum.LOCKED_THIS;
 
-            if (jobExecutionStatus.getLockForNode().equals(nodeToCheck)) {
-                return JobRunningStatusEnum.LOCKED_THIS;
-            } else {
-                return JobRunningStatusEnum.LOCKED_OTHER;
-            }
-
-        } else if (!jobExecutionStatus.isRunning()) {
-            return JobRunningStatusEnum.NOT_RUNNING;
-
-        } else if (!EjbUtils.isRunningInClusterMode()) {
+        } else if (jobExecutionStatus.isRunning(node)) {
             return JobRunningStatusEnum.RUNNING_THIS;
 
+        } else if (jobExecutionStatus.isLocked()) {
+            return JobRunningStatusEnum.LOCKED_OTHER;
+
+        } else if (jobExecutionStatus.isRunning()) {
+            return JobRunningStatusEnum.RUNNING_OTHER;
+
         } else {
-
-            String nodeToCheck = EjbUtils.getCurrentClusterNode();
-
-            if (jobExecutionStatus.isRunning(nodeToCheck)) {
-                return JobRunningStatusEnum.RUNNING_THIS;
-
-            } else {
-                return JobRunningStatusEnum.RUNNING_OTHER;
-            }
+            return JobRunningStatusEnum.NOT_RUNNING;
         }
     }
 
@@ -212,8 +203,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * node, a previous status will be returned.
      * 
      * @param jobInstance Job instance
-     * @param limitToSingleNode true if this job can be run on only one node.
-     * @return Previous job execution status - was Job locked or running before and if on this or another node
+     * @param limitToSingleNode true if this job can be run on only one node. E.g. job manager nodes
+     * @return Job execution status - was Job lock successful, failed to lock or job was requested stopped
      */
     // @Lock(LockType.WRITE)
     public JobRunningStatusEnum lockForRunning(JobInstance jobInstance, boolean limitToSingleNode) {
@@ -225,16 +216,17 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         final String jobInstanceCode = jobInstance.getCode();
 
         JobRunningStatusEnum previousStatus = isJobRunning(jobInstanceId);
-        if (previousStatus == JobRunningStatusEnum.RUNNING_THIS) {
+        if (previousStatus == JobRunningStatusEnum.LOCKED_THIS || previousStatus == JobRunningStatusEnum.RUNNING_THIS) {
             log.info("Job {} of provider {} attempted to be marked as LOCKED in job cache for node {}. Job is already running on {} node.", jobInstanceId, currentProvider, currentNode, currentNode);
-            return previousStatus;
+            return JobRunningStatusEnum.LOCK_FAILED;
         }
 
-        if (!jobInstance.isRunnableOnNode(currentNode)) {
-            return previousStatus;
+        if (!JobExecutionService.isRunnableOnNode(jobInstance.getRunOnNodesResolved())) {
+            return JobRunningStatusEnum.LOCK_FAILED;
         }
 
-        SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = JobCacheScripts.getLockForRunningFunction(jobInstanceId, jobInstanceCode, currentNode, limitToSingleNode);
+        SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = JobCacheScripts.getLockForRunningFunctionV2(jobInstanceId, jobInstanceCode, currentNode,
+            limitToSingleNode ? 1 : jobInstance.getLimitToNrOfNodesResolved());
 
         CacheKeyLong cacheKey = new CacheKeyLong(currentProvider, jobInstanceId);
 
@@ -246,14 +238,15 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         JobRunningStatusEnum currentStatus = getJobRunningStatus(jobStatus);
 
-        log.info("Job {} of provider {} was attempted to be marked as LOCKED in job cache for node {}. Job is current status is {}. Previous job running status is {}. Current cache value is {}", jobInstanceId,
-            currentProvider, currentNode, currentStatus, previousStatus, jobStatus);
+        log.info(
+            "Job {} of provider {} was attempted to be marked as LOCKED in job cache for node {}. Job current status is {}. Previous job running status was {}. Job runs on {} nodes out of {} allowed. Current cache value is {}.",
+            jobInstanceId, currentProvider, currentNode, currentStatus, previousStatus, jobStatus.getNumberOfNodesLockedOrRunning(), jobInstance.getLimitToNrOfNodesResolved(), jobStatus);
 
-        if (currentStatus == JobRunningStatusEnum.LOCKED_OTHER || currentStatus == JobRunningStatusEnum.RUNNING_OTHER) {
+        if (currentStatus == JobRunningStatusEnum.LOCKED_THIS || currentStatus == JobRunningStatusEnum.REQUEST_TO_STOP) {
             return currentStatus;
 
         } else {
-            return previousStatus;
+            return JobRunningStatusEnum.LOCK_FAILED;
         }
     }
 
@@ -261,15 +254,14 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * Mark job, identified by a given job instance, as currently running on current cluster node.
      * 
      * @param jobInstance Job instance
-     * @param limitToSingleNode true if this job can be run on only one node.
      * @param jobExecutionResultId Job execution result/progress identifier
      * @param threads Threads/futures that job is running on (optional)
-     * @return Previous job execution status - was Job locked or running before and if on this or another node
+     * @return Job execution status
      */
     // @Lock(LockType.WRITE)
     @SuppressWarnings("rawtypes")
     @Interceptors(JobExecutionInterceptor.class)
-    public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, boolean limitToSingleNode, Long jobExecutionResultId, List<Future> threads) {
+    public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, Long jobExecutionResultId, List<Future> threads) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
         String currentProvider = CurrentUserProvider.getCurrentTenant();
@@ -279,8 +271,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
 
         final Integer nrOfThreads = threads == null ? null : threads.size();
 
-        SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = JobCacheScripts.getMarkJobAsRunningFunction(currentNode, limitToSingleNode, jobInstanceId, jobInstanceCode,
-            jobExecutionResultId, nrOfThreads);
+        SerializableBiFunction<? super CacheKeyLong, JobExecutionStatus, JobExecutionStatus> remappingFunction = JobCacheScripts.getMarkJobAsRunningFunctionV2(currentNode, jobInstance.getLimitToNrOfNodesResolved(),
+            jobInstanceId, jobInstanceCode, jobExecutionResultId, nrOfThreads);
 
         JobRunningStatusEnum previousStatus = isJobRunning(jobInstanceId);
         if (previousStatus == JobRunningStatusEnum.REQUEST_TO_STOP) {
@@ -304,12 +296,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         log.info("Job {} of provider {} was marked as RUNNING in job cache for node {}. Job is current status is {}. Previous job running status is {}. Current cache value is {}", jobInstanceId, currentProvider,
             currentNode, currentStatus, previousStatus, jobStatus);
 
-        if (currentStatus == JobRunningStatusEnum.LOCKED_THIS || currentStatus == JobRunningStatusEnum.LOCKED_OTHER || currentStatus == JobRunningStatusEnum.RUNNING_OTHER) {
-            return currentStatus;
-
-        } else {
-            return previousStatus;
-        }
+        return currentStatus;
     }
 
     /**
@@ -554,6 +541,16 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             }
         }
         return new ArrayList<Future>();
+    }
+
+    /**
+     * Get a list of all running job futures/threads
+     * 
+     * @return A list of all currently job running futures/threads grouped by a job instance id
+     */
+    public static Map<Long, List<Future>> getJobExecutionThreads() {
+
+        return runningJobFutures;
     }
 
     /**

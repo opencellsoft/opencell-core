@@ -40,6 +40,7 @@ public class InvoicingMapper extends ResourceMapper<ExceptionalBillingRun, Billi
         billingRun.setDiscountAggregation(resource.getDiscountAggregation());
         billingRun.setIgnoreOrders(resource.isIgnoreOrders());
         billingRun.setIgnoreSubscriptions(resource.isIgnoreSubscriptions());
+        billingRun.setIgnoreUserAccounts(resource.isIgnoreUserAccounts());
         billingRun.setDisableAggregation(resource.isDisableAggregation());
         billingRun.setUseAccountingArticleLabel(resource.isUseAccountingArticleLabel());
         billingRun.setPreReportAutoOnCreate(resource.isPreReportAutoOnCreate());

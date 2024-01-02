@@ -41,7 +41,6 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobExecutionStatus;
 import org.meveo.cache.JobRunningStatusEnum;
-import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.EnumBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;

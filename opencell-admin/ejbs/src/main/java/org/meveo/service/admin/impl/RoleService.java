@@ -54,8 +54,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public List<Role> list(PaginationConfiguration paginationConfig) {
-    	String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
-    	if(lUserManagementSource.equalsIgnoreCase("OC")) {
+    	if(!canSynchroWithKC()) {
     		if(paginationConfig==null) {
     			paginationConfig=new PaginationConfiguration(new HashMap());
     		}
@@ -94,10 +93,13 @@ public class RoleService extends PersistenceService<Role> {
      * @return User found
      */
     public Role findByName(String name, boolean extendedInfo, boolean syncWithKC) {
-        Role kcRole = keycloakAdminClientService.findRole(name, extendedInfo, false);
-        if (kcRole == null) {
-            return null;
-        }
+	    Role kcRole = null;
+		if(canSynchroWithKC()){
+			kcRole = keycloakAdminClientService.findRole(name, extendedInfo, false);
+			if (kcRole == null) {
+				return null;
+			}
+		}
 
         Role role = null;
         try {
@@ -106,15 +108,18 @@ public class RoleService extends PersistenceService<Role> {
         } catch (NoResultException ex) {
             role = new Role();
             // Set fields, even they are transient, so they can be used in a notification if any is fired uppon role creation
-            role.setName(kcRole.getName());
-            role.setRoles(kcRole.getRoles());
-            role.setDescription(kcRole.getDescription());
-            super.create(role);
+	        if(kcRole != null) {
+		        role.setName(kcRole.getName());
+		        role.setRoles(kcRole.getRoles());
+		        role.setDescription(kcRole.getDescription());
+		        super.create(role);
+	        }
         }
-
-        role.setName(kcRole.getName());
-        role.setRoles(kcRole.getRoles());
-        role.setDescription(kcRole.getDescription());
+		if(kcRole != null) {
+			role.setName(kcRole.getName());
+			role.setRoles(kcRole.getRoles());
+			role.setDescription(kcRole.getDescription());
+		}
         return role;
 
     }
@@ -137,10 +142,9 @@ public class RoleService extends PersistenceService<Role> {
      */
     
     public void create(Role role,Boolean replicateInKc) throws BusinessException {
-    	if(BooleanUtils.isTrue(replicateInKc)) {
+    	if(BooleanUtils.isTrue(replicateInKc) && canSynchroWithKC()) {
     		if (role.getParentRole() == null) {
     			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
-
     		} else {
     			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole(), role.getParentRole().getName(), role.getParentRole().getDescription(), role.getParentRole().isClientRole());
     		}
@@ -162,8 +166,8 @@ public class RoleService extends PersistenceService<Role> {
      */
      
     public Role update(Role role,Boolean replicateInKc) throws BusinessException {
-    	
-    	if(BooleanUtils.isTrue(replicateInKc)) {
+	    
+	    if(BooleanUtils.isTrue(replicateInKc) && canSynchroWithKC()) {
     		keycloakAdminClientService.updateRole(role.getName(), role.getDescription(), role.isClientRole());
     	}
     	role = super.update(role);
@@ -183,7 +187,8 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public void remove(Role role) throws BusinessException {
-        keycloakAdminClientService.deleteRole(role.getName(), role.isClientRole());
+		if(canSynchroWithKC())
+            keycloakAdminClientService.deleteRole(role.getName(), role.isClientRole());
         super.remove(role);
     }
     
@@ -198,4 +203,9 @@ public class RoleService extends PersistenceService<Role> {
             return null;
         }
     }
+	
+	private boolean canSynchroWithKC() {
+		String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
+		return lUserManagementSource.equalsIgnoreCase("KC");
+	}
 }

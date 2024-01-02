@@ -1,11 +1,10 @@
-package org.meveo.apiv2.dunning.impl;
+package org.meveo.apiv2.payments.resource;
 
 import static java.util.Optional.ofNullable;
 
-import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.apiv2.dunning.CustomerBalance;
-import org.meveo.apiv2.dunning.resource.CustomerBalanceResource;
+import org.meveo.apiv2.payments.CustomerBalance;
 import org.meveo.apiv2.report.ImmutableSuccessResponse;
 import org.meveo.service.payments.impl.CustomerBalanceService;
 
@@ -14,7 +13,6 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
-import java.util.function.Consumer;
 
 @Interceptors({ WsRestApiInterceptor.class })
 public class CustomerBalanceResourceImpl implements CustomerBalanceResource {
@@ -26,7 +24,7 @@ public class CustomerBalanceResourceImpl implements CustomerBalanceResource {
 
     @Override
     public Response create(CustomerBalance resource) {
-        org.meveo.model.dunning.CustomerBalance customerBalance = mapper.toEntity(resource);
+        org.meveo.model.payments.CustomerBalance customerBalance = mapper.toEntity(resource);
         if(customerBalanceService.findByCode(customerBalance.getCode()) != null) {
             throw new BadRequestException("Customer balance with code "
                     + customerBalance.getCode() + " already exists");
@@ -37,7 +35,7 @@ public class CustomerBalanceResourceImpl implements CustomerBalanceResource {
         }
         try {
             customerBalanceService.create(customerBalance);
-        } catch (ValidationException exception) {
+        } catch (BusinessException exception) {
             throw new BadRequestException(exception.getMessage());
         }
         return Response.ok()
@@ -49,9 +47,7 @@ public class CustomerBalanceResourceImpl implements CustomerBalanceResource {
 
     @Override
     public Response update(Long id, CustomerBalance resource) {
-        org.meveo.model.dunning.CustomerBalance customerBalance = mapper.toEntity(resource);
-        updatePropertyIfNotNull(customerBalance.getDescription(), customerBalance::setDescription);
-        updatePropertyIfNotNull(customerBalance.getOccTemplates(), customerBalance::setOccTemplates);
+        org.meveo.model.payments.CustomerBalance customerBalance = mapper.toEntity(resource);
         customerBalance.setId(id);
         customerBalanceService.update(customerBalance);
         return Response
@@ -64,7 +60,7 @@ public class CustomerBalanceResourceImpl implements CustomerBalanceResource {
 
     @Override
     public Response delete(Long id) {
-        org.meveo.model.dunning.CustomerBalance customerBalance =
+        org.meveo.model.payments.CustomerBalance customerBalance =
                 ofNullable(customerBalanceService.findById(id)).orElseThrow(()
                         -> new NotFoundException("Customer balance does not exist"));
         if(customerBalance.isDefaultBalance()) {
@@ -77,11 +73,5 @@ public class CustomerBalanceResourceImpl implements CustomerBalanceResource {
                         .message("Customer balance successfully deleted")
                         .build())
                 .build();
-    }
-
-    private <T> void updatePropertyIfNotNull(T property, Consumer<T> action){
-        if(property != null){
-            action.accept(property);
-        }
     }
 }

@@ -228,6 +228,12 @@ public class InvoicingApi extends BaseApi {
         } else {
             billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
         }
+        
+        if (dto.getIgnoreUserAccounts() != null) {
+            billingRun.setIgnoreUserAccounts(dto.getIgnoreUserAccounts());
+        } else {
+            billingRun.setIgnoreUserAccounts(billingCycle.isIgnoreUserAccounts());
+        }
 
         if(billingCycle.getAdditionalAggregationFields() != null) {
             if(billingRun.getAdditionalAggregationFields() == null) {
@@ -312,6 +318,9 @@ public class InvoicingApi extends BaseApi {
             if (dto.getIgnoreSubscriptions() == null) {
                 billingRun.setIgnoreSubscriptions(billingCycle.isIgnoreSubscriptions());
             }
+            if (dto.getIgnoreUserAccounts() == null) {
+                billingRun.setIgnoreUserAccounts(billingCycle.isIgnoreUserAccounts());
+            }
             if (dto.getDisableAggregation() == null) {
                 billingRun.setDisableAggregation(billingCycle.isDisableAggregation());
             }
@@ -378,6 +387,10 @@ public class InvoicingApi extends BaseApi {
 
         if (dto.getIgnoreSubscriptions() != null) {
             billingRun.setIgnoreSubscriptions(dto.getIgnoreSubscriptions());
+        }
+        
+        if (dto.getIgnoreUserAccounts() != null) {
+            billingRun.setIgnoreUserAccounts(dto.getIgnoreUserAccounts());
         }
         
         if (dto.getDisableAggregation() != null) {

@@ -43,6 +43,12 @@ public class AccountsManagementResourceImpl implements AccountsManagementResourc
         accountsManagementApiService.changeCustomerAccountParentAccount(customerAccountCode, parentInput);
         return Response.noContent().build();
     }
+    
+    @Override
+    public Response changeBillingAccountParentAccount(String billingAccountCode, ParentInput parentInput) throws JsonProcessingException {
+        accountsManagementApiService.changeBillingAccountParentAccount(billingAccountCode, parentInput);
+        return Response.noContent().build();
+    }
 
     @Override
     public Response createCounterInstance(CounterInstanceDto dto) {

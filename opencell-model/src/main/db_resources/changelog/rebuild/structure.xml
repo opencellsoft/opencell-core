@@ -2173,7 +2173,8 @@
             <column name="transactional_payment_fees" type="numeric(23, 12)" />
 			<column name="error_detail" type="varchar(2000)" />
 			<column name="refunded_payment_id" type="bigint" />
-		</createTable>
+            <column name="litigation_reason" type="varchar(2000)" />
+        </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-146">
         <createTable tableName="ar_action_dunning">
@@ -6242,7 +6243,7 @@
             <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
                 <constraints nullable="false" />
             </column>
-            <column name="run_on_nodes" type="VARCHAR(100)" />
+            <column name="run_on_nodes" type="VARCHAR(500)" />
             <column name="cf_values" type="${type.json}" />
             <column name="exclude_inv_without_amount" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="verbose_report" type="${type.boolean}" defaultValueNumeric="1" />
@@ -6251,6 +6252,7 @@
             <column name="query_scheduler_id" type="bigint" />
             <column name="cluster_behavior" type="varchar(25)" defaultValue="LIMIT_TO_SINGLE_NODE"/>
             <column name="status_report_freq" type="int" defaultValueNumeric="60" />
+            <column name="limit_to_nr_of_nodes" type="int" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-278">
@@ -10058,6 +10060,7 @@
         <createTable tableName="cpq_attribute_allowed_values">
             <column name="attribute_id" type="bigint" />
             <column name="allowed_values" type="varchar(100)" />
+            <column name="order_idx"  type="int4"/>
         </createTable>
         <addPrimaryKey columnNames="attribute_id,allowed_values" constraintName="cpq_attribute_allowed_values_pkey" tableName="cpq_attribute_allowed_values" />
     </changeSet>
@@ -12073,7 +12076,9 @@
             <column name="max_amount_consumer" type="numeric(23, 12)"  />
             <column name="auto_refund" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="open_order_settings_id" type="bigint"/>
-            <column name="use_auxiliary_accounting" type="${type.boolean}" defaultValueNumeric="0" />
+            <column name="use_auxiliary_accounting" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
             <column name="auxiliary_account_code_el" type="varchar(2000)"
                     defaultValue="#{gca.code.substring(0, 3)}#{ca.description}"/>
             <column name="auxiliary_account_label_el" type="varchar(2000)"
@@ -21330,6 +21335,10 @@
     <changeSet id="#INTRD-19462_20231115" author="TarikFA." />
     <changeSet id="#INTRD-19614_20231127" author="AdilElJaouhari" />
     <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi" />
+    <changeSet id="#INTRD-20056_finance_settings" author="a.rouaguebe" />
+    <changeSet id="#INTRD-19574_20230712" author="zbariki" />
+    <changeSet id="#INTRD-20273_20231219" author="AndriusKarpavicius"/>
+    <changeSet id="#INTRD-20181_28122023" author="Mbarek-Ay" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

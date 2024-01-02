@@ -18,6 +18,7 @@
 
 package org.meveo.api.rest.catalog.impl;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +43,7 @@ import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
+import org.meveo.api.dto.catalog.EnableOfferTemplateDto;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.restful.util.GenericPagingAndFilteringUtils;
@@ -271,7 +273,15 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         }
 
 	}
-    
-
+	
+	@Override
+	public Response massEnable(EnableOfferTemplateDto input) {
+		return Response.ok().entity(Collections.singletonMap("total", offerTemplateApi.massEnableDisable(input.getFilters(), false))).build();
+	}
+	
+	@Override
+	public Response massDisable(EnableOfferTemplateDto input) {
+		return Response.ok().entity(Collections.singletonMap("total", offerTemplateApi.massEnableDisable(input.getFilters(), true))).build();
+	}
 
 }

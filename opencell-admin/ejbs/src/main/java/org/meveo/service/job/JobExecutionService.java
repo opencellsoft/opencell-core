@@ -21,7 +21,9 @@ package org.meveo.service.job;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
@@ -32,7 +34,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.MapUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ValidationException;
+import org.meveo.admin.exception.JobExecutionException;
 import org.meveo.admin.job.IteratorBasedJobBean;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobExecutionStatus;
@@ -52,6 +54,9 @@ import org.meveo.model.jobs.JobLauncherEnum;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.BaseService;
+import org.meveo.service.base.ValueExpressionWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class JobExecutionService.
@@ -68,6 +73,11 @@ public class JobExecutionService extends BaseService {
      * Number of times to repeat a job when it did not finish in a first/subsequent runs
      */
     private static final int MAX_TIMES_TO_RUN_INCOMPLETE_JOB = 50;
+
+    /**
+     * Tracks if server entered a shutdown mode
+     */
+    public static AtomicBoolean serverIsInShutdownMode = new AtomicBoolean(false);
 
     /**
      * job instance service.
@@ -131,14 +141,11 @@ public class JobExecutionService extends BaseService {
         boolean limitRunToASingleNode = jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE
                 || (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && isRunningAsJobManager);
 
-        if (jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())) {
+        if (JobExecutionService.isRunnableOnNode(jobInstance.getRunOnNodesResolved())) {
 
-            JobRunningStatusEnum isRunning = lockForRunning(jobInstance, limitRunToASingleNode);
+            JobRunningStatusEnum lockStatus = lockForRunning(jobInstance, limitRunToASingleNode);
 
-            // For worker, expected response is running_other
-
-            if ((limitRunToASingleNode && isRunning == JobRunningStatusEnum.NOT_RUNNING)
-                    || (!limitRunToASingleNode && (isRunning == JobRunningStatusEnum.NOT_RUNNING || isRunning == JobRunningStatusEnum.LOCKED_OTHER || isRunning == JobRunningStatusEnum.RUNNING_OTHER))) {
+            if (lockStatus == JobRunningStatusEnum.LOCKED_THIS) {
 
                 JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl(jobInstance, jobLauncher, EjbUtils.getCurrentClusterNode());
                 // set parent history id
@@ -152,21 +159,18 @@ public class JobExecutionService extends BaseService {
 
                 jobExecutionResultId = jobExecutionResult.getId();
 
-            } else if (isRunning == JobRunningStatusEnum.REQUEST_TO_STOP) {
-                throw new ValidationException("Job is in the process of stopping. Please try again shortly.");
-
-            } else if (isRunning == JobRunningStatusEnum.RUNNING_THIS || isRunning == JobRunningStatusEnum.LOCKED_THIS) {
-                throw new ValidationException("Job is already running on this cluster node");
+            } else if (lockStatus == JobRunningStatusEnum.REQUEST_TO_STOP) {
+                throw new JobExecutionException("Job is in the process of stopping. Please try again shortly.");
 
             } else {
-                throw new ValidationException("Job is currently running on another cluster node and is limited to run one node at a time, or one job manager at a time");
+                throw new JobExecutionException("Job is currently running on this or another cluster node and is limited to run one node at a time, or one job manager at a time");
             }
         }
         // Execute a job on other nodes if was launched from GUI or API and is not limited to run on current node only or was launched from a node that is not allowed to run on.
-        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API)
+        if (triggerExecutionOnOtherNodes && (jobLauncher == JobLauncherEnum.GUI || jobLauncher == JobLauncherEnum.API || jobLauncher == JobLauncherEnum.TRIGGER)
                 && (jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.RUN_IN_PARALLEL
                         || ((jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE || jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES)
-                                && !jobInstance.isRunnableOnNode(EjbUtils.getCurrentClusterNode())))) {
+                                && !JobExecutionService.isRunnableOnNode(jobInstance.getRunOnNodesResolved())))) {
 
             Map<String, Object> jobParameters = new HashMap<String, Object>();
             if (params != null) {
@@ -225,7 +229,7 @@ public class JobExecutionService extends BaseService {
                 JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
                 nextJob = PersistenceUtils.initializeAndUnproxy(nextJob);
                 log.info("Executing next job {} for {}", nextJob.getCode(), jobInstance.getCode());
-                executeJob(nextJob, null, JobLauncherEnum.TRIGGER, false);
+                executeJob(nextJob, null, JobLauncherEnum.TRIGGER, true);
             }
         }
     }
@@ -359,11 +363,11 @@ public class JobExecutionService extends BaseService {
      * 
      * @param jobInstance Job instance
      * @param limitToSingleNode true if this job can be run on only one node.
-     * @return Previous job execution status - was Job locked or running before and if on this or another node
+     * @return Job execution status - was Job lock successful, failed to lock or job was requested stopped
      */
     // @Lock(LockType.WRITE)
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public JobRunningStatusEnum lockForRunning(JobInstance jobInstance, boolean limitToSingleNode) {
+    private JobRunningStatusEnum lockForRunning(JobInstance jobInstance, boolean limitToSingleNode) {
         return jobCacheContainerProvider.lockForRunning(jobInstance, limitToSingleNode);
     }
 
@@ -371,15 +375,14 @@ public class JobExecutionService extends BaseService {
      * Mark job, identified by a given job instance id, as currently running on current cluster node.
      * 
      * @param jobInstanceId Job instance identifier
-     * @param limitToSingleNode true if this job can be run on only one node.
      * @param jobExecutionResultId Job execution result/progress identifier
      * @param threads Threads/futures that job is running on (optional)
-     * @return Previous job execution status - was Job locked or running before and if on this or another node
+     * @return Job execution status
      */
     @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, boolean limitToSingleNode, Long jobExecutionResultId, List<Future> threads) {
-        return jobCacheContainerProvider.markJobAsRunning(jobInstance, limitToSingleNode, jobExecutionResultId, threads);
+    public JobRunningStatusEnum markJobAsRunning(JobInstance jobInstance, Long jobExecutionResultId, List<Future> threads) {
+        return jobCacheContainerProvider.markJobAsRunning(jobInstance, jobExecutionResultId, threads);
     }
 
     /**
@@ -436,8 +439,7 @@ public class JobExecutionService extends BaseService {
                 || isRunning == JobRunningStatusEnum.REQUEST_TO_STOP) {
             return false;
         } else {
-            String nodeToCheck = EjbUtils.getCurrentClusterNode();
-            return jobInstance.isRunnableOnNode(nodeToCheck);
+            return JobExecutionService.isRunnableOnNode(jobInstance.getRunOnNodesResolved());
         }
     }
 
@@ -455,7 +457,7 @@ public class JobExecutionService extends BaseService {
 
             JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
-            if (!jobInstance.isRunnableOnNode(nodeName)) {
+            if (!JobExecutionService.isRunnableOnNode(jobInstance.getRunOnNodesResolved())) {
                 continue;
             }
 
@@ -499,6 +501,90 @@ public class JobExecutionService extends BaseService {
         }
 
         log.error("Timedout while waiting for all nodes to finish executing a job {}. Last status received was {}.", jobInstanceId, status);
+
+        return false;
+    }
+
+    /**
+     * Create JVM non-gracefull shutdown hooks to stop by force all running job threads, so job execution progress is logged
+     */
+    public static void addShutdownHooks() {
+
+        @SuppressWarnings("rawtypes")
+        Thread shutdownHook = new Thread(() -> {
+
+            JobExecutionService.markServerIsInShutdownMode();
+
+            Logger log = LoggerFactory.getLogger(JobExecutionService.class);
+
+            log.error("Stopping jobs because of server shutdown");
+
+            Map<Long, List<Future>> futureInfos = JobCacheContainerProvider.getJobExecutionThreads();
+
+            for (Entry<Long, List<Future>> futureInfo : futureInfos.entrySet()) {
+
+                IteratorBasedJobBean.markJobToStop(futureInfo.getKey());
+                IteratorBasedJobBean.releaseJobDataProcessingThreads(futureInfo.getKey());
+
+                int i = 1;
+                for (Future future : futureInfo.getValue()) {
+                    if (!future.isDone()) {
+                        boolean canceled = future.cancel(true);
+                        if (canceled) {
+                            log.info("Job {} thread #{} was canceled by force as server was shutting down", futureInfo.getKey(), i);
+                        } else {
+                            log.error("Failed to cancel a job {} thread #{} as server was shutting down", futureInfo.getKey(), i);
+                        }
+                    }
+                    i++;
+                }
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+    }
+
+    /**
+     * Mark that server is in shutdown mode
+     */
+    public static void markServerIsInShutdownMode() {
+        serverIsInShutdownMode.set(true);
+    }
+
+    /**
+     * 
+     * @return Is server operating in shutdown mode
+     */
+    public static boolean isServerIsInShutdownMode() {
+        return serverIsInShutdownMode.get();
+    }
+
+    /**
+     * Check if job instance is runnable on a current cluster node.
+     *
+     * @param currentNode Current cluster node
+     * @return True if either current cluster node is unknown (non-clustered mode), runOnNodes is not specified or current cluster node matches any node in a list of nodes
+     */
+    public static boolean isRunnableOnNode(String runOnNodes) {
+
+        String currentNode = EjbUtils.getCurrentClusterNode();
+
+        if (currentNode == null || runOnNodes == null) {
+            return true;
+        }
+
+        // Resolve EL expression
+        if (runOnNodes.startsWith("#")) {
+            return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(runOnNodes, ValueExpressionWrapper.VAR_CURRENT_NODE, currentNode);
+
+            // Evaluate from a list of node names
+        } else {
+            String[] nodes = runOnNodes.split(",");
+            for (String node : nodes) {
+                if (node.trim().equals(currentNode)) {
+                    return true;
+                }
+            }
+        }
 
         return false;
     }

@@ -169,11 +169,9 @@ public abstract class Job {
 
         AuditOrigin.setAuditOriginAndName(ChangeOriginEnum.JOB, jobInstance.getJobTemplate() + "/" + jobInstance.getCode());
 
-        JobRunningStatusEnum jobRunningStatus = jobExecutionService.markJobAsRunning(jobInstance, jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE,
-            executionResult != null ? executionResult.getId() : null, null);
+        JobRunningStatusEnum jobRunningStatus = jobExecutionService.markJobAsRunning(jobInstance, executionResult != null ? executionResult.getId() : null, null);
 
-        if (jobRunningStatus == JobRunningStatusEnum.NOT_RUNNING || jobRunningStatus == JobRunningStatusEnum.LOCKED_THIS
-                || (jobInstance.getClusterBehavior() != JobClusterBehaviorEnum.LIMIT_TO_SINGLE_NODE && (jobRunningStatus == JobRunningStatusEnum.RUNNING_OTHER || jobRunningStatus == JobRunningStatusEnum.LOCKED_OTHER))) {
+        if (jobRunningStatus == JobRunningStatusEnum.RUNNING_THIS) {
 
             log.info("Starting Job {} of type {}  with currentUser {}. Processors available {}, paralel procesors requested {}. Job parameters {}", jobInstance.getCode(), jobInstance.getJobTemplate(), currentUser,
                 Runtime.getRuntime().availableProcessors(), customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false), jobInstance.getParametres());
@@ -187,12 +185,9 @@ public abstract class Job {
                 eventJobStarted.fire(executionResult);
                 executionResult = execute(executionResult, jobInstance);
 
-                boolean jobCanceled = jobExecutionService.isJobCancelled(jobInstance.getId());
                 boolean moreToProcess = executionResult.isMoreToProcess();
 
-                executionResult.setStatus(jobCanceled ? JobExecutionResultStatusEnum.CANCELLED : moreToProcess ? JobExecutionResultStatusEnum.COMPLETED_MORE : JobExecutionResultStatusEnum.COMPLETED);
-                executionResult.close();
-                jobExecutionResultService.persistResult(executionResult);
+                boolean jobCanceled = closeExecutionResult(jobInstance, executionResult, moreToProcess);
 
                 log.info("Job {} of type {} execution finished. Job {}", jobInstance.getCode(), jobInstance.getJobTemplate(),
                     jobCanceled ? "was canceled." : moreToProcess ? "completed, with more data to process." : "completed.");
@@ -225,6 +220,27 @@ public abstract class Job {
 
             return JobExecutionResultStatusEnum.CANCELLED;
         }
+    }
+
+    protected boolean closeExecutionResult(JobInstance jobInstance, JobExecutionResultImpl executionResult, boolean moreToProcess) {
+        boolean serverShutdown = JobExecutionService.isServerIsInShutdownMode();
+        boolean jobCanceled = serverShutdown ? true : jobExecutionService.isJobCancelled(jobInstance.getId());
+        boolean limitExceeded = executionResult.isLimitExceeded();
+        JobExecutionResultStatusEnum status = JobExecutionResultStatusEnum.COMPLETED;
+        if (serverShutdown) {
+            status = JobExecutionResultStatusEnum.SHUTDOWN;
+        } else if (jobCanceled && !limitExceeded) {
+            status = JobExecutionResultStatusEnum.CANCELLED;
+        } else if (moreToProcess) {
+            status = JobExecutionResultStatusEnum.COMPLETED_MORE;
+        }
+        executionResult.setStatus(status);
+        if (serverShutdown) {
+            executionResult.addReportToBeginning("Job cancelled due to the server was shutdown in the middle of job execution");
+        }
+        executionResult.close();
+        jobExecutionResultService.persistResult(executionResult);
+        return jobCanceled;
     }
 
     /**

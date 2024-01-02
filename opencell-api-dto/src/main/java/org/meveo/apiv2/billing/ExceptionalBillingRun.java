@@ -117,6 +117,14 @@ public interface ExceptionalBillingRun extends Resource {
     default Boolean isIgnoreOrders() {
         return TRUE;
     }
+    
+    @Nullable
+    @Default
+    @Schema(description = "If TRUE, aggregation will ignore user account field (multiple user accounts will be aggregated together)")
+    @JsonProperty("ignoreUserAccounts")
+    default Boolean isIgnoreUserAccounts() {
+        return TRUE;
+    }
 
     @Nullable
     @Default
