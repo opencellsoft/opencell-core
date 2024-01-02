@@ -316,6 +316,11 @@ public class KeycloakAdminClientService implements Serializable {
 
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
+        boolean isMasterOC=false;
+        
+        if("KC".equals(ParamBean.getInstance().getProperty("userManagement.master", "KC"))) {
+        	isMasterOC=true;
+        }
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
 		log.info("realm resource keycloak : " + realmResource);
@@ -343,10 +348,15 @@ public class KeycloakAdminClientService implements Serializable {
 		if(userFromDb != null &&  user == null) {
 			isUpdate = false;
 		}else if (isUpdate && user == null) {
-            throw new ElementNotFoundException("User with username " + userName + " not found");
+			if (!isMasterOC)
+				throw new ElementNotFoundException("User with username " + userName + " not found");
+			return null;
 
         } else if (!isUpdate && user != null) {
-            throw new UsernameAlreadyExistsException("User with username " + userName + " already exists");
+        	if (!isMasterOC)
+        		throw new UsernameAlreadyExistsException("User with username " + userName + " already exists");
+        	
+        	return null;
         }
 
         if (!isUpdate && StringUtils.isBlank(password)) {
@@ -418,7 +428,7 @@ public class KeycloakAdminClientService implements Serializable {
 				log.error("error when updating user  : " + user);
 			}
         
-        } else {
+        } else{
             // Create a new user
             Response response = usersResource.create(user);
 
