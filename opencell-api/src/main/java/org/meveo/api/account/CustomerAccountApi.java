@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.GDPRInfoDto;
@@ -668,8 +669,8 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (!StringUtils.isBlank(customerAccountDto.getVatNo())) {
                 existedCustomerAccountDto.setVatNo(customerAccountDto.getVatNo());
             }
-            if (!StringUtils.isBlank(customerAccountDto.getRegistrationNo())) {
-                existedCustomerAccountDto.setRegistrationNo(customerAccountDto.getRegistrationNo());
+            if (!CollectionUtils.isNotEmpty(customerAccountDto.getRegistrationNumbers())) {
+                existedCustomerAccountDto.setRegistrationNumbers(customerAccountDto.getRegistrationNumbers());
             }
             accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto);
             if (customerAccountDto.getCustomFields() != null && !customerAccountDto.getCustomFields().isEmpty()) {

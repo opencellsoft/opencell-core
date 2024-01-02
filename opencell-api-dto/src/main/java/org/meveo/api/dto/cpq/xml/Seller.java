@@ -24,7 +24,7 @@ public class Seller {
 
         this.description = seller.getDescription();
         this.legalType = seller.getLegalType();
-        this.registrationNo = seller.getRegistrationNo();
+       // this.registrationNo = seller.getRegistrationNo();
         this.vatNo = seller.getVatNo();
 
         if (seller.getContactInformation() != null) {

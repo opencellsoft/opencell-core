@@ -82,7 +82,8 @@ public class UserAccountImportScript extends GenericMassImportScript {
             userAccountDto.setParentUserAccountCode(ocParentUACode);
         }
         userAccountDto.setDescription((String) recordMap.get("OC_USERACCOUNT_ DESCRIPTION"));
-        userAccountDto.setRegistrationNo((String) recordMap.get("OC_UA_REGISTRATION"));
+		
+        //userAccountDto.setRegistrationNo((String) recordMap.get("OC_UA_REGISTRATION"));
         userAccountDto.setVatNo((String) recordMap.get("OC_UA_TVANUMBER"));
 
         NameDto name = new NameDto();

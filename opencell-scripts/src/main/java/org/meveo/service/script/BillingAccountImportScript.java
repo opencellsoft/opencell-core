@@ -98,7 +98,7 @@ public class BillingAccountImportScript extends GenericMassImportScript {
         } catch (ParseException e) {
             throw new ValidationException("Incorrect date format for initial agreement date. Please use 'dd/MM/yyyy'");
         }
-        billingAccountDto.setRegistrationNo((String) recordMap.get("OC_BA_REGISTRATION"));
+       // billingAccountDto.setRegistrationNo((String) recordMap.get("OC_BA_REGISTRATION"));
         billingAccountDto.setVatNo((String) recordMap.get("OC_BA_TVANUMBER"));
 
         NameDto name = new NameDto();

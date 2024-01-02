@@ -19,6 +19,8 @@ package org.meveo.api.dto;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.account.AddressDto;
 import org.meveo.api.dto.account.ContactInformationDto;
 import org.meveo.api.dto.account.CustomersDto;
+import org.meveo.api.dto.account.RegistrationNumberDto;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.shared.Address;
@@ -87,7 +90,7 @@ public class SellerDto extends BusinessEntityDto {
     /**
      * The seller registration No
      */
-    private String registrationNo;
+    private Set<RegistrationNumberDto> registrationNumbers;
 
     /**
      * A legal text for the seller
@@ -99,13 +102,6 @@ public class SellerDto extends BusinessEntityDto {
      */
     private String legalType;
     
-    /**
-     * The iso ICD Code
-     */
-    private String isoICDCode;
-	
-	
-
     /**
      * Instantiates a new seller dto.
      */
@@ -145,10 +141,7 @@ public class SellerDto extends BusinessEntityDto {
         if (seller.getSeller() != null) {
             parentSeller = seller.getSeller().getCode();
         }
-        
-        if (seller.getIcdId() != null) {
-            isoICDCode = seller.getIcdId().getCode();
-        }
+		registrationNumbers = seller.getRegistrationNumbers().stream().map(RegistrationNumberDto::new).collect(Collectors.toSet());
         
         ContactInformation sellerContactInformation = seller.getContactInformation();
         if (sellerContactInformation != null) {
@@ -375,22 +368,6 @@ public class SellerDto extends BusinessEntityDto {
         this.vatNo = vatNo;
     }
 
-    /**
-     * Gets the seller's registration No
-     * @return a registration No
-     *
-     */
-    public String getRegistrationNo() {
-        return registrationNo;
-    }
-
-    /**
-     * Sets the seller's registration No
-     * @param registrationNo  new registration No
-     */
-    public void setRegistrationNo(String registrationNo) {
-        this.registrationNo = registrationNo;
-    }
 
     /**
      * Gets the seller's legal text
@@ -430,12 +407,12 @@ public class SellerDto extends BusinessEntityDto {
                 + languageCode + ", parentSeller=" + parentSeller + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences
                 + ", businessAccountModel=" + businessAccountModel + ", contactInformation=" + contactInformation + ", address=" + address + "]";
     }
-
-    public String getIsoICDCode() {
-        return isoICDCode;
-    }
-
-    public void setIsoICDCode(String isoICDCode) {
-        this.isoICDCode = isoICDCode;
-    }
+	
+	public Set<RegistrationNumberDto> getRegistrationNumbers() {
+		return registrationNumbers;
+	}
+	
+	public void setRegistrationNumbers(Set<RegistrationNumberDto> registrationNumbers) {
+		this.registrationNumbers = registrationNumbers;
+	}
 }

@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -212,7 +213,7 @@ public class CustomerAccountDto extends AccountDto {
         }
         setDueDateDelayEL(e.getDueDateDelayEL());
         setExcludedFromPayment(e.isExcludedFromPayment());
-        setRegistrationNo(e.getRegistrationNo());
+        setRegistrationNumbers(e.getRegistrationNumbers().stream().map(RegistrationNumberDto::new).collect(Collectors.toSet()));
         setVatNo(e.getVatNo());
 
         if (e.getPaymentMethods() != null && !e.getPaymentMethods().isEmpty()) {
@@ -697,4 +698,6 @@ public class CustomerAccountDto extends AccountDto {
     public void setGeneralClientAccountCode(String generalClientAccountCode) {
         this.generalClientAccountCode = generalClientAccountCode;
     }
+	
+	
 }

@@ -98,7 +98,8 @@ public class CustomerImportScript extends GenericMassImportScript {
     private void setCustomerValues(Map<String, Object> recordMap, CustomerDto customerDto) {
         customerDto.setCode((String) recordMap.get("OC_CUSTOMER_CODE"));
         customerDto.setDescription((String) recordMap.get("OC_CUSTOMER_DESCRIPTION"));
-        customerDto.setRegistrationNo((String) recordMap.get("OC_CU_REGISTRATION"));
+		
+       // customerDto.setRegistrationNo((String) recordMap.get("OC_CU_REGISTRATION"));
         customerDto.setVatNo((String) recordMap.get("OC_CU_TVANUMBER"));
         customerDto.setSeller((String) recordMap.get("OC_CUSTOMER_SELLER"));
         customerDto.setCustomerCategory((String) recordMap.get("OC_CU_CATEGORY"));

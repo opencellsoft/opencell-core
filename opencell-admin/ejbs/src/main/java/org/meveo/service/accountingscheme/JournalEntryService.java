@@ -276,7 +276,7 @@ public class JournalEntryService extends PersistenceService<JournalEntry> {
         firstEntry.setSeller(seller);
         firstEntry.setOperationNumber(operationNumber);
         firstEntry.setSellerCode(seller != null ? seller.getCode() : "");
-        firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo() : "");
+       // firstEntry.setClientUniqueId(ao.getCustomerAccount() != null ? ao.getCustomerAccount().getRegistrationNo() : "");
 
         Provider provider = providerService.getProvider();
         firstEntry.setCurrency(provider.getCurrency() != null ? provider.getCurrency().getCurrencyCode() : "");

@@ -2,14 +2,21 @@ package org.meveo.model;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.IsoIcd;
+import org.meveo.model.billing.UserAccount;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @ObservableEntity
@@ -23,9 +30,33 @@ public class RegistrationNumber extends  AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "icd_id")
 	private IsoIcd isoIcd;
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "account_entity_id")
+	
+	@Transient
 	private AccountEntity accountEntity;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "seller_id")
+	private Seller seller;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_account_id")
+	private CustomerAccount customerAccount;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_account_id")
+	private UserAccount userAccount;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "billing_account_id")
+	private BillingAccount billingAccount;
+	
+	public RegistrationNumber(){ }
+	
+	public RegistrationNumber(String registrationNo, IsoIcd isoIcd, AccountEntity accountEntity) {
+		this.registrationNo = registrationNo;
+		this.isoIcd = isoIcd;
+		setAccountEntity(accountEntity);
+	}
 	
 	public String getRegistrationNo() {
 		return registrationNo;
@@ -51,6 +82,15 @@ public class RegistrationNumber extends  AuditableEntity {
 	
 	public RegistrationNumber setAccountEntity(AccountEntity accountEntity) {
 		this.accountEntity = accountEntity;
+		if(accountEntity instanceof  Seller)
+			this.seller = (Seller) accountEntity;
+		else if(accountEntity instanceof Customer)
+			this.customer = (Customer) accountEntity;
+		else if(accountEntity instanceof CustomerAccount)
+			this.customerAccount = (CustomerAccount) accountEntity;
+		else if(accountEntity instanceof  BillingAccount)
+			this.billingAccount = (BillingAccount) accountEntity;
+		else this.userAccount = (UserAccount) accountEntity;
 		return this;
 	}
 }

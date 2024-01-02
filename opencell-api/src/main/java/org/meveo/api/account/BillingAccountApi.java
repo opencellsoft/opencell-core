@@ -614,20 +614,6 @@ public class BillingAccountApi extends AccountEntityApi {
         		titleService.create(title);
         	billingAccount.setLegalEntityType(title);
         }
-        
-        if (postData.getIsoICDCode() != null) {
-            IsoIcd isoIcd = isoIcdService.findByCode(postData.getIsoICDCode());
-            if (isoIcd == null) {
-                throw new EntityDoesNotExistsException(IsoIcd.class, postData.getIsoICDCode());
-            }
-            billingAccount.setIcdId(isoIcd);
-        }
-        else {
-            if(providerService.getProvider() != null) {
-                billingAccount.setIcdId(providerService.getProvider().getIcdId());
-            }            
-        }
-
         // exemptionReason is mandatory billingAccount.taxCategory==EXEMPTED
         if ("EXEMPTED".equalsIgnoreCase(postData.getTaxCategoryCode()) && StringUtils.isBlank(postData.getExemptionReason())) {
             throw new BusinessApiException("Exemption Reason is mandatory for EXEMPTED TaxCategory");

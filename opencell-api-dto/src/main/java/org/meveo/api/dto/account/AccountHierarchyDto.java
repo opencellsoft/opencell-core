@@ -21,7 +21,9 @@ package org.meveo.api.dto.account;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -200,8 +202,8 @@ public class AccountHierarchyDto implements Serializable {
     /**
      * Registration number. CUST.
      */
-	@Schema(description = "Registration number")
-    private String registrationNo;
+    @Schema(description = "list of registration numbers")
+    private Set<RegistrationNumberDto> registrationNumbers = new HashSet<>();
 
     /**
      * The option on how to check the threshold.
@@ -898,24 +900,6 @@ public class AccountHierarchyDto implements Serializable {
     }
 
     /**
-     * Gets the registration no.
-     *
-     * @return the registration no
-     */
-    public String getRegistrationNo() {
-        return registrationNo;
-    }
-
-    /**
-     * Sets the registration no.
-     *
-     * @param registrationNo the new registration no
-     */
-    public void setRegistrationNo(String registrationNo) {
-        this.registrationNo = registrationNo;
-    }
-
-    /**
      * Gets the vat no.
      *
      * @return the vat no
@@ -940,7 +924,7 @@ public class AccountHierarchyDto implements Serializable {
                 + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", phoneNumber=" + phoneNumber + ", billingCycleCode=" + billingCycleCode + ", address1=" + address1 + ", address2=" + address2
                 + ", address3=" + address3 + ", zipCode=" + zipCode + ", state=" + state + ", city=" + city + ", usePrefix=" + usePrefix + ", invoicingThreshold=" + invoicingThreshold + ", discountPlansForInstantiation="
                 + discountPlansForInstantiation + ", discountPlansForTermination=" + discountPlansForTermination + ", customFields=" + customFields + ", limit=" + limit + ", sortField=" + sortField + ", index=" + index
-                + ", paymentMethods=" + paymentMethods + ", paymentMethod=" + paymentMethod + ", jobTitle=" + jobTitle + ", registrationNo=" + registrationNo + ", vatNo=" + vatNo + "]";
+                + ", paymentMethods=" + paymentMethods + ", paymentMethod=" + paymentMethod + ", jobTitle=" + jobTitle + ", registrationNo=" + registrationNumbers + ", vatNo=" + vatNo + "]";
     }
 
     /**
@@ -1150,5 +1134,12 @@ public class AccountHierarchyDto implements Serializable {
 	public void setParentCustomer(CustomerDto parentCustomer) {
 		this.parentCustomer = parentCustomer;
 	}
-
+	
+	public Set<RegistrationNumberDto> getRegistrationNumbers() {
+		return registrationNumbers;
+	}
+	
+	public void setRegistrationNumbers(Set<RegistrationNumberDto> registrationNumbers) {
+		this.registrationNumbers = registrationNumbers;
+	}
 }

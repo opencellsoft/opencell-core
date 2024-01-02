@@ -165,7 +165,7 @@ public class UserAccountDto extends AccountDto {
         if (e.getMinimumLabelEl() != null) {
             setMinimumLabelEl(e.getMinimumLabelEl());
         }
-        setRegistrationNo(e.getRegistrationNo());
+		setRegistrationNumbers(e.getRegistrationNumbers().stream().map(RegistrationNumberDto::new).collect(Collectors.toSet()));
         setVatNo(e.getVatNo());
         
         if (e.getUserAccounts() != null) {
@@ -175,10 +175,6 @@ public class UserAccountDto extends AccountDto {
         	        userAccounts.add(new UserAccountDto(subUserAccount));
         	    }
         	}
-        }
-        
-        if(e.getIcdId() != null) {
-            setIsoICDCode(e.getIcdId().getCode());
         }
     }
 	

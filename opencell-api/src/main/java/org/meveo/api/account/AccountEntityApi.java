@@ -21,6 +21,7 @@ package org.meveo.api.account;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.account.AccountDto;
@@ -36,6 +37,8 @@ import org.meveo.model.shared.Title;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TitleService;
+
+import java.util.ArrayList;
 
 /**
  * @author Edward P. Legaspi
@@ -90,7 +93,8 @@ public class AccountEntityApi extends BaseApi {
         accountEntity.setName(name);
         accountEntity.setJobTitle(postData.getJobTitle());
         accountEntity.setVatNo(postData.getVatNo());
-        accountEntity.setRegistrationNo(postData.getRegistrationNo());
+	    //Todo : the list must be replaced with the real value of registration numbers
+        accountEntity.setRegistrationNumbers(new ArrayList<>());
         
         if (postData.getContactInformation() != null) {
             if (accountEntity.getContactInformation() == null) {
@@ -209,8 +213,9 @@ public class AccountEntityApi extends BaseApi {
         if (postData.getVatNo() != null) {
             accountEntity.setVatNo(StringUtils.isEmpty(postData.getVatNo()) ? null : postData.getVatNo());
         }
-        if (postData.getRegistrationNo() != null) {
-            accountEntity.setRegistrationNo(StringUtils.isEmpty(postData.getRegistrationNo()) ? null : postData.getRegistrationNo());
+         if (CollectionUtils.isNotEmpty(postData.getRegistrationNumbers())) {
+			 //Todo : the list must be replaced with the real value of registration numbers
+            accountEntity.setRegistrationNumbers(new ArrayList<>());
         }
 
         if (postData.getContactInformation() != null) {

@@ -42,6 +42,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -873,8 +874,8 @@ public class CustomerApi extends AccountEntityApi {
             if (!StringUtils.isBlank(customerDto.getVatNo())) {
                 existedCustomerDto.setVatNo(customerDto.getVatNo());
             }
-            if (!StringUtils.isBlank(customerDto.getRegistrationNo())) {
-                existedCustomerDto.setRegistrationNo(customerDto.getRegistrationNo());
+            if (CollectionUtils.isNotEmpty(customerDto.getRegistrationNumbers())) {
+                existedCustomerDto.setRegistrationNumbers(customerDto.getRegistrationNumbers());
             }
             accountHierarchyApi.populateNameAddress(existedCustomerDto, customerDto);
             if (!StringUtils.isBlank(customerDto.getCustomFields())) {

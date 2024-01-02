@@ -86,7 +86,6 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @Override
     public Seller initEntity() {
         super.initEntity();
-        this.setIcdId(entity.getIcdId());
         if (entity.getAddress() == null) {
             entity.setAddress(new Address());
         }
@@ -112,12 +111,11 @@ public class SellerBean extends CustomFieldBean<Seller> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        if(entity.getRegistrationNo() != null && this.getIcdId() == null) {
+        if(this.getIcdId() == null) {
             messages.error(new BundleKey("messages", "seller.icd.error"));
             facesContext.validationFailed();
             return "";
         }
-        entity.setIcdId(this.getIcdId());
         return super.saveOrUpdate(killConversation);
     }
 

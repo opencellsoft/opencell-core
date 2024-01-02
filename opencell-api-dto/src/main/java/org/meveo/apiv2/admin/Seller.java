@@ -1,16 +1,16 @@
 package org.meveo.apiv2.admin;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.immutables.value.Value;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.account.RegistrationNumberDto;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.apiv2.models.Resource;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @Value.Immutable
 @Value.Style(jdkOnly=true)
@@ -54,7 +54,7 @@ public interface Seller extends Resource{
 	TitleDto getLegalType();
 	
 	@Nullable
-	String getRegistrationNo();
+	Set<RegistrationNumberDto> getRegistrationNumbers();
 	@Nullable
 	CustomFieldsDto getCustomFields();
 	

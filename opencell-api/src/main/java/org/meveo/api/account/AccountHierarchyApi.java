@@ -255,7 +255,7 @@ public class AccountHierarchyApi extends BaseApi {
 
         CustomerDto customerDto = new CustomerDto();
         customerDto.setCode(customerCode);
-        customerDto.setRegistrationNo(postData.getRegistrationNo());
+        customerDto.setRegistrationNumbers(postData.getRegistrationNumbers());
         customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
 
@@ -551,7 +551,7 @@ public class AccountHierarchyApi extends BaseApi {
         }
         customerDto.setSeller(postData.getSellerCode());
         customerDto.setVatNo(postData.getVatNo());
-        customerDto.setRegistrationNo(postData.getRegistrationNo());
+        customerDto.setRegistrationNumbers(postData.getRegistrationNumbers());
         customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
         customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());
@@ -1206,7 +1206,7 @@ public class AccountHierarchyApi extends BaseApi {
         userAccountDto.setExternalRef2(postData.getExternalRef2());
         userAccountDto.setJobTitle(postData.getJobTitle());
         userAccountDto.setContactInformation(postData.getContactInformation());
-        userAccountDto.setRegistrationNo(postData.getRegistrationNo());
+        userAccountDto.setRegistrationNumbers(postData.getRegistrationNumbers());
         userAccountDto.setVatNo(postData.getVatNo());
 
         CustomFieldsDto cfsDto = new CustomFieldsDto();
@@ -1275,7 +1275,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setExternalRef2(postData.getExternalRef2());
         billingAccountDto.setJobTitle(postData.getJobTitle());
         billingAccountDto.setContactInformation(postData.getContactInformation());
-        billingAccountDto.setRegistrationNo(postData.getRegistrationNo());
+        billingAccountDto.setRegistrationNumbers(postData.getRegistrationNumbers());
         billingAccountDto.setVatNo(postData.getVatNo());
         billingAccountDto.setDiscountPlansForInstantiation(postData.getDiscountPlansForInstantiation());
         billingAccountDto.setDiscountPlansForTermination(postData.getDiscountPlansForTermination());
@@ -1353,7 +1353,7 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setExternalRef1(postData.getExternalRef1());
         customerAccountDto.setExternalRef2(postData.getExternalRef2());
         customerAccountDto.setJobTitle(postData.getJobTitle());
-        customerAccountDto.setRegistrationNo(postData.getRegistrationNo());
+        customerAccountDto.setRegistrationNumbers(postData.getRegistrationNumbers());
         customerAccountDto.setVatNo(postData.getVatNo());
         customerAccountDto.setInvoicingThreshold(postData.getCustomerAccountInvoicingThreshold());
         if (postData.getCustomerAccountCheckThreshold() == null && postData.getCustomerAccountInvoicingThreshold() != null) {
@@ -1440,7 +1440,7 @@ public class AccountHierarchyApi extends BaseApi {
         customerDto.setContactInformation(postData.getContactInformation());
         customerDto.setExternalRef1(postData.getExternalRef1());
         customerDto.setExternalRef2(postData.getExternalRef2());
-        customerDto.setRegistrationNo(postData.getRegistrationNo());
+        customerDto.setRegistrationNumbers(postData.getRegistrationNumbers());
         customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
         customerDto.setInvoicingThreshold(postData.getCustomerInvoicingThreshold());

@@ -16,6 +16,7 @@ import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.crm.CustomerSequence;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.InvoiceTypeSequenceService;
+import org.meveo.service.admin.impl.RegistrationNumberService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.catalog.impl.CustomerSequenceService;
 import org.meveo.service.validation.ValidationByNumberCountryService;
@@ -24,6 +25,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +44,8 @@ public class SellerApiService extends BaseApi {
 	private CustomerSequenceService customerSequenceService;
 	@Inject
 	private MeveoUser meveoUser;
+	@Inject
+	private RegistrationNumberService registrationNumberService;
 	
 	public void create(Seller seller) {
 		handleMissingParameters(seller);
@@ -67,6 +71,15 @@ public class SellerApiService extends BaseApi {
 			}
 		}
 		sellerService.create(seller);
+		
+		seller.getRegistrationNumbers().forEach(registrationNumber -> {
+			if(registrationNumber.getIsoIcd() == null){
+				registrationNumber.setIsoIcd(appProvider.getIcdId());
+			}
+			if(registrationNumber.getId() == null) {
+				registrationNumberService.create(registrationNumber);
+			}
+		});
 	}
 	private void addNewInvoiceTypeSequence(Seller seller, List<Long> invoiceTypeIds){
 		var missingParam = new ArrayList<String>();
@@ -110,7 +123,6 @@ public class SellerApiService extends BaseApi {
 		seller.setContactInformation(postSeller.getContactInformation());
 		seller.setAddress(postSeller.getAddress());
 		seller.setLegalType(postSeller.getLegalType());
-		seller.setRegistrationNo(postSeller.getRegistrationNo());
 		seller.setLegalEntityType(postSeller.getLegalEntityType());
 		seller.setSeller(postSeller.getSeller());
 		if(CollectionUtils.isNotEmpty(postSeller.getMedias())){
@@ -180,6 +192,12 @@ public class SellerApiService extends BaseApi {
 		if(fieldData == null){
 			missingParameters.add(fieldError);
 		}
+		if(fieldData instanceof Collection) {
+			Collection col = (Collection) fieldData;
+			if(CollectionUtils.isEmpty(col)){
+				missingParameters.add(fieldError);
+			}
+		}
 	}
 	private void handleMissingParameters(Seller seller){
 		var paramMissing = new ArrayList<String>();
@@ -189,7 +207,7 @@ public class SellerApiService extends BaseApi {
 		checkField(seller.getTradingLanguage(), "languageCode", paramMissing);
 		checkField(seller.getTradingCountry(), "countryCode", paramMissing);
 		checkField(seller.getTradingCurrency(), "currencyCode", paramMissing);
-		checkField(seller.getRegistrationNo(), "registrationNo", paramMissing);
+		checkField(seller.getRegistrationNumbers(), "registrationNumbers", paramMissing);
 		if(seller.getLegalEntityType() == null) {
 			paramMissing.add("legalType");
 		}else if(StringUtils.isEmpty(seller.getLegalEntityType().getCode())){

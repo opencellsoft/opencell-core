@@ -45,7 +45,6 @@ public class BillingAccount {
         this.externalRef1 = billingAccount.getExternalRef1();
         this.externalRef2 = billingAccount.getExternalRef2();
         this.jobTitle = billingAccount.getJobTitle();
-        this.registrationNo = billingAccount.getRegistrationNo();
         this.vatNo = billingAccount.getVatNo();
         this.name = new Name(billingAccount.getName());
         this.address = new Address(billingAccount.getAddress());

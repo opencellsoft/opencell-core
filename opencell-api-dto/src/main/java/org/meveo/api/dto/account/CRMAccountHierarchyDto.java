@@ -20,8 +20,10 @@ package org.meveo.api.dto.account;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -117,7 +119,7 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     private String customerBrand;
     
     /** The registration no. */
-    private String registrationNo;
+    private Set<RegistrationNumberDto> registrationNumbers = new HashSet<>();
     
     /** The vat no. */
     private String vatNo;
@@ -1026,24 +1028,6 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
     }
 
     /**
-     * Gets the registration no.
-     *
-     * @return the registration no
-     */
-    public String getRegistrationNo() {
-        return registrationNo;
-    }
-
-    /**
-     * Sets the registration no.
-     *
-     * @param registrationNo the new registration no
-     */
-    public void setRegistrationNo(String registrationNo) {
-        this.registrationNo = registrationNo;
-    }
-
-    /**
      * Gets the vat no.
      *
      * @return the vat no
@@ -1309,5 +1293,12 @@ public class CRMAccountHierarchyDto extends BaseEntityDto {
 	public void setParentCustomerCode(String parentCustomerCode) {
 		this.parentCustomerCode = parentCustomerCode;
 	}
-
+	
+	public Set<RegistrationNumberDto> getRegistrationNumbers() {
+		return registrationNumbers;
+	}
+	
+	public void setRegistrationNumbers(Set<RegistrationNumberDto> registrationNumbers) {
+		this.registrationNumbers = registrationNumbers;
+	}
 }

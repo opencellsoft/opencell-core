@@ -106,13 +106,6 @@ public class Seller extends AccountEntity implements IWFEntity {
     private TradingLanguage tradingLanguage;
 
     /**
-     * The seller registration No
-     */
-    @Size(max = 100)
-    @Column(name = "registration_no", length = 100)
-    private String registrationNo;
-
-    /**
      * A legal text for the seller
      */
     @Type(type = "longText")
@@ -161,21 +154,13 @@ public class Seller extends AccountEntity implements IWFEntity {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "billing_seller_media", joinColumns = @JoinColumn(name = "seller_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
     private List<Media> medias = new ArrayList<>();
-    
-    /**
-     * IsoIcd
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "icd_id")
-    private IsoIcd icdId;
-    
-    public IsoIcd getIcdId() {
-        return icdId;
-    }
-
-    public void setIcdId(IsoIcd icdId) {
-        this.icdId = icdId;
-    }
+	
+	@Column(name = "type_of_account")
+	private String typeOfAccount = "SELLER";
+	
+	public String getTypeOfAccount() {
+		return typeOfAccount;
+	}
     
     public List<Contract> getContracts() {
         return contracts;
@@ -207,25 +192,6 @@ public class Seller extends AccountEntity implements IWFEntity {
 
     public void setTradingLanguage(TradingLanguage tradingLanguage) {
         this.tradingLanguage = tradingLanguage;
-    }
-
-    /**
-     * Gets the seller's registration No
-     * 
-     * @return a registration No
-     *
-     */
-    public String getRegistrationNo() {
-        return registrationNo;
-    }
-
-    /**
-     * Sets the seller's registration No
-     * 
-     * @param registrationNo new registration No
-     */
-    public void setRegistrationNo(String registrationNo) {
-        this.registrationNo = registrationNo;
     }
 
     /**

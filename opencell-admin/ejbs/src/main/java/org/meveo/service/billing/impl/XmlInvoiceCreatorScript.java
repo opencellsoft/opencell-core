@@ -449,7 +449,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             userAccountTag.setAttribute("code", userAccount.getCode());
             userAccountTag.setAttribute("jobTitle", getDefaultIfNull(userAccount.getJobTitle(), ""));
             userAccountTag.setAttribute("description", getDefaultIfNull(userAccount.getDescription(), ""));
-            userAccountTag.setAttribute("registrationNo", getDefaultIfNull(userAccount.getRegistrationNo(), ""));
+           // userAccountTag.setAttribute("registrationNo", getDefaultIfNull(userAccount.getRegistrationNo(), ""));
             userAccountTag.setAttribute("vatNo", getDefaultIfNull(userAccount.getVatNo(), ""));
             addCustomFields(userAccount, doc, userAccountTag);
         }
@@ -1752,9 +1752,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         billingAccountTag.setAttribute("externalRef1", getDefaultIfNull(billingAccount.getExternalRef1(), ""));
         billingAccountTag.setAttribute("externalRef2", getDefaultIfNull(billingAccount.getExternalRef2(), ""));
         billingAccountTag.setAttribute("jobTitle", getDefaultIfNull(billingAccount.getJobTitle(), ""));
-        billingAccountTag.setAttribute("registrationNo", getDefaultIfNull(billingAccount.getRegistrationNo(), ""));
+       // billingAccountTag.setAttribute("registrationNo", getDefaultIfNull(billingAccount.getRegistrationNo(), ""));
         billingAccountTag.setAttribute("vatPaymentOption", invoice.getInvoiceType().getUntdidVatPaymentOption() != null ? invoice.getInvoiceType().getUntdidVatPaymentOption().getCode2475() : "");
-        billingAccountTag.setAttribute("icd", billingAccount.getIcdId() != null ? billingAccount.getIcdId().getCode() : "");
+        //billingAccountTag.setAttribute("icd", billingAccount.getIcdId() != null ? billingAccount.getIcdId().getCode() : "");
         billingAccountTag.setAttribute("vatNo", getDefaultIfNull(billingAccount.getVatNo(), ""));
         if (invoiceConfiguration.isDisplayBillingCycle()) {
             Element bcTag = createBillingCycleSection(doc, billingCycle);
@@ -1869,7 +1869,7 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
         sellerTag.setAttribute("description", getDefaultIfNull(seller.getDescription(), ""));
         sellerTag.setAttribute("legalType", getDefaultIfNull(seller.getLegalType(), ""));
         sellerTag.setAttribute("vatNo", getDefaultIfNull(seller.getVatNo(), ""));
-        sellerTag.setAttribute("registrationNo", getDefaultIfNull(seller.getRegistrationNo(), ""));
+        //sellerTag.setAttribute("registrationNo", getDefaultIfNull(seller.getRegistrationNo(), ""));
         addCustomFields(seller, doc, sellerTag);
         Element addressTag = createAddressSection(doc, seller, invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode());
         if (addressTag != null) {
@@ -3128,9 +3128,9 @@ public class XmlInvoiceCreatorScript implements IXmlInvoiceCreatorScript {
             userAccountTag.setAttribute("code", userAccount.getCode());
             userAccountTag.setAttribute("jobTitle", getDefaultIfNull(userAccount.getJobTitle(), ""));
             userAccountTag.setAttribute("description", getDefaultIfNull(userAccount.getDescription(), ""));
-            userAccountTag.setAttribute("registrationNo", getDefaultIfNull(userAccount.getRegistrationNo(), ""));
+           // userAccountTag.setAttribute("registrationNo", getDefaultIfNull(userAccount.getRegistrationNo(), ""));
             userAccountTag.setAttribute("vatNo", getDefaultIfNull(userAccount.getVatNo(), ""));
-            userAccountTag.setAttribute("ICD", userAccount.getIcdId() != null ? userAccount.getIcdId().getCode() : "");
+           // userAccountTag.setAttribute("ICD", userAccount.getIcdId() != null ? userAccount.getIcdId().getCode() : "");
             addCustomFields(userAccount, doc, userAccountTag);
         }
         if (invoiceConfiguration.isDisplaySubscriptions()) {

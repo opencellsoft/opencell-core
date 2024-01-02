@@ -386,12 +386,6 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
     @Transient
     private List<InvoiceLine> minInvoiceLines;
 
-    /**
-     * IsoIcd
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "icd_id")
-    private IsoIcd icdId;
 
     /**
      * Default PriceList (Optional)
@@ -399,16 +393,7 @@ public class BillingAccount extends AccountEntity implements IInvoicingMinimumAp
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_list_id")
     private PriceList priceList;
-
-    public IsoIcd getIcdId() {
-        return icdId;
-    }
-
-    public void setIcdId(IsoIcd icdId) {
-        this.icdId = icdId;
-    }
-
-    public boolean isThresholdPerEntity() {
+	public boolean isThresholdPerEntity() {
     	return thresholdPerEntity;
 	}
     

@@ -336,16 +336,6 @@ public class UserAccountApi extends AccountEntityApi {
             }
             userAccount.setBillingAccount(billingAccount);
         }
-        if (postData.getIsoICDCode() != null) {
-            IsoIcd isoIcd = isoIcdService.findByCode(postData.getIsoICDCode());
-            if (isoIcd == null) {
-                throw new EntityDoesNotExistsException(IsoIcd.class, postData.getIsoICDCode());
-            }
-            userAccount.setIcdId(isoIcd);
-        }
-        else {
-            userAccount.setIcdId(userAccount.getBillingAccount().getIcdId());
-        }
         updateAccount(userAccount, postData, checkCustomFields);
 
         if (postData.getSubscriptionDate() != null) {

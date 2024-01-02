@@ -155,7 +155,6 @@ public class Customer extends AccountEntity implements IInvoicingMinimumApplicab
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Contract> contracts = new ArrayList<>();
-    
     public List<Contract> getContracts() {
         return contracts;
     }

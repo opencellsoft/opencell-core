@@ -21,6 +21,7 @@ package org.meveo.api.dto.account;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -150,7 +151,7 @@ public class CustomerDto extends AccountDto {
 		super(e);
 
 		setVatNo(e.getVatNo());
-		setRegistrationNo(e.getRegistrationNo());
+		setRegistrationNumbers(e.getRegistrationNumbers().stream().map(RegistrationNumberDto::new).collect(Collectors.toSet()));
 
 		if (e.getCustomerCategory() != null) {
 			setCustomerCategory(e.getCustomerCategory().getCode());

@@ -18,6 +18,7 @@
 package org.meveo.model;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -28,6 +29,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
@@ -141,8 +143,8 @@ public abstract class AccountEntity extends BusinessCFEntity {
     /**
      * Registration number
      */
-    @Column(name = "registration_no", length = 100)
-    private String registrationNo;
+    /*@Column(name = "registration_no", length = 100)
+    private String registrationNo;*/
 
     /**
      * Expression to determine minimum amount value
@@ -178,12 +180,10 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @JoinColumn(name = "legal_entity_type_id")
     protected Title legalEntityType;
 	
-	@OneToMany(mappedBy = "")
+	@Transient
 	private List<RegistrationNumber> registrationNumbers = new ArrayList<>();
-    
-
-
-    public String getExternalRef1() {
+	
+	public String getExternalRef1() {
         return externalRef1;
     }
 
@@ -273,13 +273,13 @@ public abstract class AccountEntity extends BusinessCFEntity {
         this.vatNo = vatNo;
     }
 
-    public String getRegistrationNo() {
+    /*public String getRegistrationNo() {
         return registrationNo;
     }
 
     public void setRegistrationNo(String registrationNo) {
         this.registrationNo = registrationNo;
-    }
+    }*/
 
 	/**
      * Instantiate contactInformation field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
@@ -392,4 +392,12 @@ public abstract class AccountEntity extends BusinessCFEntity {
     public String getAccountType() {
         return this.getClass().getSimpleName();
     }
+	
+	public List<RegistrationNumber> getRegistrationNumbers() {
+		return registrationNumbers;
+	}
+	
+	public void setRegistrationNumbers(List<RegistrationNumber> registrationNumbers) {
+		this.registrationNumbers = registrationNumbers;
+	}
 }

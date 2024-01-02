@@ -9094,8 +9094,10 @@ public class AgedBalanceReporting extends ReportExtractScript {
 		</addColumn>
 	</changeSet>
 
-    <changeSet id="INTRD-20050_20231226" author="TarikFA.">
-        <createSequence sequenceName="account_registration_number_seq" />
+    <changeSet id="INTRD-20050_20231226_V2" author="TarikFA.">
+        <dropSequence sequenceName="account_registration_number_seq" />
+        <createSequence sequenceName="account_registration_number_seq" startValue="1" />
+        <dropTable tableName="account_registration_number" />
         <createTable tableName="account_registration_number">
             <column name="id" type="bigint" autoIncrement="${id.auto}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_registration_number_pkey" />
@@ -9109,7 +9111,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="updater" type="varchar(100)" />
             <column name="registration_id" type="varchar(100)" />
             <column name="icd_id" type="bigint" />
-            <column name="account_entity_id" type="bigint" />
+            <column name="seller_id" type="bigint" />
+            <column name="billing_account_id" type="bigint" />
+            <column name="user_account_id" type="bigint" />
+            <column name="customer_account_id" type="bigint" />
+            <column name="customer_id" type="bigint" />
 
         </createTable>
 
@@ -9118,9 +9124,29 @@ public class AgedBalanceReporting extends ReportExtractScript {
                                  referencedTableName="iso_icd"
                                  referencedColumnNames="id"/>
 
-        <addForeignKeyConstraint baseColumnNames="account_entity_id" baseTableName="account_registration_number"
-                                 constraintName="fk_account_entity_id_registration_number"
-                                 referencedTableName="account_entity"
+        <addForeignKeyConstraint baseColumnNames="billing_account_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_billing_account"
+                                 referencedTableName="billing_billing_account"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="customer_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_crm_customer"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_ar_customer_account"
+                                 referencedTableName="ar_customer_account"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_crm_seller"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_account_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_billing_user_account"
+                                 referencedTableName="billing_user_account"
                                  referencedColumnNames="id"/>
     </changeSet>
 
