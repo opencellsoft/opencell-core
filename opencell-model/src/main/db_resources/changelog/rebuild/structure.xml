@@ -21027,6 +21027,57 @@
                                  referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
 
+
+    <changeSet id="INTRD-20050_20231226_build" author="TarikFA.">
+        <createSequence sequenceName="account_registration_number_seq" startValue="1" />
+        <createTable tableName="account_registration_number">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="account_registration_number_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="registration_id" type="varchar(100)" />
+            <column name="icd_id" type="bigint" />
+            <column name="account_entity_id" type="bigint" />
+
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="icd_id" baseTableName="account_registration_number"
+                                 constraintName="fk_icd_id"
+                                 referencedTableName="iso_icd"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="account_entity_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_billing_account"
+                                 referencedTableName="billing_billing_account"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="account_entity_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_crm_customer"
+                                 referencedTableName="crm_customer"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="account_entity_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_ar_customer_account"
+                                 referencedTableName="ar_customer_account"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="account_entity_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_crm_seller"
+                                 referencedTableName="crm_seller"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="account_entity_id" baseTableName="account_registration_number"
+                                 constraintName="fk_account_entity_id_billing_user_account"
+                                 referencedTableName="billing_user_account"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
    	<changeSet id="#20210623-INTRD-277-quoteValidationScript" author="TarikFA."/>
    	<changeSet id="#20210623-INTRD-277-orderAdvacementScript" author="TarikFA."/>
     <changeSet id="#INTRD-13326_20230227" author="zelmeliani" />
@@ -21164,6 +21215,7 @@
     <changeSet id="#INTRD-18792_advanced_settings" author="Mohammed_ElAzzouzi" />
     <changeSet id="#INTRD-20056_finance_settings" author="a.rouaguebe" />
     <changeSet id="#INTRD-19574_20230712" author="zbariki" />
+    <changeSet id="INTRD-20050_20231226" author="TarikFA." />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
