@@ -768,7 +768,7 @@ public class PaymentApi extends BaseApi {
 	 */
 	public RejectionCodesImportResult importRejectionCodes(ImportRejectionCodeInput importRejectionCodeInput) {
 		if (isBlank(importRejectionCodeInput.getBase64csv())) {
-			throw new BusinessException("Encoded file should not be null or empty");
+			throw new BusinessApiException("Encoded file should not be null or empty");
 		}
 		ImportRejectionCodeConfig config =
 				new ImportRejectionCodeConfig(importRejectionCodeInput.getBase64csv(),
