@@ -26,7 +26,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
@@ -43,9 +42,6 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Parent class of all account entities
@@ -177,9 +173,6 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "legal_entity_type_id")
     protected Title legalEntityType;
-	
-	@OneToMany(mappedBy = "")
-	private List<RegistrationNumber> registrationNumbers = new ArrayList<>();
     
 
 
