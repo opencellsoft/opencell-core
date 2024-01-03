@@ -22,8 +22,8 @@ import java.util.Map;
 @ModuleItem
 @CustomFieldEntity(cftCodePrefix = "PaymentRejectionCode")
 @Table(name = "ar_payment_rejection_code")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "ar_payment_rejection_code_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+        parameters = {@Parameter(name = "sequence_name", value = "ar_payment_rejection_code_seq"), })
 @NamedQueries({
         @NamedQuery(name = "PaymentRejectionCode.findByCodeAndPaymentGateway", query = "SELECT rc from PaymentRejectionCode rc where rc.code = :code and rc.paymentGateway.id = :paymentGatewayId"),
         @NamedQuery(name = "PaymentRejectionCode.clearAllByPaymentGateway", query = "DELETE from PaymentRejectionCode rc where rc.paymentGateway.id = :paymentGatewayId"),
@@ -47,6 +47,10 @@ public class PaymentRejectionCode extends BusinessCFEntity {
     @Column(name = "description_i18n", columnDefinition = "jsonb")
     private Map<String, String> descriptionI18n;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_rejection_codes_group_id")
+    private PaymentRejectionCodesGroup paymentRejectionCodesGroup;
+
     public PaymentGateway getPaymentGateway() {
         return paymentGateway;
     }
@@ -61,5 +65,13 @@ public class PaymentRejectionCode extends BusinessCFEntity {
 
     public void setDescriptionI18n(Map<String, String> descriptionI18n) {
         this.descriptionI18n = descriptionI18n;
+    }
+
+    public PaymentRejectionCodesGroup getPaymentRejectionCodesGroup() {
+        return paymentRejectionCodesGroup;
+    }
+
+    public void setPaymentRejectionCodesGroup(PaymentRejectionCodesGroup paymentRejectionCodesGroup) {
+        this.paymentRejectionCodesGroup = paymentRejectionCodesGroup;
     }
 }

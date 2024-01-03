@@ -9151,4 +9151,87 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			referencedColumnNames="id" referencedTableName="cpq_order_product" />
 	</changeSet>
 
+    <changeSet id="INTRD-19826_20240103" author="ZBARIKI">
+        <createSequence sequenceName="ar_payment_rejection_action_seq" startValue="1" />
+        <createSequence sequenceName="ar_payment_rejection_codes_group_seq" startValue="1" />
+
+        <createTable tableName="ar_payment_rejection_action">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_rejection_action_pk"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="cf_values" type="${type.json}"/>
+            <column name="sequence" type="int"/>
+            <column name="script_instance_id" type="bigint" />
+            <column name="payment_rejection_codes_group_id" type="bigint" />
+        </createTable>
+
+        <createTable tableName="ar_payment_rejection_codes_group">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_rejection_codes_group_pk"/>
+            </column>
+            <column name="version" type="int4"/>
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated" type="datetime"/>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)"/>
+            <column name="uuid" type="varchar(60)" defaultValueComputed="${uuid_function}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator" type="varchar(100)"/>
+            <column name="updater" type="varchar(100)"/>
+            <column name="cf_values" type="${type.json}"/>
+            <column name="payment_gateway_id" type="bigint"/>
+        </createTable>
+
+        <addColumn tableName="ar_payment_rejection_code">
+            <column name="payment_rejection_codes_group_id" type="bigint"/>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="script_instance_id"
+                                 baseTableName="ar_payment_rejection_action"
+                                 constraintName="fk_ar_payment_rejection_action_script_inst_id"
+                                 referencedTableName="meveo_script_instance"
+                                 referencedColumnNames="id" />
+        <addForeignKeyConstraint baseColumnNames="payment_rejection_codes_group_id"
+                                 baseTableName="ar_payment_rejection_action"
+                                 constraintName="fk_ar_payment_rejection_action_payment_rejection_codes_group_id"
+                                 referencedTableName="ar_payment_rejection_codes_group"
+                                 referencedColumnNames="id" />
+        
+        <addForeignKeyConstraint baseColumnNames="payment_gateway_id"
+                                 baseTableName="ar_payment_rejection_codes_group"
+                                 constraintName="fk_ar_payment_rejection_codes_group_payment_gateway_id"
+                                 referencedTableName="ar_payment_gateway"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseColumnNames="payment_rejection_codes_group_id"
+                                 baseTableName="ar_payment_rejection_code"
+                                 constraintName="fk_payment_rejection_codes_group_id"
+                                 referencedTableName="ar_payment_rejection_codes_group"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>

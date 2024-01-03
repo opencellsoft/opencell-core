@@ -13033,6 +13033,18 @@ public class DummyPaymentGatewayScript extends Script {
 		</insert>
 	</changeSet>
 
+	<changeSet id="INTRD-19826_20240103" author="ZBARIKI">
+		<insert tableName="meveo_script_instance_cat">
+			<column name="id" valueSequenceNext="meveo_script_instance_cat_seq"/>
+			<column name="version" valueNumeric="0"/>
+			<column name="created" valueComputed="now()"/>
+			<column name="creator" value="applicationInitializer"/>
+			<column name="code" value="PAYMENT_REJECTION_ACTIONS"/>
+			<column name="description" value="Payment rejection actions"/>
+			<column name="description_i18n" value='{"EN":"Payment rejection actions","FR":"Actions sur rejet de paiement"}' />
+		</insert>
+	</changeSet>
+
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
 	<changeSet id="INTRD-15899_20230505-BA-DEFAULT-TAXCATEGORY" author="aelmalki" />
