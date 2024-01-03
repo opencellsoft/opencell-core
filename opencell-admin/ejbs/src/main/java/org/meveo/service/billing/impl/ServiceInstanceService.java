@@ -664,7 +664,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 				        .createNamedQuery("WalletOperation.findWalletOperationByChargeInstance")
 				        .setParameter("chargeInstanceId", recurringChargeInstance.getId())
 				        .setParameter("subscriptionId", recurringChargeInstance.getSubscription().getId())
-				        .setParameter("dateToCharge", recurringChargeInstance.getNextChargeDate())
+				        .setParameter("dateToCharge", terminationDate)
 				        .getResultList();
 		        if (walletOperations != null && !walletOperations.isEmpty()) {
 			        walletOperationService.getEntityManager()
@@ -726,7 +726,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             } else if (applyReimbursment && chargeToDateOnTermination.before(chargedToDate)) {
 
                 try {
-                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber);
+                    recurringChargeInstanceService.reimburseRecuringCharges(recurringChargeInstance, orderNumber, woCanceled);
 
                 } catch (RatingException e) {
                     log.trace("Failed to apply reimbursement recurring charge {}: {}", recurringChargeInstance, e.getRejectionReason());
