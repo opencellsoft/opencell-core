@@ -111,11 +111,6 @@ public class UserApi extends BaseApi {
 
             handleMissingParameters();
 
-            // check if the user already exists
-            if (userService.findByUsername(postData.getUsername(), false, false) != null) {
-                throw new EntityAlreadyExistsException(User.class, postData.getUsername(), "username");
-            }
-
             boolean isManagingSelf = currentUser.hasRole(ROLE_API_USER_SELF_MANAGEMENT);
             boolean isUsersManager = currentUser.hasRole(ROLE_API_USER_MANAGEMENT);
 
