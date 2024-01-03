@@ -451,6 +451,16 @@ public class InvoiceUblHelper {
 	private ItemType getItemTyp(InvoiceLine invoiceLine){
 		ItemType itemType = objectFactoryCommonAggrement.createItemType();
 		TaxCategoryType taxCategoryType = objectFactoryCommonAggrement.createTaxCategoryType();
+		
+		//id.setValue();
+		String untdidTaxationCategory = invoiceLine.getTax() != null ? invoiceLine.getTax().getUntdidTaxationCategory() != null ?  invoiceLine.getTax().getUntdidTaxationCategory().getCode() : null: null;
+		if(untdidTaxationCategory != null) {
+			ID id = objectFactorycommonBasic.createID();
+			id.setSchemeID("UN/ECE 5305");
+			id.setSchemeAgencyID("6");
+			id.setValue(untdidTaxationCategory);
+			taxCategoryType.setID(id);
+		}
 		Percent percent = objectFactorycommonBasic.createPercent();
 		percent.setValue(invoiceLine.getTaxRate());
 		taxCategoryType.setPercent(percent);
