@@ -132,6 +132,7 @@ public class InvoiceUblHelper {
 	private final static UntdidAllowanceCodeService untdidAllowanceCodeService;
 	private final static UntdidTaxationCategoryService UntdidTaxationCategoryService;
 	private final static InvoiceAgregateService invoiceAgregateService;
+	private static final String XUN = "XUN";
 	
 	static {
 		objectFactorycommonBasic = new oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.ObjectFactory();
@@ -395,6 +396,7 @@ public class InvoiceUblHelper {
 			// InvoiceLine/ InvoicedQuantity
 			InvoicedQuantity invoicedQuantity = objectFactorycommonBasic.createInvoicedQuantity();
 			invoicedQuantity.setValue(invoiceLine.getQuantity());
+			invoicedQuantity.setUnitCode(XUN);
 			invoiceLineType.setInvoicedQuantity(invoicedQuantity);
 			setPriceAndCreditLine(invoiceLine, invoiceLineType, itemType);
 			target.getInvoiceLines().add(invoiceLineType);
@@ -407,6 +409,7 @@ public class InvoiceUblHelper {
 			ItemType itemType = getItemTyp(invoiceLine);
 			// InvoiceLine/ InvoicedQuantity
 			CreditedQuantity invoicedQuantity = objectFactorycommonBasic.createCreditedQuantity();
+			invoicedQuantity.setUnitCode(XUN);
 			invoicedQuantity.setValue(invoiceLine.getQuantity());
 			invoiceLineType.setCreditedQuantity(invoicedQuantity);
 			setPriceAndCreditLine(invoiceLine, invoiceLineType, itemType);
