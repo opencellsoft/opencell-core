@@ -35,6 +35,7 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.User;
@@ -60,8 +61,15 @@ public class UserService extends PersistenceService<User> {
     @RolesAllowed({ "userManagement", "userSelfManagement", "apiUserManagement", "apiUserSelfManagement" })
     public void create(User user) throws UsernameAlreadyExistsException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
-	    keycloakAdminClientService.createUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
-			super.create(user);
+        String userId =keycloakAdminClientService.createUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
+	    // check if the user already exists
+        if (findByUsername(user.getUserName(), false, false) != null) {
+        	if(userId==null) // when master=OC and user already exists in KC
+        		throw new EntityAlreadyExistsException(User.class, user.getUserName(), "username");
+        }else {
+        	super.create(user);
+        }
+	    
     }
 
     @Override
