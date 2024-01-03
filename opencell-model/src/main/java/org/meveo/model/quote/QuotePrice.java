@@ -20,6 +20,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -83,6 +84,7 @@ public class QuotePrice extends AuditableEntity {
 		this.contractItem=copy.contractItem;
 		this.pricePlanMatrixVersion=copy.getPricePlanMatrixVersion();
 		this.pricePlanMatrixLine=copy.getPricePlanMatrixLine();
+		this.tax=copy.getTax();
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -199,6 +201,10 @@ public class QuotePrice extends AuditableEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contract_item_id")
 	private ContractItem contractItem;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "tax_id")
+    private Tax tax;
     
 	public QuoteArticleLine getQuoteArticleLine() {
 		return quoteArticleLine;
@@ -438,6 +444,14 @@ public class QuotePrice extends AuditableEntity {
 
 	public void setContractItem(ContractItem contractItem) {
 		this.contractItem = contractItem;
+	}
+
+	public Tax getTax() {
+		return tax;
+	}
+
+	public void setTax(Tax tax) {
+		this.tax = tax;
 	}
 
 	

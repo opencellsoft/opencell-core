@@ -9070,6 +9070,21 @@ public class AgedBalanceReporting extends ReportExtractScript {
             $$;
             ]]></sql>
     </changeSet>
+    
+    <changeSet id="#INTRD-19244_27102023" author="Mbarek-Ay" failOnError="false">
+		<addColumn tableName="cpq_quote_price">
+			<column name="tax_id"  type="bigint" />
+		</addColumn>
+		<addColumn tableName="order_price">
+			<column name="tax_id"  type="bigint" />
+		</addColumn>
+	
+	   <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_tax"
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+       <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="order_price" constraintName="fk_order_price_tax"
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+            
+      </changeSet>
 
     <changeSet id="INTRD-20050_20231226" author="TarikFA.">
         <createSequence sequenceName="account_registration_number_seq" startValue="1" />

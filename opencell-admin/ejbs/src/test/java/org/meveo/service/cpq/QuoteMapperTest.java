@@ -333,6 +333,7 @@ public class QuoteMapperTest {
         price.setCurrencyCode("EUR");
         price.setPriceOverCharged(false);
         price.setApplyDiscountsOnOverridenPrice(false);
+        price.setTax(null);
         return price;
     }
 

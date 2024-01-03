@@ -10211,6 +10211,7 @@
 			<column name="price_plan_matrix_version_id" type="bigint" />
 			<column name="price_plan_matrix_line_id" type="bigint" />
 			<column name="contract_item_id" type="bigint" />
+			<column name="tax_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-464" author="NabilOUACHI">
@@ -10833,6 +10834,7 @@
     		<column name="apply_discounts_on_overriden_price" type="${type.boolean}"/>
     		<column name="discounted_amount" type="numeric(23,12)"/>
     		<column name="sequence" type="int4"/>
+    		<column name="tax_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet id="rebuild-str-tbl-484" author="NabilOUACHI">
@@ -17959,6 +17961,15 @@
                                  referencedTableName="batch_entity"
                                  referencedColumnNames="id"/>
     </changeSet>
+    
+      <changeSet id="#INTRD-19244_27102023_fk" author="Mbarek-Ay" failOnError="false">
+    
+	   <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="cpq_quote_price" constraintName="fk_quote_price_tax" 
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+       <addForeignKeyConstraint baseColumnNames="tax_id" baseTableName="order_price" constraintName="fk_order_price_tax" 
+            referencedColumnNames="id" referencedTableName="billing_tax" />
+            
+      </changeSet>
 
     <!-- end fk -->
 
@@ -21391,6 +21402,7 @@
     <changeSet id="INTRD-20050_20231226" author="TarikFA." />
     <changeSet id="#INTRD-20273_20231219" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-20181_28122023" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-19244_27102023" author="Mbarek-Ay" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
