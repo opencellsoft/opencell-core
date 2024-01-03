@@ -67,13 +67,13 @@ import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 import org.keycloak.representations.idm.authorization.ScopePermissionRepresentation;
 import org.keycloak.representations.idm.authorization.ScopeRepresentation;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementAlreadyExistsException;
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidParameterException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.ResteasyClientProxyBuilder;
 import org.meveo.model.admin.User;
@@ -110,6 +110,10 @@ public class KeycloakAdminClientService implements Serializable {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     /**
      * A Keycloak client role giving a full API access
@@ -316,11 +320,7 @@ public class KeycloakAdminClientService implements Serializable {
 
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
-        boolean isMasterOC=false;
-        
-        if("OC".equals(ParamBean.getInstance().getProperty("userManagement.master", "KC"))) {
-        	isMasterOC=true;
-        }
+        boolean isMasterOC=isMasterOC();
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
 		log.info("realm resource keycloak : " + realmResource);
@@ -1520,4 +1520,10 @@ public class KeycloakAdminClientService implements Serializable {
         }
         throw new ElementNotFoundException("No user found with username " + username);
     }
+    
+    private boolean isMasterOC() {
+		String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
+		log.info("lUserManagementSource : " + lUserManagementSource);
+		return lUserManagementSource.equalsIgnoreCase("OC");
+	}
 }
