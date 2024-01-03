@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -30,6 +31,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.MapUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
@@ -284,6 +286,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
                     cets.forEach((cet) -> customFieldsCache.addUpdateCustomEntityTemplate(cet, false));
                 }
             }
+            
+            cets = cets.stream().filter(x -> currentUser.hasRole(x.getReadPermission())).collect(Collectors.toList());
 
             // Order the list
             try {
@@ -307,7 +311,8 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
             return cets;
 
         } else {
-            return super.list(config);
+            List<CustomEntityTemplate> result = super.list(config);
+            return result.stream().filter(x -> currentUser.hasRole(x.getReadPermission())).collect(Collectors.toList());
         }
     }
 
@@ -470,5 +475,21 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         return referenceTable;
     }
 
+    /**
+     * Count the number of custom entity instances based on the list method as the cache can be involved
+     * @param config Data filtering, sorting and pagination criteria
+     * @return
+     */
+    public long count(PaginationConfiguration config) {
+        return this.list(config).size();
+    }
 
+    @Override
+    public CustomEntityTemplate findByIdIgnoringCache(Long id, List<String> fetchFields) {
+        CustomEntityTemplate cet = super.findByIdIgnoringCache(id, fetchFields);
+        if(cet != null && !currentUser.hasRole(cet.getReadPermission())) {
+            throw new ActionForbiddenException("User does not have permission to read data from '" + cet.getCode() + "'");
+        }
+        return cet;
+    }
 }
