@@ -20,6 +20,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.billing.Tax;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.DiscountPlan;
 import org.meveo.model.catalog.DiscountPlanItem;
@@ -126,7 +127,10 @@ public class OrderPrice extends BusinessEntity {
      @Type(type = "numeric_boolean")
      @Column(name = "apply_discounts_on_overriden_price")
      private Boolean applyDiscountsOnOverridenPrice;
-    
+     
+     @ManyToOne(fetch = FetchType.LAZY)
+     @JoinColumn(name = "tax_id")
+     private Tax tax;
      
      /**The amount after discount**/
      @Column(name = "discounted_amount")
@@ -338,6 +342,16 @@ public class OrderPrice extends BusinessEntity {
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
 	}
+
+	public Tax getTax() {
+		return tax;
+	}
+
+	public void setTax(Tax tax) {
+		this.tax = tax;
+	}
+	
+	
 	
 	
     

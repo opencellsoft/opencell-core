@@ -82,6 +82,7 @@ public class QuoteLine {
             quotePrice.setAmountWithoutTax(a.getAmountWithoutTax().add(b.getAmountWithoutTax()));
             quotePrice.setUnitPriceWithoutTax(a.getUnitPriceWithoutTax().add(b.getUnitPriceWithoutTax()));
             quotePrice.setTaxRate(a.getTaxRate());
+            quotePrice.setTax(a.getTax());
             return quotePrice;
         });
     }
