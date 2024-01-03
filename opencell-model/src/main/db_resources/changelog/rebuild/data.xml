@@ -12458,6 +12458,17 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 			<column name="sequence_id" valueNumeric="-4" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="#INTRD-20344_20240102" author="aeljaouhari">
+    	<insert tableName="audit_data_config">
+            <column name="id" valueSequenceNext="audit_data_config_seq"/>
+            <column name="version" valueNumeric="0"/>
+            <column name="created" valueComputed="now()"/>
+            <column name="creator" value="opencell.admin"/>
+            <column name="entity_class" value="org.meveo.model.catalog.OfferTemplate"/>
+            <column name="entity_fields" value="allowedDiscountPlans,allowedOffersChange,attachments,auditable,autoEndOfEngagement,businessAccountModels,businessOfferModel,cfValues,channels,code,commercialRules,customerCategories,description,descriptionI18n,disabled,display,document,generateQuoteEdrPerProduct,globalRatingScriptInstance,id,imagePath,isModel,isOfferChangeRestricted,lifeCycleStatus,longDescription,longDescriptionI18n,medias,minimumAmountEl,minimumArticle,minimumChargeTemplate,minimumInvoiceSubCategory,minimumLabelEl,name,offerAttributes,offerComponents,offerModel,offerProductTemplates,offerServiceTemplates,offerTemplateCategories,sellers,sequence,statusDate,subscriptionRenewal,tags,uuid,validity,version"/>
+        </insert>
+    </changeSet>
 
 	<changeSet id="INTRD-15841_20230502" author="aeljaouhari" />
 	<changeSet id="INTRD-15899_20230505" author="aelmalki" />
