@@ -467,11 +467,11 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
      * Gets wallet operations list to rerate
      *
      * @param reratingTarget Rerating target
-     * @param targetBatches  Target batchs
+     * @param targetBatches  Target batch codes
      * @param nbToRetrieve   Number of wallet operations to retrieve
      * @return The wallet operations list to rerate
      */
-    public List<Long> listToRerate(String reratingTarget, List<Long> targetBatches, int nbToRetrieve) {
+    public List<Long> listToRerate(String reratingTarget, List<String> targetBatches, int nbToRetrieve) {
         // null | ALL
         TypedQuery<Long> query = getEntityManager().createNamedQuery("WalletOperation.listToRerate", Long.class);
         if (ReratingTargetEnum.NO_BATCH.name().equals(reratingTarget)) {
@@ -479,8 +479,7 @@ public class WalletOperationService extends PersistenceService<WalletOperation> 
         } else if (ReratingTargetEnum.WITH_BATCH.name().equals(reratingTarget)) {
             if (CollectionUtils.isNotEmpty(targetBatches)) {
                 query = getEntityManager().createNamedQuery("WalletOperation.listToRerateWithBatches", Long.class)
-                        .setParameter("targetBatches", targetBatches)
-                        .setParameter("targetJob", ReRatingJob.class.getSimpleName());
+                        .setParameter("targetBatches", targetBatches);
             } else {
                 query = getEntityManager().createNamedQuery("WalletOperation.listToRerateAllBatches", Long.class);
             }
