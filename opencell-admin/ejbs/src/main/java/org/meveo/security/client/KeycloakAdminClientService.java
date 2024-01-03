@@ -70,6 +70,7 @@ import org.meveo.admin.exception.UsernameAlreadyExistsException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
@@ -108,6 +109,10 @@ public class KeycloakAdminClientService implements Serializable {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+    
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     /**
      * A Keycloak client role giving a full API access
@@ -272,11 +277,7 @@ public class KeycloakAdminClientService implements Serializable {
 
         KeycloakAdminClientConfig keycloakAdminClientConfig = AuthenticationProvider.getKeycloakConfig();
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
-        boolean isMasterOC=false;
-        
-        if("OC".equals(ParamBean.getInstance().getProperty("userManagement.master", "KC"))) {
-        	isMasterOC=true;
-        }
+        boolean isMasterOC=isMasterOC();
 
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
         UsersResource usersResource = realmResource.users();
@@ -1474,4 +1475,10 @@ public class KeycloakAdminClientService implements Serializable {
         }
         throw new ElementNotFoundException("No user found with username " + username);
     }
+    
+    private boolean isMasterOC() {
+		String lUserManagementSource = paramBeanFactory.getInstance().getProperty("userManagement.master", "KC");
+		log.info("lUserManagementSource : " + lUserManagementSource);
+		return lUserManagementSource.equalsIgnoreCase("OC");
+	}
 }
