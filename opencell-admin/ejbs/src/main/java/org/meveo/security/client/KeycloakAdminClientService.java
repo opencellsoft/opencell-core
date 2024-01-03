@@ -274,7 +274,7 @@ public class KeycloakAdminClientService implements Serializable {
         Keycloak keycloak = getKeycloakClient(keycloakAdminClientConfig);
         boolean isMasterOC=false;
         
-        if("KC".equals(ParamBean.getInstance().getProperty("userManagement.master", "KC"))) {
+        if("OC".equals(ParamBean.getInstance().getProperty("userManagement.master", "KC"))) {
         	isMasterOC=true;
         }
 
@@ -302,8 +302,9 @@ public class KeycloakAdminClientService implements Serializable {
 		if(userFromDb != null &&  user == null) {
 			isUpdate = false;
 		}else if (isUpdate && user == null) {
-			if (!isMasterOC)
+			if (!isMasterOC) 
 				throw new ElementNotFoundException("User with username " + userName + " not found");
+			
 			return null;
 
         } else if (!isUpdate && user != null) {

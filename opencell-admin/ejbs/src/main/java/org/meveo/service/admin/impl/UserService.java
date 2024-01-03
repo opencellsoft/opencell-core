@@ -61,7 +61,7 @@ public class UserService extends PersistenceService<User> {
     public void create(User user) throws UsernameAlreadyExistsException, InvalidParameterException {
         user.setUserName(user.getUserName().toUpperCase());
 	    keycloakAdminClientService.createUser(user.getUserName(), user.getName().getFirstName(), user.getName().getLastName(), user.getEmail(), user.getPassword(), user.getUserLevel(), user.getRoles(), null);
-			super.create(user);
+		super.create(user);
     }
 
     @Override
