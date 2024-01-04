@@ -20,7 +20,6 @@ package org.meveo.apiv2.admin.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.meveo.api.logging.WsRestApiInterceptor;
-import org.meveo.apiv2.admin.File;
 import org.meveo.apiv2.admin.FilesPagingAndFiltering;
 import org.meveo.apiv2.admin.resource.FilesResource;
 import org.meveo.apiv2.admin.service.FilesApiService;
@@ -28,8 +27,6 @@ import org.meveo.apiv2.admin.service.FilesApiService;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,18 +43,12 @@ public class FilesResourceImpl implements FilesResource {
 
     @Override
     public Response search(FilesPagingAndFiltering searchConfig) {
-        List<File> list = filesApiService.searchFiles(searchConfig);
-        Map<String, Object> results = new LinkedHashMap<>();
-        results.put("total", list.size());
-        results.put("limit", searchConfig.getLimit());
-        results.put("offset", searchConfig.getOffset());
-        results.put("data", list);
+        Map<String, Object> results = filesApiService.searchFiles(searchConfig);
         ObjectMapper mapper = new ObjectMapper();
         try {
             return Response.ok().entity(mapper.writeValueAsString(results)).build();
         } catch (JsonProcessingException e) {
             throw new RuntimeException("json formatting exception", e);
         }
-
     }
 }
