@@ -1436,16 +1436,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param automaticInvoiceCheck
      */
     private void applyAutomaticInvoiceCheck(Invoice invoice, boolean automaticInvoiceCheck, boolean save) {
-    	invoice = invoiceService.refreshOrRetrieve(invoice);
-        if (invoice.getStatus() != InvoiceStatusEnum.VALIDATED) {
-            invoice.setStatus(InvoiceStatusEnum.DRAFT);
-        }
-        if (automaticInvoiceCheck && invoice.getInvoiceType() != null &&
-                (invoice.getInvoiceType().getInvoiceValidationScript() != null
-                        || invoice.getInvoiceType().getInvoiceValidationRules() != null)) {
-            InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
-            if(invoice.getInvoiceType().getInvoiceValidationScript() != null) {
-                ScriptInstance scriptInstance = invoice.getInvoiceType().getInvoiceValidationScript();
+    	InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
+        if (automaticInvoiceCheck && invoiceType != null && (invoiceType.getInvoiceValidationScript() != null || invoiceType.getInvoiceValidationRules() != null)) {
+            if (invoiceType.getInvoiceValidationScript() != null) {
+                ScriptInstance scriptInstance = invoiceType.getInvoiceValidationScript();
                 if (scriptInstance != null) {
                     ScriptInterface script = scriptInstanceService.getScriptInstance(scriptInstance.getCode());
                     if (script != null) {
@@ -1464,8 +1458,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                         }
                     }
                 }
-            } else if (invoiceType.getInvoiceValidationRules() != null
-                    && !invoiceType.getInvoiceValidationRules().isEmpty()) {
+            } else if (invoiceType.getInvoiceValidationRules() != null && !invoiceType.getInvoiceValidationRules().isEmpty()) {
 				List<InvoiceValidationRule> invoiceValidationRules = invoice.getInvoiceType().getInvoiceValidationRules()
 						.stream().filter(rule -> Objects.isNull(rule.getParentRule())).collect(Collectors.toList());
                 sort(invoiceValidationRules, comparingInt(InvoiceValidationRule::getPriority));
