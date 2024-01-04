@@ -47,6 +47,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.CreditNo
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.CreditedQuantity;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Description;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.DocumentCurrencyCode;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.DocumentTypeCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.DueDate;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.ElectronicMail;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.EndDate;
@@ -65,6 +66,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PayableA
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PaymentMeansCode;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.Percent;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PostalZone;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PrepaidAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.PriceAmount;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.RegistrationName;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_2.SalesOrderID;
@@ -94,6 +96,8 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceLine;
 import org.meveo.model.billing.InvoiceType;
+import org.meveo.model.billing.InvoiceTypeEnum;
+import org.meveo.model.billing.LinkedInvoice;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
@@ -172,18 +176,20 @@ public class InvoiceUblHelper {
 		String curreny = invoice.getTradingCurrency() != null ? invoice.getTradingCurrency().getCurrencyCode():null;
 		BigDecimal amountWithoutTax = invoice.getAmountWithoutTax();
 		BigDecimal amountWithTax = invoice.getAmountWithTax();
+		BigDecimal totalPrepaidAmount = invoice.getLinkedInvoices().stream().filter(li -> li.getType() == InvoiceTypeEnum.ADVANCEMENT_PAYMENT).map(LinkedInvoice::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
 		if (creditNote != null) {
 			setGeneralInfo(invoice, creditNote);
 			setBillingReference(invoice, creditNote);
 			setOrderReference(invoice, creditNote);
 			setInvoiceLine(invoice.getInvoiceLines(), creditNote);
-			creditNote.setLegalMonetaryTotal(setTaxExclusiveAmount(curreny, amountWithoutTax , amountWithTax));
+			creditNote.setLegalMonetaryTotal(setTaxExclusiveAmount(totalPrepaidAmount, curreny, amountWithoutTax , amountWithTax));
 		} else {
 			setGeneralInfo(invoice, invoiceXml);
 			setBillingReference(invoice, invoiceXml);
 			setOrderReference(invoice, invoiceXml);
 			setInvoiceLine(invoice.getInvoiceLines(), invoiceXml);
-			invoiceXml.setLegalMonetaryTotal(setTaxExclusiveAmount(curreny, amountWithoutTax , amountWithTax));
+			invoiceXml.setLegalMonetaryTotal(setTaxExclusiveAmount(totalPrepaidAmount, curreny, amountWithoutTax , amountWithTax));
+			setBillingReferenceForInvoice(invoice, invoiceXml);
 		}
 		
 		
@@ -961,7 +967,7 @@ public class InvoiceUblHelper {
 		return taxCategoryType;
 	}
 	
-	private static MonetaryTotalType setTaxExclusiveAmount(String currency, BigDecimal amountWithoutTax, BigDecimal amountWithTax) {
+	private static MonetaryTotalType setTaxExclusiveAmount(BigDecimal totalPrepaidAmount, String currency, BigDecimal amountWithoutTax, BigDecimal amountWithTax) {
 		MonetaryTotalType moneyTotalType = objectFactoryCommonAggrement.createMonetaryTotalType();
 		TaxInclusiveAmount taxInclusiveAmount = objectFactorycommonBasic.createTaxInclusiveAmount();
 		taxInclusiveAmount.setCurrencyID(currency);
@@ -973,7 +979,32 @@ public class InvoiceUblHelper {
 		taxExclusiveAmount.setValue(amountWithoutTax);
 		moneyTotalType.setTaxExclusiveAmount(taxExclusiveAmount);
 		
+		if(totalPrepaidAmount.compareTo(BigDecimal.ZERO) != 0){
+			PrepaidAmount prepaidAmount = objectFactorycommonBasic.createPrepaidAmount();
+			prepaidAmount.setCurrencyID(currency);
+			prepaidAmount.setValue(totalPrepaidAmount);
+			moneyTotalType.setPrepaidAmount(prepaidAmount);
+		}
+		
+		
 		return moneyTotalType;
 		
+	}
+	
+	private BillingReference setBillingReferenceForInvoice(org.meveo.model.billing.Invoice source, Invoice target) {
+		BillingReference billingReference = setBillingReference(source);
+		DocumentReferenceType documentReferenceType =  billingReference.getInvoiceDocumentReference();
+		
+		IssueDate dueDate = objectFactorycommonBasic.createIssueDate();
+		dueDate.setValue(toXmlDate(source.getDueDate()));
+		documentReferenceType.setIssueDate(dueDate);
+		
+		if(source.getInvoiceType() != null && StringUtils.isNotBlank(source.getInvoiceType().getCode())){
+			DocumentTypeCode documentTypeCode = objectFactorycommonBasic.createDocumentTypeCode();
+			documentTypeCode.setValue(source.getInvoiceType().getCode());
+			documentReferenceType.setDocumentTypeCode(documentTypeCode);
+		}
+		target.getBillingReferences().add(billingReference);
+		return billingReference;
 	}
 }
