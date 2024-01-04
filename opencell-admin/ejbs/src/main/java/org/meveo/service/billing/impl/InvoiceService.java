@@ -7025,29 +7025,23 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if (invoiceLinesIds == null || invoiceLinesIds.isEmpty()) {
             for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-    
-                invoiceAgregateService.detach(invoiceAgregate);
-    
                 switch (invoiceAgregate.getDescriminatorValue()) {
                     case TAX_INVOICE_AGREGATE: {
                         var taxInvoiceAgregate = new TaxInvoiceAgregate((TaxInvoiceAgregate) invoiceAgregate);
                         taxInvoiceAgregate.setInvoice(duplicateInvoice);
                         invoiceAgregateService.create(taxInvoiceAgregate);
-                        duplicateInvoice.getInvoiceAgregates().add(taxInvoiceAgregate);
                         break;
                     }
                     case CATEGORY_INVOICE_AGREGATE: {
                         var categoryInvoiceAgregate = new CategoryInvoiceAgregate((CategoryInvoiceAgregate) invoiceAgregate);
                         categoryInvoiceAgregate.setInvoice(duplicateInvoice);
                         invoiceAgregateService.create(categoryInvoiceAgregate);
-                        duplicateInvoice.getInvoiceAgregates().add(categoryInvoiceAgregate);
                         break;
                     }
                     case SUBCATEGORY_INVOICE_AGREGATE: {
                         var subCategoryInvoiceAgregate = new SubCategoryInvoiceAgregate((SubCategoryInvoiceAgregate) invoiceAgregate);
                         subCategoryInvoiceAgregate.setInvoice(duplicateInvoice);
                         invoiceAgregateService.create(subCategoryInvoiceAgregate);
-                        duplicateInvoice.getInvoiceAgregates().add(subCategoryInvoiceAgregate);
                         break;
                     }
                 }
