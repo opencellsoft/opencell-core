@@ -40,8 +40,12 @@ public interface File extends Serializable {
     String getName();
 
     @Nullable
-    @Schema(description = "Indicates the type of file or directory.")
+    @Schema(description = "Indicates if it is file or directory.")
     Boolean getIsDirectory();
+
+    @Nullable
+    @Schema(description = "The file size in bytes")
+    Long getSize();
 
     @Nullable
     @Schema(description = "The last modified")
