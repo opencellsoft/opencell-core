@@ -34,6 +34,7 @@ public class FileMapper {
                 .name(file.getName())
                 .isDirectory(file.isDirectory())
                 .lastModified(file.lastModified())
+                .size(file.length())
                 .build();
     }
 }
