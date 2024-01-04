@@ -170,7 +170,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 				+ "	    SUM(CASE WHEN rt.status = 'BILLED' THEN rt.amount_with_tax ELSE 0 END) AS rt_amount_with_tax, SUM(CASE WHEN rt.status = 'BILLED' THEN rt.amount_tax ELSE 0 END) AS rt_amount_tax, SUM(CASE WHEN rt.status = 'BILLED' THEN rt.quantity ELSE 0 END) AS rt_quantity,\n"
 				+ "	    string_agg(dwo.id::text, ',') AS dwo_id, string_agg(drt.id::text, ',') AS drt_id, dil.id AS dil_id, SUM(CASE WHEN drt.status = 'BILLED' THEN drt.amount_without_tax ELSE 0 END) AS drt_amount_without_tax,\n"
 				+ "	    SUM(CASE WHEN drt.status = 'BILLED' THEN drt.amount_with_tax ELSE 0 END) AS drt_amount_with_tax, SUM(CASE WHEN drt.status = 'BILLED' THEN drt.amount_tax ELSE 0 END) AS drt_amount_tax, SUM(CASE WHEN drt.status = 'BILLED' THEN drt.quantity ELSE 0 END) AS drt_quantity,\n"
-				+ "	    wo.subscription_id AS s_id, COUNT(1) AS count_WO, ROW_NUMBER() OVER (ORDER BY COUNT(1) / "+configuredNrPerTx+" DESC, wo.subscription_id) AS id, CASE WHEN il.status = 'BILLED' THEN il.id WHEN dil.status = 'BILLED' THEN dil.id ELSE NULL END AS billed_il\n"
+				+ "	    wo.billing_account_id AS ba_id, wo.id/ "+configuredNrPerTx+" as lot, COUNT(1) AS count_WO, ROW_NUMBER() OVER (ORDER BY COUNT(1) / "+configuredNrPerTx+" DESC, wo.billing_account_id) AS id, CASE WHEN il.status = 'BILLED' THEN il.id WHEN dil.status = 'BILLED' THEN dil.id ELSE NULL END AS billed_il\n"
 				+ "	FROM billing_wallet_operation wo\n"
 				+ "		LEFT JOIN billing_rated_transaction rt ON rt.id = wo.rated_transaction_id and rt.status<>'CANCELED'\n"
 				+ "		LEFT JOIN billing_invoice_line il ON il.id = rt.invoice_line_id\n"
@@ -178,7 +178,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 				+ "		LEFT JOIN billing_rated_transaction drt ON drt.id = dwo.rated_transaction_id  and drt.status<>'CANCELED'\n"
 				+ "		LEFT JOIN billing_invoice_line dil ON dil.id = drt.invoice_line_id\n"
 				+ "	WHERE wo.status = 'TO_RERATE'\n"
-				+ "GROUP BY s_id, il_id, dil_id";
+				+ "GROUP BY ba_id, il_id, dil_id, lot";
 
 		cancellationJobBean.createMaterializedView(query, mainViewName, useExistingViews);
 	}
@@ -237,7 +237,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	                statement.execute("create index idx__" + viewName + "__billed_il ON " + viewName + " USING btree (billed_il) ");
 	                statement.execute("create index idx__" + viewName + "__main_id ON " + viewName + " USING btree (id) ");
 	                if(viewName.equals(mainViewName)) {
-	                	statement.execute("create index idx__" + viewName + "__subscription_id ON " + viewName + " USING btree (s_id) ");
+	                	statement.execute("create index idx__" + viewName + "__billing_account_id ON " + viewName + " USING btree (ba_id) ");
 	                }
 	            } catch (Exception e) {
 	                log.error("Failed to create the materialized view " + viewName, e.getMessage());
@@ -296,7 +296,7 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 	            "			AND rr.id NOT IN (SELECT id FROM " + billedViewName + ") " +
 	            "			AND rt.id = CAST(to_update AS bigint)";
 
-	    cancellationJobBean.runInNewTransaction(min, max, updateILQuery, updateRTsQuery);
+	    cancellationJobBean.runInNewTransaction(min, max, updateRTsQuery, updateILQuery);
 	}
 	
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

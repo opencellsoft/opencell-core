@@ -89,7 +89,7 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 		
 		final long nrPerTx = (nrOfInitialWOs / nbThreads) < configuredNrPerTx ? nrOfInitialWOs / nbThreads : configuredNrPerTx;
 		int fetchSize = ((Long) nrPerTx).intValue() * nbThreads.intValue();
-		NativeQuery nativeQuery = statelessSession.createNativeQuery("SELECT CAST(unnest(string_to_array(wo_id, ',')) AS bigint) as id FROM " + viewName + " WHERE billed_il is null order by s_id");
+		NativeQuery nativeQuery = statelessSession.createNativeQuery("SELECT CAST(unnest(string_to_array(wo_id, ',')) AS bigint) as id FROM " + viewName + " WHERE billed_il is null order by ba_id");
 		scrollableResults = nativeQuery.setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun).setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
 		return Optional.of(
@@ -114,20 +114,17 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 
 	private void applyReRating(List<Object[]> reratingTree, JobExecutionResultImpl jobExecutionResult) {
 		if (reratingTree != null) {
-			rerateByGroup(reratingTree.stream().map(x->((Number)x[0]).longValue()).collect(Collectors.toList()));
+			rerateByGroup(reratingTree.stream().map(x->((Number)x[0]).longValue()).collect(Collectors.toList()), jobExecutionResult);
 		}
 	}
 
 	
-	private void rerateByGroup(List<Long> reratingTree) {
+	private void rerateByGroup(List<Long> reratingTree, JobExecutionResultImpl jobExecutionResult) {
     	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", reratingService.SHORT_MAX_VALUE);
     	List<List<Long>> subList = partition(reratingTree, maxValue);
-    	subList.forEach(ids -> rerate(ids));
+    	subList.forEach(ids -> reratingService.applyMassRerate(ids, useSamePricePlan, jobExecutionResult));
 	}
 
-	private void rerate(List<Long> ids) {
-		reratingService.applyMassRerate(ids, useSamePricePlan);
-	}
 
 	/**
 	 * Close data resultset
