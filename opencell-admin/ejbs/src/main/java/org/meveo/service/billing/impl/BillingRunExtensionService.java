@@ -33,6 +33,7 @@ import org.meveo.jpa.JpaAmpNewTx;
 import org.meveo.model.IBillableEntity;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.BillingRunStatusEnum;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -108,5 +109,13 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
         ofNullable(xmlExecutionResultId).ifPresent(xmlExecutionId -> billingRun.setXmlJobExecutionResultId(xmlExecutionId));
         ofNullable(pdfExecutionResultId).ifPresent(pdfExecutionId -> billingRun.setPdfJobExecutionResultId(pdfExecutionId));
         return updateNoCheck(billingRun);
+    }
+    
+    @JpaAmpNewTx
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void updateBillingRunJobExecution(Long billingRunId, JobExecutionResultImpl result) {
+        BillingRun billingRun = findById(billingRunId);
+        billingRun.addJobExecutions(result);
+        updateNoCheck(billingRun);
     }
 }

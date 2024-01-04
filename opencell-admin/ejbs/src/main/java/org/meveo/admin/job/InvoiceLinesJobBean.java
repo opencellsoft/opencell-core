@@ -209,7 +209,7 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
                     jobExecutionResult.getStatus() != JobExecutionResultStatusEnum.CANCELLED ? BillingRunStatusEnum.INVOICE_LINES_CREATED : BillingRunStatusEnum.NEW);
             }
 
-            billingRunService.updateBillingRunJobExecution(currentBillingRun.getId(), jobExecutionResult);
+            billingRunExtensionService.updateBillingRunJobExecution(currentBillingRun.getId(), jobExecutionResult);
             runBillingRunReports(asList(currentBillingRun.getId()));
         }
     }
