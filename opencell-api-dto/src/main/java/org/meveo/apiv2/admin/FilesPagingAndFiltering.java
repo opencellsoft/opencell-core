@@ -45,15 +45,7 @@ public interface FilesPagingAndFiltering {
     }
 
     @Nullable
-    Long getTotal();
-
-    @Nullable
     Long getLimit();
-
-    @Value.Auxiliary
-    default Long getLimitOrDefault(Long defaultValue) {
-        return getLimit() != null ? getLimit() : defaultValue;
-    }
 
     @Value.Default
     default Long getOffset() {

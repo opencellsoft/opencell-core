@@ -36,7 +36,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -63,54 +65,55 @@ public class FilesApiService extends BaseApi {
             if (p == path) { //Exclude the root directory
                 return false;
             }
-            final ArrayList<Boolean> condition = new ArrayList<>();
+            final ArrayList<Boolean> conditions = new ArrayList<>();
             if (searchConfig.getFilters() != null && !searchConfig.getFilters().isEmpty()) {
                 searchConfig.getFilters().entrySet().stream().forEach(entry -> {
                             ExpressionParser exp = new ExpressionParser(entry.getKey().split(" "));
-                            if (!StringUtils.isBlank(exp.getFieldName()) && entry.getValue() != null) {
+                            Object value = entry.getValue();
+                            if (!StringUtils.isBlank(exp.getFieldName()) && value != null) {
                                 switch (exp.getCondition()) {
                                     case "startsWith":
                                         if (exp.getFieldName().equalsIgnoreCase("name")) {
-                                            condition.add(p.getFileName().toString().startsWith((String) entry.getValue()));
+                                            conditions.add(p.getFileName().toString().startsWith((String) value));
                                         }
                                         break;
                                     case "endsWith":
                                         if (exp.getFieldName().equalsIgnoreCase("name")) {
-                                            condition.add(p.getFileName().toString().endsWith((String) entry.getValue()));
+                                            conditions.add(p.getFileName().toString().endsWith((String) value));
                                         }
                                         break;
                                     case "likeCriterias":
                                         if (exp.getFieldName().equalsIgnoreCase("name")) {
-                                            String regex = ((String) entry.getValue()).replace("*", ".*?");
-                                            condition.add(p.getFileName().toString().matches(regex));
+                                            String regex = ((String) value).replace("*", ".*?");
+                                            conditions.add(p.getFileName().toString().matches(regex));
                                         }
                                         break;
                                     case "fromRange":
                                         if (exp.getFieldName().equalsIgnoreCase("date")) {
-                                            Date date = DateUtils.parseDate(entry.getValue());
+                                            Date date = DateUtils.parseDate(value);
                                             if (date != null) {
-                                                condition.add(date.getTime() >= p.toFile().lastModified());
+                                                conditions.add(date.getTime() >= p.toFile().lastModified());
                                             }
                                         } else if (exp.getFieldName().equalsIgnoreCase("size")) {
-                                            Long size = NumberUtils.toLong((String) entry.getValue(), -1);
+                                            Long size = NumberUtils.toLong((String) value, -1);
                                             if (size > -1) {
-                                                condition.add(size >= p.toFile().length());
+                                                conditions.add(size >= p.toFile().length());
                                             }
                                         }
                                         break;
                                     default: {
                                         if (StringUtils.isBlank(exp.getCondition())) {
                                             if (exp.getFieldName().equalsIgnoreCase("name")) {
-                                                condition.add(p.getFileName().toString().equalsIgnoreCase((String) entry.getValue()));
+                                                conditions.add(p.getFileName().toString().equalsIgnoreCase((String) value));
                                             } else if (exp.getFieldName().equalsIgnoreCase("date")) {
-                                                Date date = DateUtils.parseDate(entry.getValue());
+                                                Date date = DateUtils.parseDate(value);
                                                 if (date != null) {
-                                                    condition.add(p.toFile().lastModified() == date.getTime());
+                                                    conditions.add(p.toFile().lastModified() == date.getTime());
                                                 }
                                             } else if (exp.getFieldName().equalsIgnoreCase("size")) {
-                                                Long size = NumberUtils.toLong((String) entry.getValue(), -1);
+                                                Long size = NumberUtils.toLong((String) value, -1);
                                                 if (size > -1) {
-                                                    condition.add(p.toFile().length() == size);
+                                                    conditions.add(p.toFile().length() == size);
                                                 }
                                             }
                                         }
@@ -121,7 +124,7 @@ public class FilesApiService extends BaseApi {
 
                 );
             }
-            return condition.contains(false) ? false : true;
+            return conditions.contains(false) ? false : true;
         };
     }
 
@@ -184,7 +187,7 @@ public class FilesApiService extends BaseApi {
      * @return the list of files
      * @throws BusinessApiException the business API exception
      */
-    public List<org.meveo.apiv2.admin.File> searchFiles(FilesPagingAndFiltering searchConfig) throws BusinessApiException {
+    public Map<String, Object> searchFiles(FilesPagingAndFiltering searchConfig) throws BusinessApiException {
         String dir = searchConfig.getDirectory();
         if (!StringUtils.isBlank(dir)) {
             dir = getProviderRootDir() + File.separator + normalizePath(dir);
@@ -199,18 +202,27 @@ public class FilesApiService extends BaseApi {
         Comparator<Path> comparator = getComparator(searchConfig);
         Predicate<Path> filter = getFilter(path, searchConfig);
 
-        List<org.meveo.apiv2.admin.File> result = new ArrayList<>();
+        long count = 0;
+        List<org.meveo.apiv2.admin.File> files = new ArrayList<>();
         try {
-            result = Files.walk(path, 1)
-                    .sorted(comparator)
-                    .filter(filter)
-                    .skip(searchConfig.getOffset())
-                    .limit(searchConfig.getLimit())
-                    .map(p -> fileMapper.toResource(p.toFile()))
-                    .collect(Collectors.toList());
+            count = Files.walk(path, 1).filter(filter).count();
+            if (count > 0) {
+                files = Files.walk(path, 1)
+                        .sorted(comparator)
+                        .filter(filter)
+                        .skip(searchConfig.getOffset())
+                        .limit(searchConfig.getLimit())
+                        .map(p -> fileMapper.toResource(p.toFile()))
+                        .collect(Collectors.toList());
+            }
         } catch (IOException e) {
             log.error("Failed to search files from directory {}", dir, e);
         }
-        return result;
+        Map<String, Object> results = new LinkedHashMap<>();
+        results.put("total", count);
+        results.put("limit", searchConfig.getLimit());
+        results.put("offset", searchConfig.getOffset());
+        results.put("data", files);
+        return results;
     }
 }
