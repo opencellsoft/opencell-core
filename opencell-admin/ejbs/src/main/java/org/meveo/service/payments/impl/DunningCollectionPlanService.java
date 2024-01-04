@@ -204,7 +204,7 @@ public class DunningCollectionPlanService extends PersistenceService<DunningColl
         }
         Optional.ofNullable(invoice.getRecordedInvoice())
                 .ifPresent(recordedInvoice ->
-                        collectionPlan.setBalance(recordedInvoice.getUnMatchingAmount()));
+                        collectionPlan.setBalance(recordedInvoice.getTransactionalUnMatchingAmount()));
         create(collectionPlan);
         invoice.setRelatedDunningCollectionPlan(collectionPlan);
         invoice.setDunningCollectionPlanTriggered(true);
