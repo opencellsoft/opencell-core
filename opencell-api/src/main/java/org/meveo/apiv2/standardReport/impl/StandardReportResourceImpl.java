@@ -138,7 +138,7 @@ public class StandardReportResourceImpl implements StandardReportResource {
         calculateSums(input, agedReceivablesList);
 
 		filePath = genericExportManager.exportAgedTrialBalance("AgedReceivableDto", fileFormat, input.getGenericFieldDetails(), agedReceivablesList,
-		        input.getGenericFieldDetails().stream().map(GenericFieldDetails::getName).collect(Collectors.toList()), locale);
+		        input.getGenericFieldDetails().stream().map(GenericFieldDetails::getName).collect(Collectors.toList()), locale, input.getFilters().get("numberOfPeriods") != null ? (Integer) input.getFilters().get("numberOfPeriods") : 0);
         } catch(ParseException ex) {
             throw new BusinessApiException("Error occurred when listing aged balance report : " + ex.getMessage());
         }
