@@ -381,7 +381,7 @@ public class GenericFileExportManager {
      * @return Stored Path
      */
     public String exportAgedTrialBalance(String entityName, String fileType, List<GenericFieldDetails> genericFieldDetails,
-                                         List<AgedReceivableDto> agedReceivablesList, List<String> orderedColumn, String locale){
+                                         List<AgedReceivableDto> agedReceivablesList, List<String> orderedColumn, String locale, Integer numberOfPeriods){
         log.info("Export Aged Balance - Entity Name: {}, File Type: {}, Locale: {}", entityName, fileType, locale);
 
         String filename = FR_AGED_BALANCE_FILENAME;;
@@ -402,7 +402,7 @@ public class GenericFileExportManager {
         // Manage Columns and convert List of AgedReceivable to a List Of Map
         List<String> columns = new ArrayList<>();
         Objects.requireNonNull(genericFieldDetails).forEach(gfd -> columns.add(gfd.getName()));
-        List<Map<String, Object>> map = convertObjectsListToListOfMap(agedReceivablesList, AgedReceivableDto.class, columns);
+        List<Map<String, Object>> map = convertObjectsListToListOfMap(agedReceivablesList, AgedReceivableDto.class, columns, numberOfPeriods);
        
         // Get Fields to Map by name and header
         Map<String, GenericFieldDetails> fieldDetails = getFieldDetailsMap(genericFieldDetails);
@@ -426,12 +426,12 @@ public class GenericFileExportManager {
      * @param columns List of columns
      * @return List of Map
      */
-    private List<Map<String, Object>> convertObjectsListToListOfMap(List<AgedReceivableDto> list, Class clazz, List<String> columns) {
+    private List<Map<String, Object>> convertObjectsListToListOfMap(List<AgedReceivableDto> list, Class clazz, List<String> columns, Integer numberOfPeriods) {
         List<Map<String, Object>> listOfMap = new ArrayList<>();
         List<Field> fields = Arrays.stream(clazz.getDeclaredFields()).filter(x -> columns.contains(x.getName())).collect(Collectors.toList());
 
         if(list != null) {
-            for (Object o : list) {
+            for (AgedReceivableDto o : list) {
                 Map<String, Object> map = new TreeMap<>();
                 for (Field field : fields) {
                     field.setAccessible(true);
@@ -443,6 +443,10 @@ public class GenericFileExportManager {
                         log.error("error occurred when converting list to list of Map");
                     }
                 }
+
+                IntStream.range(0, numberOfPeriods)
+                        .forEach(i -> map.put("period" + (i + 1), o.getTotalAmountByPeriod().get(i)));
+
                 listOfMap.add(map);
             }
         }
