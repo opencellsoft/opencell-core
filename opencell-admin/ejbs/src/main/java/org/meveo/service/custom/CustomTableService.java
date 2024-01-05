@@ -73,6 +73,7 @@ import org.meveo.commons.utils.MethodCallingUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -1135,6 +1136,14 @@ public class CustomTableService extends NativePersistenceService {
                 return findRecordOfTableById(field, id);
             }
             return Optional.ofNullable(customEntityInstanceService.findById(id)).map(customEntityInstanceService::customEntityInstanceAsMapWithCfValues).orElse(new HashMap<>());
+        } else {
+            try {
+                if (BusinessEntity.class.isAssignableFrom(Class.forName(field.getEntityClazz()))) {
+                    return findByClassAndId(field.getEntityClazz(), id, Set.of("id", "code", "description"));
+                }
+            } catch (ClassNotFoundException e) {
+                throw new BusinessException("Exception when trying to get class with name: " + field.getEntityClazz());
+            }
         }
         return findByClassAndId(field.getEntityClazz(), id);
     }
