@@ -49,11 +49,11 @@ public class FinanceSettingsResourceImpl implements FinanceSettingsResource {
     public Response update(Long id, FinanceSettings financeSettings) {
         org.meveo.model.securityDeposit.FinanceSettings financeSettingsToUpdate = financeSettingsService.findById(id);
         if (financeSettingsToUpdate == null) {
-            throw new EntityDoesNotExistsException("security deposit settings with id " + id + " does not exist.");
+            throw new EntityDoesNotExistsException("Finance settings with id " + id + " does not exist.");
         }
         if(financeSettings.getOpenOrderSetting() != null && financeSettings.getOpenOrderSetting().getId() != null) {
             OpenOrderSetting openOrderSettingToUpdate = ofNullable(openOrderSettingService.findById(financeSettings.getOpenOrderSetting().getId()))
-                            .orElseThrow(() -> new EntityDoesNotExistsException("security deposit settings with id " + id + " does not exist."));
+                            .orElseThrow(() -> new EntityDoesNotExistsException("Open order settings with id " + financeSettings.getOpenOrderSetting().getId() + " does not exist."));
             openOrderSettingToUpdate = openOrderSettingMapper.toEntity(openOrderSettingToUpdate, financeSettings.getOpenOrderSetting());
             openOrderSettingService.checkParameters(openOrderSettingToUpdate);
             financeSettingsToUpdate.setOpenOrderSetting(openOrderSettingToUpdate);

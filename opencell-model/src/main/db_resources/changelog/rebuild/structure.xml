@@ -12094,6 +12094,9 @@
             <column name="billing_run_process_warning" type="${type.boolean}" defaultValueNumeric="0" />
             <column name="nb_partitions_keep" type="int4" />
             <column name="synchronous_mass_action_limit" type="int4" defaultValueNumeric="10000" />
+            <column name="handle_framework_agreement" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="handle_invoice_plan" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="handle_accounting_periods" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="wo_partition_range_months" type="int4">
                 <constraints nullable="true" />
             </column>
@@ -21351,6 +21354,7 @@
     <changeSet id="#INTRD-20273_20231219" author="AndriusKarpavicius"/>
     <changeSet id="#INTRD-20181_28122023" author="Mbarek-Ay" />
     <changeSet id="#INTRD-19244_27102023" author="Mbarek-Ay" />
+    <changeSet id="#INTRD-20460_20240104" author="zelmeliani" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">

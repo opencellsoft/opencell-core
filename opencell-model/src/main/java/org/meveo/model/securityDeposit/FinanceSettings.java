@@ -90,6 +90,18 @@ public class FinanceSettings extends BusinessEntity {
     @Column(name = "synchronous_mass_action_limit")
     private Integer synchronousMassActionLimit = 10000;
 
+    @Type(type = "numeric_boolean")
+    @Column(name = "handle_framework_agreement")
+    private boolean handleFrameworkAgreement = true;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "handle_invoice_plan")
+    private boolean handleInvoicingPlans = true;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "handle_accounting_periods")
+    private boolean handleAccountingPeriods = true;
+
     public FinanceSettings() {
         super();
     }
@@ -244,5 +256,29 @@ public class FinanceSettings extends BusinessEntity {
 
     public void setEdrPartitionPeriod(Integer edrPartitionPeriod) {
         this.edrPartitionPeriod = edrPartitionPeriod;
+    }
+
+    public boolean isHandleFrameworkAgreement() {
+        return handleFrameworkAgreement;
+    }
+
+    public void setHandleFrameworkAgreement(boolean handleFrameworkAgreement) {
+        this.handleFrameworkAgreement = handleFrameworkAgreement;
+    }
+
+    public boolean isHandleInvoicingPlans() {
+        return handleInvoicingPlans;
+    }
+
+    public void setHandleInvoicingPlans(boolean handleInvoicingPlans) {
+        this.handleInvoicingPlans = handleInvoicingPlans;
+    }
+
+    public boolean isHandleAccountingPeriods() {
+        return handleAccountingPeriods;
+    }
+
+    public void setHandleAccountingPeriods(boolean handleAccountingPeriods) {
+        this.handleAccountingPeriods = handleAccountingPeriods;
     }
 }
