@@ -125,14 +125,16 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 		
 		markFailedToRerate(min, max);
 		
+		recalculateInvoiceLinesAndCancelRTs("",mainViewName, min, max);
+		recalculateInvoiceLinesAndCancelRTs("d",mainViewName, min, max);
+		recalculateInvoiceLinesAndCancelRTs("t",triggeredViewName, min, max);
+		
 		markCanceledEDRs(min, max);
 		
 		markCanceledWOs("d",mainViewName, min, max);
 		markCanceledWOs("t",triggeredViewName, min, max);
 		
-		recalculateInvoiceLinesAndCancelRTs("",mainViewName, min, max);
-		recalculateInvoiceLinesAndCancelRTs("d",mainViewName, min, max);
-		recalculateInvoiceLinesAndCancelRTs("t",triggeredViewName, min, max);
+
 		
 	}
 	
