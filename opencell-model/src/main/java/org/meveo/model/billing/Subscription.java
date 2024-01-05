@@ -1248,7 +1248,7 @@ public class Subscription extends BusinessCFEntity implements IInvoicingMinimumA
 		}
 		Calendar calendar = new GregorianCalendar();
         calendar.setTime(getSubscriptionDate());
-		if(getSubscriptionRenewal()!=null) {
+		if(getSubscriptionRenewal()!=null && getSubscriptionRenewal().getInitialyActiveFor() != null) {
             calendar.add(getSubscriptionRenewal().getInitialyActiveForUnit().getCalendarField(), getSubscriptionRenewal().getInitialyActiveFor());
 		}
 		return calendar.getTime();
