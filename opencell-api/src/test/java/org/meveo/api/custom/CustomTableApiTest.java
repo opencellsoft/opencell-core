@@ -107,7 +107,7 @@ public class CustomTableApiTest {
     public void should_not_replace_value_if_there_is_no_records_in_database() {
         //Given
         CustomFieldTemplate customTableField = mock(CustomFieldTemplate.class);
-        when(customTableField.getEntityClazz()).thenReturn("org.meveo.model.customEntities.CustomEntityTemplate - TABLE_2");
+        when(customTableField.getEntityClazz()).thenReturn("org.meveo.model.customEntities.CustomEntityTemplate");
         Map<String, CustomFieldTemplate> reference = new HashMap<String, CustomFieldTemplate>() {{
             put("flirtikit", customTableField);
         }};
