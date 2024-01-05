@@ -457,8 +457,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                             inputQuantity = inputQuantity.negate();
                         }
                     }
-
-                    if((!prorate && !prorateLastPeriod) && chargeInstance.getTerminationDate().compareTo(new Date()) < 0) {
+                    if((!prorate && !prorateLastPeriod) && chargeInstance.getTerminationDate() != null && chargeInstance.getTerminationDate().compareTo(new Date()) < 0) {
                         effectiveChargeToDate = chargeInstance.getTerminationDate();
                         effectiveChargeFromDate = getRecurringPeriodStartDate(chargeInstance, chargeInstance.getChargeToDateOnTermination());
                         inputQuantity = computeProrate(chargeInstance, effectiveChargeFromDate,
@@ -494,7 +493,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                                 && chargeInstance.getSubscription().getSubscribedTillDate() != null) {
                             effectiveChargeFromDate = chargeInstance.getChargedToDate();
                             inputQuantity = computeProrate(chargeInstance, effectiveChargeFromDate,
-                                    effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, inputQuantity);
+                                    effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, chargeInstance.getQuantity());
                         }
 
                         RatingResult localRatingResult = rateChargeAndInstantiateTriggeredEDRs(chargeInstance, operationDate, inputQuantity, null,
