@@ -148,7 +148,19 @@ public class NativePersistenceService extends BaseService {
      * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
      */
     public Map<String, Object> findById(String tableName, Long id) {
-        return findByIdWithouCheckCodeAndDescription(tableName, id, true);
+        return findById(tableName, id, null);
+    }
+
+    /**
+     * Find record by its identifier
+     *
+     * @param tableName Table name
+     * @param id        Identifier
+     * @param fields    A set of fields to return. If null or empty, only id field will be returned
+     * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
+     */
+    public Map<String, Object> findById(String tableName, Long id, Set<String> fields) {
+        return findByIdWithouCheckCodeAndDescription(tableName, id, fields, true);
     }
     /**
      * Find record by its identifier
@@ -159,6 +171,20 @@ public class NativePersistenceService extends BaseService {
      */
     @SuppressWarnings({ "rawtypes", "deprecation" })
     public Map<String, Object> findByIdWithouCheckCodeAndDescription(String tableName, Long id, boolean canCheck) {
+        return findByIdWithouCheckCodeAndDescription(tableName, id, null, canCheck);
+    }
+
+    /**
+     * Find record by its identifier
+     *
+     * @param tableName Table name
+     * @param id        Identifier
+     * @param fields    A set of fields to return. Works only when canCheck is true
+     * @param canCheck When True it will get id, and the code of the customer table
+     * @return A map of values with field name as a map key and field value as a map value. Or null if no record was found with such identifier.
+     */
+    @SuppressWarnings({ "rawtypes", "deprecation" })
+    public Map<String, Object> findByIdWithouCheckCodeAndDescription(String tableName, Long id, Set<String> fields, boolean canCheck) {
         tableName = addCurrentSchema(tableName);
         try {
             Session session = getEntityManager().unwrap(Session.class);
@@ -167,6 +193,9 @@ public class NativePersistenceService extends BaseService {
             query.setParameter("id", id);
             if(canCheck) {
                 query.addScalar("id", new LongType());
+                if(!ListUtils.isEmtyCollection(fields)) {
+                    fields.stream().filter(f -> !f.equals("id")).forEach(f -> query.addScalar(f, new StringType()));
+                }
                 query.setFlushMode(FlushMode.COMMIT);
             }
 
@@ -1413,10 +1442,14 @@ public class NativePersistenceService extends BaseService {
 
     @SuppressWarnings("rawtypes")
     public Map<String, Object> findByClassAndId(String className, Long id) {
+        return findByClassAndId(className, id, null);
+    }
+
+    public Map<String, Object> findByClassAndId(String className, Long id, Set<String> fields) {
         try {
             Class clazz = Class.forName(className);
             String tableName = getTableNameForClass(clazz);
-            return findById(tableName, id);
+            return findById(tableName, id, fields);
         } catch (ClassNotFoundException e) {
             throw new BusinessException("Exception when trying to get class with name: " + className);
         }

@@ -4,6 +4,7 @@ import org.meveo.service.custom.CustomTableService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class CustomTableServiceMock extends CustomTableService {
 
@@ -19,6 +20,11 @@ public class CustomTableServiceMock extends CustomTableService {
 
     @Override
     public Map<String, Object> findByClassAndId(String className, Long id) {
+        return new HashMap<>();
+    }
+
+    @Override
+    public Map<String, Object> findByClassAndId(String className, Long id, Set<String> fields) {
         return new HashMap<>();
     }
 }
