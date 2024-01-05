@@ -445,7 +445,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                         inputQuantity = computeProrate(chargeInstance, effectiveChargeFromDate,
                                 effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, inputQuantity);
                     }
-                    if((!prorate && !prorateLastPeriod) && chargeInstance.getTerminationDate().compareTo(new Date()) < 0) {
+                    if((!prorate && !prorateLastPeriod) && chargeInstance.getTerminationDate() != null && chargeInstance.getTerminationDate().compareTo(new Date()) < 0) {
                         effectiveChargeToDate = chargeInstance.getTerminationDate();
                         effectiveChargeFromDate = getRecurringPeriodStartDate(chargeInstance, chargeInstance.getChargeToDateOnTermination());
                         inputQuantity = computeProrate(chargeInstance, effectiveChargeFromDate,
