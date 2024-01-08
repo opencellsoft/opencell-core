@@ -21,6 +21,7 @@ package org.meveo.service.billing.impl;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -273,7 +274,9 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 if(chargeInstance.getSubscription().getSubscribedTillDate() != null) {
                     Date end = getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
                     if(end != null && chargeInstance.getTerminationDate() != null && chargeInstance.getTerminationDate().after(end)) {
-                        WalletOperation walletOperation = chargeInstance.getWalletOperations().get(chargeInstance.getWalletOperations().size() - 1);
+                        List<WalletOperation> walletOperations = chargeInstance.getWalletOperations();
+                        walletOperations.sort(Comparator.comparing(WalletOperation::getCreated));
+                        WalletOperation walletOperation = walletOperations.get(chargeInstance.getWalletOperations().size() - 1);
                         while (chargeInstance.getTerminationDate().after(end)) {
                             Date startDate = getRecurringPeriodStartDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
                             if (walletOperation.getRatedTransaction() != null
@@ -408,6 +411,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                 } else {
 
+                    boolean alreadyInvoiced = false;
                     BigDecimal inputQuantity = chargeMode.isReimbursement() ? chargeInstance.getQuantity().negate() : chargeInstance.getQuantity();
 
                     if (chargeInstance != null && chargeInstance.getSubscription() != null
@@ -425,7 +429,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                             } else {
                                 walletOperations.add(chargeInstance.getWalletOperations().get(lastIndex));
                             }
-                            boolean alreadyInvoiced = walletOperations.stream().allMatch(this::isAlreadyInvoiced);
+                            alreadyInvoiced = walletOperations.stream().allMatch(this::isAlreadyInvoiced);
                             if(!alreadyInvoiced) {
                                 walletOperationService.cancelWalletOperations(walletOperations.stream().map(WalletOperation::getId).collect(Collectors.toList()));
                                 inputQuantity = inputQuantity.abs();
@@ -440,6 +444,9 @@ public class RecurringRatingService extends RatingService implements Serializabl
                             if(effectiveChargeFromDate.after(effectiveChargeToDate)) {
                                 effectiveChargeFromDate = chargeInstance.getChargeToDateOnTermination();
                                 effectiveChargeToDate = chargeInstance.getSubscription().getSubscribedTillDate();
+                            }
+                            if(effectiveChargeFromDate.compareTo(effectiveChargeToDate) == 0 && chargeInstance.getSubscription() != null) {
+                                effectiveChargeFromDate = getRecurringPeriodStartDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
                             }
                         }
                     }
@@ -490,8 +497,11 @@ public class RecurringRatingService extends RatingService implements Serializabl
 
                         if(chargeInstance != null
                                 && chargeInstance.getSubscription() != null
-                                && chargeInstance.getSubscription().getSubscribedTillDate() != null) {
-                            effectiveChargeFromDate = chargeInstance.getChargedToDate();
+
+                                && chargeInstance.getSubscription().getSubscribedTillDate() != null
+                                && ( chargeInstance.getSubscription().getSubscribedTillDate().before(effectiveChargeToDate) || chargeInstance.getSubscription().getSubscribedTillDate().compareTo(effectiveChargeToDate) == 0)
+                                && inputQuantity.compareTo(BigDecimal.ONE) == 0) {
+	                        effectiveChargeFromDate = operationDate;
                             inputQuantity = computeProrate(chargeInstance, effectiveChargeFromDate,
                                     effectiveChargeToDate, currentPeriodFromDate, currentPeriodToDate, chargeInstance.getQuantity());
                         }
