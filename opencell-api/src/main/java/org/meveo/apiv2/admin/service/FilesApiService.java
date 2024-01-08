@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -203,9 +204,12 @@ public class FilesApiService extends BaseApi {
         Predicate<Path> filter = getFilter(path, searchConfig);
 
         long count = 0;
+        AtomicLong size = new AtomicLong(0);
         List<org.meveo.apiv2.admin.File> files = new ArrayList<>();
         try {
-            count = Files.walk(path, 1).filter(filter).count();
+            count = Files.walk(path, 1).filter(filter).peek(p -> {
+                size.set(size.get() + p.toFile().length());
+            }).count();
             if (count > 0) {
                 files = Files.walk(path, 1)
                         .sorted(comparator)
@@ -222,6 +226,7 @@ public class FilesApiService extends BaseApi {
         results.put("total", count);
         results.put("limit", searchConfig.getLimit());
         results.put("offset", searchConfig.getOffset());
+        results.put("size", size.longValue());
         results.put("data", files);
         return results;
     }
