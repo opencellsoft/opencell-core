@@ -9,7 +9,6 @@ import org.meveo.model.securityDeposit.ArticleSelectionModeEnum;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 
 import static java.lang.Boolean.FALSE;
@@ -111,4 +110,22 @@ public interface FinanceSettings extends Resource {
     @Nullable
     @Schema(description = "EDR partition Period in Months")
     Integer getEdrPartitionPeriod();
+
+    @Value.Default
+    @Schema(description = "Handle Framework Agreement")
+    default boolean getHandleFrameworkAgreement() {
+        return TRUE;
+    }
+
+    @Value.Default
+    @Schema(description = "Handle Invoice Plans")
+    default boolean getHandleInvoicingPlans() {
+        return TRUE;
+    }
+
+    @Value.Default
+    @Schema(description = "Handle Accounting Periods")
+    default boolean getHandleAccountingPeriods() {
+        return TRUE;
+    }
 }

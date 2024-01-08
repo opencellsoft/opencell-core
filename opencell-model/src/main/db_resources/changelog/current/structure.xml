@@ -9086,4 +9086,12 @@ public class AgedBalanceReporting extends ReportExtractScript {
             
       </changeSet>
 
+      <changeSet id="#INTRD-20460_20240104" author="zelmeliani">
+		<addColumn tableName="finance_settings">
+            <column name="handle_framework_agreement" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="handle_invoice_plan" type="${type.boolean}" defaultValueNumeric="1" />
+            <column name="handle_accounting_periods" type="${type.boolean}" defaultValueNumeric="1" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
