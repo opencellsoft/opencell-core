@@ -494,7 +494,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
         ChargeApplicationModeEnum chargeApplicationModeEnum = ChargeApplicationModeEnum.REIMBURSMENT;
         if((chargeInstance.getSubscription().getSubscribedTillDate() != null
-                && chargeInstance.getTerminationDate().after(chargeInstance.getSubscription().getSubscribedTillDate())) || woCancelled) {
+                && chargeInstance.getTerminationDate().after(chargeInstance.getSubscription().getSubscribedTillDate()))) {
             chargeApplicationModeEnum = ChargeApplicationModeEnum.AGREEMENT;
         }
         RatingResult ratingResult = recurringRatingService.rateReccuringCharge(chargeInstance, chargeApplicationModeEnum, false, null, orderNumber, false, false);
