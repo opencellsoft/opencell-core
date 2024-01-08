@@ -97,7 +97,7 @@ public class BatchFilteringJobBean extends IteratorBasedJobBean<IEntity> {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::applyScriptOnListEntity, null, this::finalizeScript, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::initJobOnWorkerNode, null, this::applyScriptOnListEntity, null, this::closeResultset, this::finalizeScript);
 
         scriptInterface = null;
         scriptContext = null;
@@ -116,7 +116,7 @@ public class BatchFilteringJobBean extends IteratorBasedJobBean<IEntity> {
     }
 
     /**
-     * Initialize job settings and retrieve data to process
+     * Initialize job settings and retrieve data to process for main node
      * 
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of entities to execute the script on
@@ -140,7 +140,7 @@ public class BatchFilteringJobBean extends IteratorBasedJobBean<IEntity> {
             return Optional.empty();
         }
 
-        if(StringUtils.isBlank(filter.getPollingQuery())) {
+        if (StringUtils.isBlank(filter.getPollingQuery())) {
             jobExecutionResult.registerError("Filter : " + filterCode + " has no polling query. Check filter configuration.");
             return Optional.empty();
         }
@@ -182,13 +182,12 @@ public class BatchFilteringJobBean extends IteratorBasedJobBean<IEntity> {
                 }
             }
         }
-        
+
         String pollingQuery = filter.getPollingQuery();
-        Query countQuery = emWrapper.getEntityManager()
-                                    .createQuery("SELECT count(*) " + pollingQuery.substring(pollingQuery.toUpperCase().indexOf("FROM")));
+        Query countQuery = emWrapper.getEntityManager().createQuery("SELECT count(*) " + pollingQuery.substring(pollingQuery.toUpperCase().indexOf("FROM")));
         sqlParams.forEach(countQuery::setParameter);
         var count = (Long) countQuery.getSingleResult();
-        
+
         statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
         org.hibernate.query.Query<IEntity> query = (org.hibernate.query.Query<IEntity>) statelessSession.createQuery(filter.getPollingQuery());
         for (Map.Entry<String, Object> entry : sqlParams.entrySet()) {
@@ -201,13 +200,53 @@ public class BatchFilteringJobBean extends IteratorBasedJobBean<IEntity> {
             nbThreads = (long) Runtime.getRuntime().availableProcessors();
         }
         scrollableResults = query.setReadOnly(true).setCacheable(false).setFetchSize(Optional.ofNullable(batchSize).map(Long::intValue).orElse(1)).scroll(ScrollMode.FORWARD_ONLY);
-        
-        
 
         return Optional.of(new SynchronizedIterator<>(scrollableResults, count.intValue()));
     }
 
+    /**
+     * Initialize job settings on Worker node
+     * 
+     * @param jobExecutionResult Job execution result
+     */
+    @SuppressWarnings("unchecked")
+    private void initJobOnWorkerNode(JobExecutionResultImpl jobExecutionResult) {
 
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+        scriptInterface = null;
+        scriptContext = new HashMap<String, Object>();
+        scriptContext.put(Script.JOB_EXECUTION_RESULT, jobExecutionResult);
+
+        String scriptCode = ((EntityReferenceWrapper) this.getParamOrCFValue(jobInstance, "BatchFilteringJob_script")).getCode();
+        recordVariableName = (String) this.getParamOrCFValue(jobInstance, "BatchFilteringJob_recordVariableName");
+
+        try {
+            scriptInterface = scriptInstanceService.getScriptInstance(scriptCode);
+
+        } catch (EntityNotFoundException | InvalidScriptException e) {
+            jobExecutionResult.registerError(e.getMessage());
+            return;
+        }
+
+        Map<Object, Object> elContext = new HashMap<>();
+        elContext.put("manager", manager);
+        elContext.put("currentUser", currentUser);
+        elContext.put("appProvider", appProvider);
+
+        Map<String, Object> scriptParams = (Map<String, Object>) this.getParamOrCFValue(jobInstance, "BatchFilteringJob_variables");
+        if (scriptParams != null) {
+            for (Map.Entry<String, Object> entry : scriptParams.entrySet()) {
+                if (entry.getValue() instanceof String) {
+                    scriptContext.put(entry.getKey(), ValueExpressionWrapper.evaluateExpression((String) entry.getValue(), elContext, Object.class));
+                } else {
+                    scriptContext.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
+        scriptInterface.init(scriptContext);
+    }
 
     /**
      * Apply script on entity
@@ -216,13 +255,25 @@ public class BatchFilteringJobBean extends IteratorBasedJobBean<IEntity> {
      * @param jobExecutionResult Job execution result
      */
     private void applyScriptOnEntity(IEntity entity, JobExecutionResultImpl jobExecutionResult) {
-        
+
         Map<String, Object> context = new HashMap<>(scriptContext);
         context.put(recordVariableName, entity);
         context.put(Script.CONTEXT_CURRENT_USER, currentUser);
         context.put(Script.CONTEXT_APP_PROVIDER, appProvider);
 
         scriptInterface.execute(context);
+    }
+
+    /**
+     * Close data resultset
+     * 
+     * @param jobExecutionResult Job execution result
+     */
+    private void closeResultset(JobExecutionResultImpl jobExecutionResult) {
+        if (scrollableResults != null) {
+            scrollableResults.close();
+            statelessSession.close();
+        }
     }
 
     /**
@@ -234,14 +285,6 @@ public class BatchFilteringJobBean extends IteratorBasedJobBean<IEntity> {
         try {
             log.info("Finalize script");
             scriptInterface.terminate(scriptContext);
-            
-            if(scrollableResults != null) {
-                scrollableResults.close();
-            }
-            
-            if(statelessSession != null) {
-                statelessSession.close();
-            }
 
         } catch (Exception e) {
             log.error("Error on script finalize execute", e);

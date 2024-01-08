@@ -160,21 +160,23 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
     /**
      * Execute a job - retrieve a list of data to process, iterate over the data and process one item at a time, checking if job is still running and update job progress in DB periodically
      * <p>
-     * When run in mode where same data set is processed on multiple nodes, initFunction and finalizeInitFunction are called only on a master node that initiated job execution. It will NOT be called on worked nodes.
+     * When run in mode where same data set is processed on multiple nodes, initMainNodeAndRetrieveDataFunction and finalizeInitMainNodeAndCloseDataFunction are called only on a master node that initiated job execution.
+     * It will NOT be called on worked nodes.
      * 
      * @param jobExecutionResult Job execution result
      * @param jobInstance Job instance
-     * @param initFunction A function to initialize the data to process.
+     * @param initMainNodeAndRetrieveDataFunction A function to initialize the data to process.
      * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction
      * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
-     * @param finalizeInitFunction A function to close any resources opened during initFunction call. Optional. Run once job is finished, independently if it was canceled, stopped, or completed successfully
+     * @param finalizeInitMainNodeAndCloseDataFunction A function to close any resources opened during initMainNodeAndRetrieveDataFunction call. Optional. Run once job is finished, independently if it was canceled,
+     *        stopped, or completed successfully
      * @param finalizeFunction A function to finalize data to process. Optional. Run once job is finished - only when job completed successfully.
      */
-    protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
-            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, Predicate<JobInstance> hasMoreFunction, Consumer<JobExecutionResultImpl> finalizeInitFunction,
+    protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initMainNodeAndRetrieveDataFunction,
+            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, Predicate<JobInstance> hasMoreFunction, Consumer<JobExecutionResultImpl> finalizeInitMainNodeAndCloseDataFunction,
             Consumer<JobExecutionResultImpl> finalizeFunction) {
 
-        execute(jobExecutionResult, jobInstance, initFunction, processSingleItemFunction, null, hasMoreFunction, finalizeInitFunction, finalizeFunction);
+        execute(jobExecutionResult, jobInstance, initMainNodeAndRetrieveDataFunction, null, processSingleItemFunction, null, hasMoreFunction, finalizeInitMainNodeAndCloseDataFunction, finalizeFunction);
     }
 
     /**
@@ -183,22 +185,24 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * 
      * If processMultipleItemFunction is provided at first an attempt to process multiple items in one transaction will be attempted. If any items fail, each item will be processed one by one in a separate transaction.
      * <p>
-     * When run in mode where same data set is processed on multiple nodes, initFunction and finalizeInitFunction are called only on a master node that initiated job execution. It will NOT be called on worked nodes.
+     * When run in mode where same data set is processed on multiple nodes, initMainNodeAndRetrieveDataFunction and finalizeInitMainNodeAndCloseDataFunction are called only on a master node that initiated job execution.
+     * It will NOT be called on worked nodes.
      * 
      * @param jobExecutionResult Job execution result
      * @param jobInstance Job instance
-     * @param initFunction A function to initialize the data to process
+     * @param initMainNodeAndRetrieveDataFunction A function to initialize the data to process
      * @param processSingleItemFunction A function to process a single item. Will be executed in its own transaction
      * @param processMultipleItemFunction A function to process multiple items. Will be executed in its own transaction.
      * @param hasMoreFunction A function to determine if the are more data to process even though this job run has completed. Optional.
-     * @param finalizeInitFunction A function to close any resources opened during initFunction call. Optional. Run once job is finished, independently if it no data was found to process, if it was canceled or completed.
-     * @param finalizeFunction A function to finalize data to process. Optional. Run once job is finished, independently if it was canceled or completed. Not run if no data were foudn to process. Consult job execution
+     * @param finalizeInitMainNodeAndCloseDataFunction A function to close any resources opened during initMainNodeAndRetrieveDataFunction call. Optional. Run once job is finished, independently if it no data was found
+     *        to process, if it was canceled or completed.
+     * @param finalizeFunction A function to finalize data to process. Optional. Run once job is finished, independently if it was canceled or completed. Not run if no data were found to process. Consult job execution
      *        result status if needed.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initFunction,
-            BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, Predicate<JobInstance> hasMoreFunction,
-            Consumer<JobExecutionResultImpl> finalizeInitFunction, Consumer<JobExecutionResultImpl> finalizeFunction) {
+    protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initMainNodeAndRetrieveDataFunction,
+            Consumer<JobExecutionResultImpl> initWorkerNodeFunction, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction,
+            Predicate<JobInstance> hasMoreFunction, Consumer<JobExecutionResultImpl> finalizeInitMainNodeAndCloseDataFunction, Consumer<JobExecutionResultImpl> finalizeFunction) {
 
         boolean isRunningAsJobManager = jobExecutionResult.getJobLauncherEnum() != JobLauncherEnum.WORKER;
 
@@ -222,12 +226,12 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         if (isRunningAsJobManager) {
             jobExecutionErrorService.purgeJobErrors(jobExecutionResult.getJobInstance());
 
-            Optional<Iterator<T>> iteratorOpt = initFunction.apply(jobExecutionResult);
+            Optional<Iterator<T>> iteratorOpt = initMainNodeAndRetrieveDataFunction.apply(jobExecutionResult);
 
+            // Close data initialization if no data was found to process
             if (!iteratorOpt.isPresent()) {
-                // When running as a primary job manager, Close data initialization
-                if (finalizeInitFunction != null) {
-                    finalizeInitFunction.accept(jobExecutionResult);
+                if (finalizeInitMainNodeAndCloseDataFunction != null) {
+                    finalizeInitMainNodeAndCloseDataFunction.accept(jobExecutionResult);
                 }
                 return;
             }
@@ -248,8 +252,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
                 log.info("{}/{} will skip as nothing to process", jobInstance.getJobTemplate(), jobInstance.getCode());
 
                 // When running as a primary job manager, Close data initialization
-                if (finalizeInitFunction != null) {
-                    finalizeInitFunction.accept(jobExecutionResult);
+                if (finalizeInitMainNodeAndCloseDataFunction != null) {
+                    finalizeInitMainNodeAndCloseDataFunction.accept(jobExecutionResult);
                 }
                 if (finalizeFunction != null) {
                     finalizeFunction.accept(jobExecutionResult);
@@ -264,6 +268,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             log.info("{}/{} - {} records to process by main node", jobInstance.getJobTemplate(), jobInstance.getCode(), jobExecutionResult.getNbItemsToProcess());
 
         } else {
+
+            if (initWorkerNodeFunction != null) {
+                initWorkerNodeFunction.accept(jobExecutionResult);
+            }
 
             log.info("{}/{} running as a worker node", jobInstance.getJobTemplate(), jobInstance.getCode());
         }
@@ -355,9 +363,12 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             // Job manager launches worker jobs in other cluster nodes
             if (isRunningAsJobManager && spreadOverCluster) {
-                clusterEventPublisher.publishEventAsync(jobInstance, CrudActionEnum.executeWorker,
-                    MapUtils.putAll(new HashMap<String, Object>(), new Object[] { Job.JOB_PARAM_HISTORY_PARENT_ID, jobExecutionResult.getId(), Job.JOB_PARAM_LAUNCHER, JobLauncherEnum.WORKER }),
-                    currentUser.getProviderCode(), currentUser.getUserName());
+
+                Map<String, Object> additionalInformation = new HashMap<String, Object>(jobInstance.getRunTimeValues());
+                additionalInformation.put(Job.JOB_PARAM_HISTORY_PARENT_ID, jobExecutionResult.getId());
+                additionalInformation.put(Job.JOB_PARAM_LAUNCHER, JobLauncherEnum.WORKER);
+
+                clusterEventPublisher.publishEventAsync(jobInstance, CrudActionEnum.executeWorker, additionalInformation, currentUser.getProviderCode(), currentUser.getUserName());
             }
 
             // Wait for all async methods to finish
@@ -391,8 +402,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             countDowns.remove(jobInstance.getId());
 
             // When running as a primary job manager, Close data initialization
-            if (isRunningAsJobManager && finalizeInitFunction != null) {
-                finalizeInitFunction.accept(jobExecutionResult);
+            if (isRunningAsJobManager && finalizeInitMainNodeAndCloseDataFunction != null) {
+                finalizeInitMainNodeAndCloseDataFunction.accept(jobExecutionResult);
             }
 
             // Mark job as stopped if task was killed but not shut down

@@ -58,11 +58,15 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-		super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyReRating,
-				null, null, this::closeResultset, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::initJobOnWorkerNode, this::applyReRating, null, null, this::closeResultset, null);
 	}
 
-	@SuppressWarnings({ "unchecked" })
+    /**
+     * Initialize job settings and retrieve data to process
+     *
+     * @param jobExecutionResult Job execution result
+     * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
+     */
 	private Optional<Iterator<List<Object[]>>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 
 		useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
@@ -92,8 +96,7 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 		NativeQuery nativeQuery = statelessSession.createNativeQuery("SELECT CAST(unnest(string_to_array(wo_id, ',')) AS bigint) as id FROM " + viewName + " WHERE billed_il is null order by ba_id");
 		scrollableResults = nativeQuery.setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun).setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
-		return Optional.of(
-				new SynchronizedMultiItemIterator<Object[]>(scrollableResults, nrOfInitialWOs.intValue(), true, null) {
+        return Optional.of(new SynchronizedMultiItemIterator<Object[]>(scrollableResults, nrOfInitialWOs.intValue(), true, null) {
 
 					long count = 0L;
 
@@ -112,13 +115,22 @@ public class ReRatingV2JobBean extends IteratorBasedJobBean<List<Object[]>> {
 				});
 	}
 
+    /**
+     * Initialize job settings on Worker node
+     * 
+     * @param jobExecutionResult Job execution result
+     */
+    private void initJobOnWorkerNode(JobExecutionResultImpl jobExecutionResult) {
+
+        useSamePricePlan = "justPrice".equalsIgnoreCase(jobExecutionResult.getJobInstance().getParametres());
+    }
+
 	private void applyReRating(List<Object[]> reratingTree, JobExecutionResultImpl jobExecutionResult) {
 		if (reratingTree != null) {
 			rerateByGroup(reratingTree.stream().map(x->((Number)x[0]).longValue()).collect(Collectors.toList()), jobExecutionResult);
 		}
 	}
 
-	
 	private void rerateByGroup(List<Long> reratingTree, JobExecutionResultImpl jobExecutionResult) {
     	final int maxValue = ParamBean.getInstance().getPropertyAsInteger("database.number.of.inlist.limit", reratingService.SHORT_MAX_VALUE);
     	List<List<Long>> subList = partition(reratingTree, maxValue);

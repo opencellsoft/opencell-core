@@ -75,7 +75,7 @@ public class CounterPeriodJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::getOrCreateCounterPeriod, null, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, null, this::getOrCreateCounterPeriod, null, null, null);
     }
 
     /**

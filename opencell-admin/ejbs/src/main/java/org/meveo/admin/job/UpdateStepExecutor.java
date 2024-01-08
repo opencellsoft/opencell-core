@@ -27,7 +27,7 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
     @Inject
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
-    
+
     private boolean isNativeQuery = true;
 
     public static final String PARAM_NATIVE_QUERY = "PARAM_NATIVE_QUERY";
@@ -46,14 +46,14 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
      */
     public Optional<Iterator<Long[]>> initFunction(JobExecutionResultImpl jobExecutionResult) {
         List<Long[]> intervals = new ArrayList<>();
-        
+
         jobExecutionResult.addJobParam("updatedElementsCount", 0L);
 
         String readQuery = (String) jobExecutionResult.getJobParam(PARAM_READ_INTERVAL_QUERY);
-        isNativeQuery = jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY)!=null?(boolean) jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY):true;
-        Object[] result=null;
-        if(!StringUtils.isEmpty(readQuery)){
-        	result= isNativeQuery? (Object[]) emWrapper.getEntityManager().createNativeQuery(readQuery).getSingleResult() : (Object[]) emWrapper.getEntityManager().createQuery(readQuery).getSingleResult();
+        isNativeQuery = jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY) != null ? (boolean) jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY) : true;
+        Object[] result = null;
+        if (!StringUtils.isEmpty(readQuery)) {
+            result = isNativeQuery ? (Object[]) emWrapper.getEntityManager().createNativeQuery(readQuery).getSingleResult() : (Object[]) emWrapper.getEntityManager().createQuery(readQuery).getSingleResult();
         }
 
         Long chunkSize = (Long) jobExecutionResult.getJobParam(PARAM_CHUNK_SIZE);
@@ -83,27 +83,36 @@ public class UpdateStepExecutor extends IteratorBasedJobBean<Long[]> {
         return Optional.of(new SynchronizedIterator(intervals));
     }
 
+    /**
+     * Initialize job settings on Worker node
+     * 
+     * @param jobExecutionResult Job execution result
+     */
+    public void initJobOnWorkerNode(JobExecutionResultImpl jobExecutionResult) {
+
+        isNativeQuery = jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY) != null ? (boolean) jobExecutionResult.getJobParam(PARAM_NATIVE_QUERY) : true;
+    }
+
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initFunction, this::processUpdateByInterval, null, null, null, this::writeReport);
+        super.execute(jobExecutionResult, jobInstance, this::initFunction, this::initJobOnWorkerNode, this::processUpdateByInterval, null, null, null, this::writeReport);
     }
-    
+
     private void writeReport(JobExecutionResultImpl jobExecutionResult) {
-    	jobExecutionResult.addReport("Total number of updated elements :"+jobExecutionResult.getJobParam("updatedElementsCount"));
+        jobExecutionResult.addReport("Total number of updated elements :" + jobExecutionResult.getJobParam("updatedElementsCount"));
     }
 
     /**
      * Process an update operation for a specific interval.
      *
-     * @param interval           The interval to update.
+     * @param interval The interval to update.
      * @param jobExecutionResult The job execution result.
      */
-	private void processUpdateByInterval(Long[] interval, JobExecutionResultImpl jobExecutionResult) {
+    private void processUpdateByInterval(Long[] interval, JobExecutionResultImpl jobExecutionResult) {
         String namedQuery = (String) jobExecutionResult.getJobParam(PARAM_NAMED_QUERY);
         String updateQuery = (String) jobExecutionResult.getJobParam(PARAM_UPDATE_QUERY);
         String tableAlias = (String) jobExecutionResult.getJobParam(PARAM_TABLE_ALIAS);
-
 
         if (namedQuery == null && (tableAlias == null || updateQuery == null)) {
             log.error("params should not be null - updateQuery: {}, tableAlias: {}, namedQuery: {}", updateQuery, tableAlias, namedQuery);
