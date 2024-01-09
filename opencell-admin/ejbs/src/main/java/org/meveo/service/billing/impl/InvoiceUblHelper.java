@@ -1009,11 +1009,6 @@ public class InvoiceUblHelper {
 		dueDate.setValue(toXmlDate(source.getDueDate()));
 		documentReferenceType.setIssueDate(dueDate);
 		
-		if(source.getInvoiceType() != null && StringUtils.isNotBlank(source.getInvoiceType().getCode())){
-			DocumentTypeCode documentTypeCode = objectFactorycommonBasic.createDocumentTypeCode();
-			documentTypeCode.setValue(source.getInvoiceType().getCode());
-			documentReferenceType.setDocumentTypeCode(documentTypeCode);
-		}
 		target.getBillingReferences().add(billingReference);
 		return billingReference;
 	}
