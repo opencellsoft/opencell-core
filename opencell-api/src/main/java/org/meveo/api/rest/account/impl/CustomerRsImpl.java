@@ -18,6 +18,14 @@
 
 package org.meveo.api.rest.account.impl;
 
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.interceptor.Interceptors;
+
 import org.meveo.api.account.CustomerApi;
 import org.meveo.api.account.CustomerSequenceApi;
 import org.meveo.api.dto.ActionStatus;
@@ -43,13 +51,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.interceptor.Interceptors;
-import java.util.Date;
-import java.util.List;
-import java.util.Comparator;
 
 /**
  * @author Edward P. Legaspi
@@ -151,7 +152,7 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     @Override
     public CustomersResponseDto list() {
         try {
-            return customerApi.listGetAll(null, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering() );
+            return customerApi.listGetAll(null, GenericPagingAndFilteringUtils.getInstance().getPagingAndFiltering());
         } catch (Exception e) {
             CustomersResponseDto result = new CustomersResponseDto();
             processException(e, result.getActionStatus());
@@ -474,4 +475,31 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     public GetCountersInstancesResponseDto filterCustomerCountersByPeriodV2(String customerCode, Date date) {
         return filterCustomerCountersByPeriod(customerCode, date);
     }
+
+    public ActionStatus mq1(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        return customerApi.mq1(threads, count, batchSize, isTempQueue);
+    }
+
+    public ActionStatus mq2(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        return customerApi.mq2(threads, count, batchSize, isTempQueue);
+    }
+
+    public ActionStatus mq3(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        return customerApi.mq3(threads, count, batchSize, isTempQueue);
+
+    }
+
+    public ActionStatus mq4(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        return customerApi.mq4(threads, count, batchSize, isTempQueue);
+    }
+
+    public ActionStatus mq5SingleTx(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        return customerApi.mq5SingleTx(threads, count, batchSize, isTempQueue);
+    }
+
 }

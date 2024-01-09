@@ -27,23 +27,40 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSConnectionFactory;
+import javax.jms.JMSContext;
+import javax.jms.JMSException;
+import javax.jms.JMSProducer;
+import javax.jms.Queue;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.MeveoApiErrorCodeEnum;
+import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.AuditableEntityDto;
 import org.meveo.api.dto.GDPRInfoDto;
 import org.meveo.api.dto.account.CustomerBrandDto;
@@ -89,6 +106,8 @@ import org.meveo.model.intcrm.AddressBook;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.sequence.GenericSequence;
 import org.meveo.model.tax.TaxCategory;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.admin.impl.CustomGenericEntityCodeService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.AccountingCodeService;
@@ -121,6 +140,26 @@ public class CustomerApi extends AccountEntityApi {
      * Default sort for list call.
      */
     private static final String DEFAULT_SORT_ORDER_CODE = "code";
+
+    /**
+     * Remote MQ connection url
+     */
+    private static final String REMOTE_MQ_HOST = "REMOTE_MQ_HOST";
+
+    /**
+     * Remote MQ JMX connection port
+     */
+    private static final String REMOTE_MQ_JMX_PORT = "REMOTE_MQ_JMX_PORT";
+
+    /**
+     * Remote MQ connection username
+     */
+    private static final String REMOTE_MQ_ADMIN_USER = "REMOTE_MQ_ADMIN_USER";
+
+    /**
+     * Remote MQ connection password
+     */
+    private static final String REMOTE_MQ_ADMIN_PASSWORD = "REMOTE_MQ_ADMIN_PASSWORD";
 
     @Inject
     private CustomerService customerService;
@@ -166,6 +205,19 @@ public class CustomerApi extends AccountEntityApi {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Resource(lookup = "java:/jms/remoteCF-consumer")
+    private ConnectionFactory jmsConnectionFactory;
+
+    @Inject
+    @JMSConnectionFactory("java:/jms/remoteCF")
+    private JMSContext jmsContextForPublishing;
+
+    @Resource(lookup = "java:jboss/ee/concurrency/executor/job_executor")
+    protected ManagedExecutorService executor;
+
+    @Inject
+    protected CurrentUserProvider currentUserProvider;
 
     public Customer create(CustomerDto postData) throws MeveoApiException, BusinessException {
         return create(postData, true);
@@ -255,8 +307,7 @@ public class CustomerApi extends AccountEntityApi {
      * @param businessAccountModel Business account model
      * @param associatedSeller associated Seller
      **/
-    private void dtoToEntity(Customer customer, CustomerDto postData, boolean checkCustomFields,
-                             BusinessAccountModel businessAccountModel, Seller associatedSeller) {
+    private void dtoToEntity(Customer customer, CustomerDto postData, boolean checkCustomFields, BusinessAccountModel businessAccountModel, Seller associatedSeller) {
 
         boolean isNew = customer.getId() == null;
 
@@ -335,8 +386,7 @@ public class CustomerApi extends AccountEntityApi {
             customer.setAdditionalDetails(additionalDetails);
         }
 
-        if(postData.getIsCompany() != null)
-        {
+        if (postData.getIsCompany() != null) {
             customer.setIsCompany(postData.getIsCompany());
         }
     }
@@ -456,8 +506,7 @@ public class CustomerApi extends AccountEntityApi {
             sortBy = pagingAndFiltering.getSortBy();
         }
 
-        PaginationConfiguration paginationConfig =
-                toPaginationConfiguration(sortBy, pagingAndFiltering.getMultiSortOrder(), null, pagingAndFiltering, Customer.class);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration(sortBy, pagingAndFiltering.getMultiSortOrder(), null, pagingAndFiltering, Customer.class);
 
         Long totalCount = customerService.count(paginationConfig);
 
@@ -812,8 +861,7 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     /**
-     * Exports an account hierarchy given a specific customer selected in the GUI. It includes Subscription, AccountOperation and Invoice details. It packaged the json output as a
-     * zipped file along with the pdf invoices.
+     * Exports an account hierarchy given a specific customer selected in the GUI. It includes Subscription, AccountOperation and Invoice details. It packaged the json output as a zipped file along with the pdf invoices.
      * 
      * @param customerCode customer code.
      * @param response Http servlet response.
@@ -891,8 +939,8 @@ public class CustomerApi extends AccountEntityApi {
 
     public void anonymizeGdpr(String customerCode) throws BusinessException {
         Customer entity = customerService.findByCode(customerCode);
-        if(entity == null) {
-        	throw new EntityDoesNotExistsException(Customer.class, customerCode);
+        if (entity == null) {
+            throw new EntityDoesNotExistsException(Customer.class, customerCode);
         }
         gdprService.anonymize(entity);
     }
@@ -927,5 +975,264 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         return new ArrayList<>(customerService.filterCountersByPeriod(customer.getCounters(), date).values());
+    }
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public ActionStatus mq1(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        publishDataFork(threads, count, true, batchSize, isTempQueue);
+
+        return new ActionStatus();
+    }
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public ActionStatus mq2(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        publishDataFork(threads, count, false, batchSize, isTempQueue);
+
+        return new ActionStatus();
+    }
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public ActionStatus mq3(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        publishDataExecutor(threads, count, true, batchSize, isTempQueue);
+
+        return new ActionStatus();
+
+    }
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public ActionStatus mq4(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        publishDataExecutor(threads, count, false, batchSize, isTempQueue);
+        return new ActionStatus();
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public ActionStatus mq5SingleTx(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+
+        publishDataExecutor(threads, count, false, batchSize, isTempQueue);
+        return new ActionStatus();
+    }
+
+    private void publishDataFork(Integer threads, Integer count, boolean asList, Integer batchSize, Boolean isTempQueue) {
+
+        long start = new Date().getTime();
+
+        if (threads == null) {
+            threads = 1;
+        }
+        if (count == null) {
+            count = 10000;
+        }
+        if (batchSize == null) {
+            batchSize = 1;
+        }
+
+        final int countFinal = count;
+        final int batchSizeFinal = batchSize;
+
+        AtomicInteger aInteger = new AtomicInteger(countFinal);
+
+        Queue jobQueue = isTempQueue == null || isTempQueue ? jmsContextForPublishing.createTemporaryQueue() : jmsContextForPublishing.createQueue("AKK_Andrius");
+
+        String queueName = null;
+        try {
+            queueName = jobQueue.getQueueName();
+        } catch (JMSException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        String queueNameFinal = queueName;
+
+        ForkJoinPool executor = new ForkJoinPool();
+
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+        for (int threadNr = 0; threadNr < threads; threadNr++) {
+
+            JMSContext jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.CLIENT_ACKNOWLEDGE);
+            JMSProducer jmsProducer = jmsContext.createProducer();
+
+            final int threadNrFinal = threadNr;
+
+            RecursiveAction recursiveAction = new RecursiveAction() {
+                @Override
+                protected void compute() {
+                    // TODO Auto-generated method stub
+
+                    Thread.currentThread().setName("AKK-PublishToCluster-" + threadNrFinal);
+
+                    currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+                    log.debug("Thread {} will publish data for cluster-wide data processing to queue {}", Thread.currentThread().getName(), queueNameFinal);
+
+                    int nrOfItemsProcessedByThread = 0;
+                    int nrMessages = 0;
+
+                    jmsContext.start();
+
+                    while (aInteger.intValue() > 0) {
+                        int i = aInteger.decrementAndGet();
+
+                        if (batchSizeFinal > 1) {
+
+                            List<Integer> itemsToProcess = new ArrayList<>();
+                            itemsToProcess.add(i);
+
+                            while (aInteger.intValue() > 0 && itemsToProcess.size() < batchSizeFinal) {
+                                i = aInteger.decrementAndGet();
+                                itemsToProcess.add(i);
+                            }
+
+                            jmsProducer.send(jobQueue, (Serializable) itemsToProcess);
+                            nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + itemsToProcess.size();
+                            nrMessages++;
+
+                        } else if (asList) {
+                            List<Integer> itemsToProcess = new ArrayList<>();
+                            itemsToProcess.add(i);
+
+                            jmsProducer.send(jobQueue, (Serializable) itemsToProcess);
+                            nrOfItemsProcessedByThread++;
+                            nrMessages++;
+
+                        } else {
+                            jmsProducer.send(jobQueue, i);
+                            nrOfItemsProcessedByThread++;
+                            nrMessages++;
+                        }
+                    }
+
+                    log.info("Thread {} published {} data items in {} messages for cluster-wide data processing", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrMessages);
+
+                    jmsContext.close();
+
+                }
+            };
+
+            executor.execute(recursiveAction);
+        }
+
+        executor.awaitQuiescence(20, TimeUnit.SECONDS);
+
+        long time = new Date().getTime() - start;
+
+        log.error("AKK done launching all tasks {} in {}", count, time);
+    }
+
+    private void publishDataExecutor(Integer threads, Integer count, boolean asList, Integer batchSize, Boolean isTempQueue) {
+
+        long start = new Date().getTime();
+
+        if (threads == null) {
+            threads = 1;
+        }
+        if (count == null) {
+            count = 10000;
+        }
+        if (batchSize == null) {
+            batchSize = 1;
+        }
+
+        final int countFinal = count;
+        final int batchSizeFinal = batchSize;
+
+        AtomicInteger aInteger = new AtomicInteger(countFinal);
+
+        Queue jobQueue = isTempQueue == null || isTempQueue ? jmsContextForPublishing.createTemporaryQueue() : jmsContextForPublishing.createQueue("AKK_Andrius");
+
+        String queueName = null;
+        try {
+            queueName = jobQueue.getQueueName();
+        } catch (JMSException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        String queueNameFinal = queueName;
+
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+
+        List<Future> futures = new ArrayList<>();
+        List<Runnable> tasks = new ArrayList<>();
+
+        for (int threadNr = 0; threadNr < threads; threadNr++) {
+
+            JMSContext jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.CLIENT_ACKNOWLEDGE);
+            JMSProducer jmsProducer = jmsContext.createProducer();
+
+            final int threadNrFinal = threadNr;
+
+            Runnable task = () -> {
+                // TODO Auto-generated method stub
+
+                Thread.currentThread().setName("AKK-PublishToCluster-" + threadNrFinal);
+
+                currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
+                log.debug("Thread {} will publish data for cluster-wide data processing to queue {}", Thread.currentThread().getName(), queueNameFinal);
+
+                int nrOfItemsProcessedByThread = 0;
+                int nrMessages = 0;
+
+                jmsContext.start();
+
+                while (aInteger.intValue() > 0) {
+                    int i = aInteger.decrementAndGet();
+
+                    if (batchSizeFinal > 1) {
+
+                        List<Integer> itemsToProcess = new ArrayList<>();
+                        itemsToProcess.add(i);
+
+                        while (aInteger.intValue() > 0 && itemsToProcess.size() < batchSizeFinal) {
+                            i = aInteger.decrementAndGet();
+                            itemsToProcess.add(i);
+                        }
+
+                        jmsProducer.send(jobQueue, (Serializable) itemsToProcess);
+                        nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + itemsToProcess.size();
+                        nrMessages++;
+
+                    } else if (asList) {
+                        List<Integer> itemsToProcess = new ArrayList<>();
+                        itemsToProcess.add(i);
+
+                        jmsProducer.send(jobQueue, (Serializable) itemsToProcess);
+                        nrOfItemsProcessedByThread++;
+                        nrMessages++;
+
+                    } else {
+                        jmsProducer.send(jobQueue, i);
+                        nrOfItemsProcessedByThread++;
+                        nrMessages++;
+                    }
+                }
+
+                log.info("Thread {} published {} data items in {} messages for cluster-wide data processing", Thread.currentThread().getName(), nrOfItemsProcessedByThread, nrMessages);
+
+                jmsContext.close();
+
+            };
+            tasks.add(task);
+        }
+
+        for (Runnable task : tasks) {
+            futures.add(executor.submit(task));
+        }
+
+        for (Future future : futures) {
+            try {
+                future.get();
+            } catch (Exception e) {
+
+            }
+        }
+
+        long time = new Date().getTime() - start;
+
+        log.error("AKK done launching all tasks {} in {}", count, time);
     }
 }
