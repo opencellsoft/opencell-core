@@ -21,6 +21,7 @@ package org.meveo.service.billing.impl;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -266,12 +267,26 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 if(chargeInstance.getSubscription().getSubscribedTillDate() != null) {
                     Date end = getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
                     if (end != null && chargeInstance.getTerminationDate() != null && chargeInstance.getTerminationDate().after(end)) {
-                        Date startDate = chargeInstance.getSubscription().getSubscribedTillDate();
-                        while (chargeInstance.getTerminationDate().after(end)) {
-                            DatePeriod datePeriod = new DatePeriod(startDate, end);
-                            periods.add(datePeriod);
-                            startDate = end;
-                            end = getRecurringPeriodEndDate(chargeInstance, startDate);
+                        List<WalletOperation> walletOperations = chargeInstance.getWalletOperations();
+                        walletOperations.sort(Comparator.comparing(WalletOperation::getCreated));
+                        WalletOperation walletOperation = walletOperations.get(chargeInstance.getWalletOperations().size() - 1);
+                        if(walletOperation.getRatedTransaction() != null
+                                && walletOperation.getRatedTransaction().getStatus() == RatedTransactionStatusEnum.BILLED) {
+                            Date startDate = chargeInstance.getSubscription().getSubscribedTillDate();
+                            while (chargeInstance.getTerminationDate().after(end)) {
+                                DatePeriod datePeriod = new DatePeriod(startDate, end);
+                                periods.add(datePeriod);
+                                startDate = end;
+                                end = getRecurringPeriodEndDate(chargeInstance, startDate);
+                            }
+                        } else {
+                            Date startDate = getRecurringPeriodStartDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
+                            while (chargeInstance.getTerminationDate().compareTo(end) >= 0) {
+                                DatePeriod datePeriod = new DatePeriod(startDate, end);
+                                startDate = end;
+                                end = chargeInstance.getCalendar().nextCalendarDate(end);
+                                periods.add(datePeriod);
+                            }
                         }
                     }
                 }
