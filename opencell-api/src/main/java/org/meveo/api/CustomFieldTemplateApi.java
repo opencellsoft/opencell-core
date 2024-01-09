@@ -385,6 +385,8 @@ public class CustomFieldTemplateApi extends BaseApi {
 
         handleMissingParameters();
 
+        checkEntityClazzIsPresent(postData.getEntityClazz());
+
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
 
@@ -415,6 +417,20 @@ public class CustomFieldTemplateApi extends BaseApi {
 	        }
 		}
 	}
+
+    /**
+     * Check if entity class is present on the classpath
+     * @param clazzEntity
+     */
+    private static void checkEntityClazzIsPresent(String clazzEntity) {
+        if(!StringUtils.isBlank(clazzEntity) ) {
+            try {
+                Class.forName(clazzEntity);
+            } catch (ClassNotFoundException e) {
+                throw new BusinessException("Unknown entity class '" + clazzEntity + "'", e);
+            }
+        }
+    }
 
     protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, String appliesTo, CustomFieldTemplate cftToUpdate) throws InvalidParameterException {
 
