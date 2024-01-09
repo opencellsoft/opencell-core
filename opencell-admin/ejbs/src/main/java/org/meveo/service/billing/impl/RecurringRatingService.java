@@ -452,10 +452,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                             throw new RatingException("Failed to calculate prorating for charge id=" + chargeInstance.getId() + " : periodFrom=" + currentPeriodFromDate + ", periodTo=" + currentPeriodToDate
                                     + ", proratedFrom=" + effectiveChargeFromDate + ", proratedTo=" + effectiveChargeToDate);
                         }
-
-                        inputQuantity = inputQuantity.multiply(prorata)
-                                .setScale(appProvider.getRounding(), appProvider.getRoundingMode().getRoundingMode());
-                        if (effectiveChargeFromDate.after(effectiveChargeToDate)) {
+                        if(effectiveChargeFromDate.after(effectiveChargeToDate)) {
                             inputQuantity = inputQuantity.negate();
                         }
                     }
