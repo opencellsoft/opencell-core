@@ -21,14 +21,13 @@ package org.meveo.service.billing.impl;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -37,7 +36,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.BusinessException.ErrorContextAttributeEnum;
 import org.meveo.admin.exception.ElementNotFoundException;
@@ -257,9 +255,8 @@ public class RecurringRatingService extends RatingService implements Serializabl
             }
 
             if(chargeInstance.isAnticipateEndOfSubscription()) {
-                Date prorateLastPeriodDate = Arrays.asList(period.getTo(), chargeInstance.getSubscription().getSubscribedTillDate(),
+                Date prorateLastPeriodDate = Stream.of(period.getTo(), chargeInstance.getSubscription().getSubscribedTillDate(),
                         chargeInstance.getServiceInstance().getSubscribedTillDate())
-                        .stream()
                         .filter(Objects::nonNull).min(Date::compareTo).orElse(null);
                 if(prorateLastPeriodDate != null && prorateLastPeriodDate.compareTo(period.getTo()) != 0) {
                     applyChargeFromDate = period.getFrom();
@@ -269,19 +266,12 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 if(chargeInstance.getSubscription().getSubscribedTillDate() != null) {
                     Date end = getRecurringPeriodEndDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
                     if (end != null && chargeInstance.getTerminationDate() != null && chargeInstance.getTerminationDate().after(end)) {
-                        List<WalletOperation> walletOperations = chargeInstance.getWalletOperations();
-                        walletOperations.sort(Comparator.comparing(WalletOperation::getCreated));
-                        WalletOperation walletOperation = walletOperations.get(chargeInstance.getWalletOperations().size() - 1);
+                        Date startDate = chargeInstance.getSubscription().getSubscribedTillDate();
                         while (chargeInstance.getTerminationDate().after(end)) {
-                            Date startDate = getRecurringPeriodStartDate(chargeInstance, chargeInstance.getSubscription().getSubscribedTillDate());
-                            if (walletOperation.getRatedTransaction() != null
-                                    && walletOperation.getRatedTransaction().getStatus().equals(RatedTransactionStatusEnum.BILLED)
-                                    && walletOperation.getStartDate().compareTo(startDate) == 0) {
-                                startDate = walletOperation.getEndDate();
-                            }
                             DatePeriod datePeriod = new DatePeriod(startDate, end);
-                            end = chargeInstance.getCalendar().nextCalendarDate(end);
                             periods.add(datePeriod);
+                            startDate = end;
+                            end = getRecurringPeriodEndDate(chargeInstance, startDate);
                         }
                     }
                 }
