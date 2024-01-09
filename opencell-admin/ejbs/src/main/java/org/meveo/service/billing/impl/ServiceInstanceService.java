@@ -264,10 +264,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new ValidationException("Service " + serviceInstance.getCode() + " is not associated with Offer");
         }
         
-        if (offer != null && offer.isDisabled() && serviceInstance.getSubscription().getOrder() == null) {
-			throw new BusinessException(String.format("OfferTemplate[code=%s] is disabled and cannot be subscription to. Please select another offer.", offer.getCode()));
-		}
-
         if (offer != null && serviceInstance != null) {
             log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
 
