@@ -285,7 +285,7 @@ public class AttributeService extends BusinessService<Attribute>{
     }
 
     private boolean isValidNumber(Object value) {
-        if (value == null) {
+        if (StringUtils.isBlank(value)) {
             return true;
         }
         try {
