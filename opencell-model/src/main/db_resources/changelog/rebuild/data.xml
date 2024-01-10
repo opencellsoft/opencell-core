@@ -12494,6 +12494,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
 	<changeSet id="#INTRD-19606_migrate-huge-entities-settings" author="anas.rouaguebe" dbms="postgresql" />
     <changeSet id="INTRD-19464_20231204" author="TarikFA." />
 	<changeSet id="#INTRD-19685_20231130" author="AbdellatifBARI" />
+	<changeSet id="#INTRD-20278_20240109" author="AbdellatifBARI" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

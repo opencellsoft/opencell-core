@@ -626,11 +626,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         if (accountOperation == null) {
             throw new BusinessException("Cant find account operation by id:" + aoID);
         }
-        if (MatchingStatusEnum.L != accountOperation.getMatchingStatus() && MatchingStatusEnum.P != accountOperation.getMatchingStatus() ) {
-            throw new BusinessException("The account operation is unmatched");
+        List<MatchingAmount> matchingAmounts = accountOperation.getMatchingAmounts();
+        if (matchingAmounts != null && !matchingAmounts.isEmpty()) {
+            unmatching(matchingAmounts.get(0).getMatchingCode().getId());
         }
-        unmatching(accountOperation.getMatchingAmounts().get(0).getMatchingCode().getId());
-
     }
 
     /**
