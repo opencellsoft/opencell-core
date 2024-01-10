@@ -364,7 +364,10 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
             // Job manager launches worker jobs in other cluster nodes
             if (isRunningAsJobManager && spreadOverCluster) {
 
-                Map<String, Object> additionalInformation = new HashMap<String, Object>(jobInstance.getRunTimeValues());
+                Map<String, Object> additionalInformation = new HashMap<String, Object>();
+                if (jobInstance.getRunTimeValues() != null) {
+                    additionalInformation.putAll(jobInstance.getRunTimeValues());
+                }
                 additionalInformation.put(Job.JOB_PARAM_HISTORY_PARENT_ID, jobExecutionResult.getId());
                 additionalInformation.put(Job.JOB_PARAM_LAUNCHER, JobLauncherEnum.WORKER);
 
