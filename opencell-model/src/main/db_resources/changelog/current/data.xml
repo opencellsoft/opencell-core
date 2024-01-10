@@ -21696,5 +21696,11 @@ public class ImportJobNotification extends Script {
             <where>code='PPL_INSTALLMENT'</where>
         </update>
     </changeSet>
+    <changeSet id="#INTRD-20278_20240109" author="AbdellatifBARI">
+        <update tableName="ar_occ_template">
+            <column name="occ_category" value="DEBIT" />
+            <where>code in ('REJ_CHK','REJ_DDT','REJ_TIP','REJ_CRD')</where>
+        </update>
+    </changeSet>
 	        
 </databaseChangeLog>
