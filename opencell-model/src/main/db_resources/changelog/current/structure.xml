@@ -8890,13 +8890,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	<addColumn tableName="cpq_attribute_allowed_values">
 		<column name="order_idx" type="int4"/>
 	</addColumn>
-	<sql>UPDATE cpq_attribute_allowed_values AS attr
-		SET order_idx = subquery.new_order_idx FROM (SELECT attribute_id, allowed_values,
-		ROW_NUMBER() OVER (PARTITION BY attribute_id ORDER BY allowed_values)
-		AS new_order_idx
-		FROM cpq_attribute_allowed_values
-		) AS subquery WHERE attr.attribute_id = subquery.attribute_id AND attr.allowed_values = subquery.allowed_values;
-	</sql>
+	<sql>UPDATE cpq_attribute_allowed_values AS attr SET order_idx = subquery.new_order_idx - 1 FROM (SELECT attribute_id, allowed_values,
+	    ROW_NUMBER() OVER (PARTITION BY attribute_id ORDER BY allowed_values) AS new_order_idx
+	    FROM cpq_attribute_allowed_values) AS subquery
+	    WHERE attr.attribute_id = subquery.attribute_id AND attr.allowed_values = subquery.allowed_values;
+     </sql>
 
   </changeSet>
 
