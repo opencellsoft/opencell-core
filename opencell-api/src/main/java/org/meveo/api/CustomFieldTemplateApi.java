@@ -34,6 +34,7 @@ import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
+import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
@@ -45,7 +46,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Edward P. Legaspi
@@ -384,8 +387,20 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
 
         handleMissingParameters();
+        
+        if(StringUtils.isNotBlank(postData.getEntityClazz())) {
+            List<String> cetArrays = Arrays.stream(postData.getEntityClazz().split("-"))
+                                           .map(String::trim)
+                                           .collect(Collectors.toList());
 
-        checkEntityClazzIsPresent(postData.getEntityClazz());
+            checkEntityClazzIsPresent(cetArrays.get(0));
+            if(cetArrays.size() > 1 && StringUtils.isNotBlank(cetArrays.get(1))) {
+                CustomEntityTemplate cet = customEntityTemplateService.findByCode(cetArrays.get(1));
+                if(cet == null) {
+                    throw new EntityDoesNotExistsException(CustomEntityTemplate.class, cetArrays.get(1));
+                }
+            }
+        }
 
         if (appliesTo != null) {
             postData.setAppliesTo(appliesTo);
@@ -423,12 +438,10 @@ public class CustomFieldTemplateApi extends BaseApi {
      * @param clazzEntity
      */
     private static void checkEntityClazzIsPresent(String clazzEntity) {
-        if(!StringUtils.isBlank(clazzEntity) ) {
-            try {
-                Class.forName(clazzEntity);
-            } catch (ClassNotFoundException e) {
-                throw new BusinessException("Unknown entity class '" + clazzEntity + "'", e);
-            }
+        try {
+            Class.forName(clazzEntity);
+        } catch (ClassNotFoundException e) {
+            throw new BusinessException("Unknown entity class '" + clazzEntity + "'", e);
         }
     }
 
