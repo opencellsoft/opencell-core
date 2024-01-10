@@ -142,7 +142,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     
     public void create(Role role,Boolean replicateInKc) throws BusinessException {
-    	if(BooleanUtils.isTrue(replicateInKc) && canSynchroWithKC()) {
+    	if(BooleanUtils.isTrue(replicateInKc)) {
     		if (role.getParentRole() == null) {
     			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
     		} else {
