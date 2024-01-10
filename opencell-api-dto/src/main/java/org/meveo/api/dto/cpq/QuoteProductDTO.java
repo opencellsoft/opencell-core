@@ -129,14 +129,14 @@ public class QuoteProductDTO extends BaseEntityDto{
 				boolean display = false;
 				boolean mandatory = false;
 				Boolean readOnly = null;
-				Set<String> allowedValues = new HashSet<>();
+				List<String> allowedValues = new ArrayList<>();
 				AttributeCategoryEnum attributeCategoryEnum = null;
 				if(productVersionAttribute != null) {
 					sequence = productVersionAttribute.getSequence();
 					display = productVersionAttribute.isDisplay();
 					mandatory = productVersionAttribute.isMandatory();
 					readOnly = productVersionAttribute.getReadOnly();
-					allowedValues = new HashSet<>(productVersionAttribute.getAttribute().getAllowedValues());
+					allowedValues = new ArrayList<>(productVersionAttribute.getAttribute().getAllowedValues());
 					attributeCategoryEnum = productVersionAttribute.getAttribute().getAttributeCategory();
 				}
 				productAttributes.add(new QuoteAttributeDTO(quoteAttribute, sequence, mandatory, display, readOnly, allowedValues, attributeCategoryEnum));
