@@ -3469,6 +3469,7 @@
             <column name="order_id" type="bigint" />
             <column name="order_lot_id" type="bigint" />
             <column name="product_version_id" type="bigint" />
+            <column name="order_product_id" type="bigint" />
             <column name="invoice_line_id" type="bigint"/>
 			<column name="discount_plan_id" type="bigint"/>
     		<column name="discounted_ratedtransaction_id" type="bigint" />
@@ -4086,6 +4087,7 @@
             <column name="accounting_article_id" type="bigint" />
             <column name="order_lot_id" type="bigint" />
             <column name="product_version_id" type="bigint" />
+            <column name="order_product_id" type="bigint" />
             <column name="refunds_wo_id" type="bigint"/>
     		<column name="discounted_wallet_operation_id" type="bigint" />
     		<column name="discount_plan_id" type="bigint" />
@@ -17419,6 +17421,25 @@
                                  constraintName="fk_billing_chrg_inst_counter_counter_instance_id" referencedTableName="billing_counter"
                                  referencedColumnNames="id"/>
     </changeSet>
+   	<changeSet id="#INTRD-20501_20240104_fk" author="AdilElJaouhari">
+		<addColumn tableName="billing_wallet_operation">
+			<column name="order_product_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_rated_transaction">
+			<column name="order_product_id" type="bigint" />
+		</addColumn>
+
+		<addForeignKeyConstraint
+			baseColumnNames="order_product_id"
+			baseTableName="billing_wallet_operation"
+			constraintName="fk_wallet_operation_order_product"
+			referencedColumnNames="id" referencedTableName="cpq_order_product" />
+		<addForeignKeyConstraint
+			baseColumnNames="order_product_id"
+			baseTableName="billing_rated_transaction"
+			constraintName="fk_rated_transaction_order_product"
+			referencedColumnNames="id" referencedTableName="cpq_order_product" />
+	</changeSet>
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
@@ -20566,6 +20587,7 @@
     <changeSet id="#INTRD-19322_add_aggre_fields" author="anas.rouaguebe" />
     <changeSet id="#INTRD-19614_20231127" author="AdilElJaouhari" />
     <changeSet id="#INTRD-20056_finance_settings" author="a.rouaguebe" />
+    <changeSet id="#INTRD-20501_20240104" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
