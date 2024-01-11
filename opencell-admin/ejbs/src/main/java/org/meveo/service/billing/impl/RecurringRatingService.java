@@ -255,7 +255,7 @@ public class RecurringRatingService extends RatingService implements Serializabl
                 applyChargeToDate = prorateLastPeriodToDate;
             }
 
-            if(chargeInstance.isAnticipateEndOfSubscription()) {
+            if(chargeInstance.isAnticipateEndOfSubscription() && !chargeInstance.getSubscription().getSubscriptionRenewal().isAutoRenew()) {
                 Date prorateLastPeriodDate = Stream.of(period.getTo(), chargeInstance.getSubscription().getSubscribedTillDate(),
                         chargeInstance.getServiceInstance().getSubscribedTillDate())
                         .filter(Objects::nonNull).min(Date::compareTo).orElse(null);
