@@ -38,20 +38,22 @@ import javax.jms.Queue;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
+import javax.management.RuntimeMBeanException;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.as.ee.component.ComponentIsStoppedException;
 import org.jgroups.JChannel;
 import org.meveo.admin.async.SynchronizedIterator;
 import org.meveo.admin.async.SynchronizedIteratorGrouped;
 import org.meveo.admin.async.SynchronizedMultiItemIterator;
+import org.meveo.admin.exception.JobExecutionException;
 import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.MethodCallingUtils;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.event.qualifier.LastJobDataMessageReceived;
@@ -199,16 +201,12 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param finalizeFunction A function to finalize data to process. Optional. Run once job is finished, independently if it was canceled or completed. Not run if no data were found to process. Consult job execution
      *        result status if needed.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     protected void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance, Function<JobExecutionResultImpl, Optional<Iterator<T>>> initMainNodeAndRetrieveDataFunction,
             Consumer<JobExecutionResultImpl> initWorkerNodeFunction, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction,
             Predicate<JobInstance> hasMoreFunction, Consumer<JobExecutionResultImpl> finalizeInitMainNodeAndCloseDataFunction, Consumer<JobExecutionResultImpl> finalizeFunction) {
 
         boolean isRunningAsJobManager = jobExecutionResult.getJobLauncherEnum() != JobLauncherEnum.WORKER;
-
-        boolean spreadOverCluster = jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && EjbUtils.isRunningInClusterMode();
-
-        final String queueName = "JOB_" + jobInstance.getCode().replace(' ', '_');
 
         Iterator<T> iterator = null;
 
@@ -300,29 +298,52 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         boolean wasCanceled = false;
         boolean wasKilled = false;
 
+        boolean spreadOverCluster = jobInstance.getClusterBehavior() == JobClusterBehaviorEnum.SPREAD_OVER_CLUSTER_NODES && EjbUtils.isRunningInClusterMode();
+
+        String queueName = JobExecutionService.getJobQueueName(jobInstance.getCode());
+
         final Iterator<T> finalIterator = iterator;
         try {
-            Queue jobQueue = spreadOverCluster ? jmsContextForPublishing.createQueue(queueName) : null;
+            Queue jobQueue = null;
+            if (spreadOverCluster) {
+                // Determine and create or connect to a queue
+                if (isRunningAsJobManager) {
 
-            // Create publishing data to the job processing queue tasks if data processing is spread over a cluster
-            if (isRunningAsJobManager && spreadOverCluster) {
-
-                // A value of data publishers might come from a Custom Field or calculated dynamically based on number of nodes in a cluster
-                nbPublishers = (Long) getParamOrCFValue(jobInstance, Job.CF_NB_PUBLISHERS, 0L);
-                if (nbPublishers == null || nbPublishers < 1) {
-                    // Number of data publishing tasks is half of the cluster members or the number of nodes that job can run on
-                    int nrOfNodes = jobInstance.getRunOnNodes() != null ? jobInstance.getRunOnNodes().split(",").length : channel.getView().getMembers().size();
-                    nbPublishers = ((Integer) (nrOfNodes < 1 ? 1 : (3 * nrOfNodes) / 4)).longValue();
+                    // If queue is not durable - use a JMX API to create it
+                    boolean isDurableQueue = ParamBean.getInstance().getPropertyAsBoolean("jobs.mq.durable", false);
+                    if (!isDurableQueue) {
+                        if (!createAQueueIfDoesNotExist(jobInstance.getCode(), queueName)) {
+                            throw new JobExecutionException("Failed to create a queue " + queueName + ". Job will stop.");
+                        }
+                    }
                 }
 
-                log.info("{}/{} Will submit {} task(s) to publish data for cluster-wide data processing", jobInstance.getJobTemplate(), jobInstance.getCode(), nbPublishers);
-                clearPendingWorkLoad(jobInstance);
+                // Connect to a job queue
+                jobQueue = jmsContextForPublishing.createQueue(queueName);
 
-                for (int k = 0; k < nbPublishers; k++) {
-                    int kFinal = k;
-                    Runnable publishingTask = methodCallingUtils
-                        .callCallableInNoTx(() -> getDataPublishingToQueueTask(jobInstance.getCode(), lastCurrentUser, finalIterator, batchSize, jobQueue, jobExecutionResult, kFinal));
-                    tasks.add(publishingTask);
+                // Create publishing data to the job processing queue tasks if data processing is spread over a cluster
+                if (isRunningAsJobManager) {
+
+                    // Clear any leftover data in a queue if it is a durable queue
+                    clearPendingWorkLoad(jobInstance, queueName);
+
+                    // A value of data publishers might come from a Custom Field or calculated dynamically based on number of nodes in a cluster
+                    nbPublishers = (Long) getParamOrCFValue(jobInstance, Job.CF_NB_PUBLISHERS, 0L);
+                    if (nbPublishers == null || nbPublishers < 1) {
+                        // Number of data publishing tasks is half of the cluster members or the number of nodes that job can run on
+                        int nrOfNodes = jobInstance.getRunOnNodes() != null ? jobInstance.getRunOnNodes().split(",").length : channel.getView().getMembers().size();
+                        nbPublishers = ((Integer) (nrOfNodes < 1 ? 1 : (3 * nrOfNodes) / 4)).longValue();
+                    }
+
+                    log.info("{}/{} Will submit {} task(s) to publish data for cluster-wide data processing", jobInstance.getJobTemplate(), jobInstance.getCode(), nbPublishers);
+
+                    final Queue jobQueueFinal = jobQueue;
+                    for (int k = 0; k < nbPublishers; k++) {
+                        int kFinal = k;
+                        Runnable publishingTask = methodCallingUtils
+                            .callCallableInNoTx(() -> getDataPublishingToQueueTask(jobInstance.getCode(), lastCurrentUser, finalIterator, batchSize, jobQueueFinal, jobExecutionResult, kFinal));
+                        tasks.add(publishingTask);
+                    }
                 }
             }
 
@@ -382,7 +403,8 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                     // Send EOF message to a queue once all data publishing tasks are finished
                     if (!wasKilled && nbPublishers != null && i == nbPublishers - 1) {
-                        methodCallingUtils.callMethodInNoTx(() -> sendEOFMessageToAQueue(jobQueue));
+                        final Queue jobQueueFinal = jobQueue;
+                        methodCallingUtils.callMethodInNoTx(() -> sendEOFMessageToAQueue(jobQueueFinal));
                     }
 
                 } catch (InterruptedException | CancellationException e) {
@@ -422,7 +444,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
             // Clear pending workload in MQ queue if multinode job was canceled but not shut down
             if (wasCanceled && isRunningAsJobManager && spreadOverCluster && !JobExecutionService.isServerIsInShutdownMode()) {
-                clearPendingWorkLoad(jobInstance);
+                clearPendingWorkLoad(jobInstance, queueName);
             }
 
             // Check if there are any more data to process and mark job as completed if there are none
@@ -449,6 +471,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param jobExecutionResult Job execution results
      * @return A total number of processed items, successful or failed
      */
+    @SuppressWarnings("rawtypes")
     private long processItem(T itemToProcess, boolean isNewTx, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction, JobExecutionResultImpl jobExecutionResult) {
 
         int itemCount = 1;
@@ -613,12 +636,14 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @return A task definition
      * @throws JMSException An exception publishing to JMS
      */
-    private Runnable getDataPublishingToQueueTask(String jobInstanceCode, MeveoUser lastCurrentUser, Iterator<T> iterator, Long batchSize, Destination jobQueue, JobExecutionResultImpl jobExecutionResult, int threadNr)
+    private Runnable getDataPublishingToQueueTask(String jobInstanceCode, MeveoUser lastCurrentUser, Iterator<T> iterator, Long batchSize, Queue jobQueue, JobExecutionResultImpl jobExecutionResult, int threadNr)
             throws JMSException {
 
         Long jobInstanceId = jobExecutionResult.getJobInstance().getId();
         JMSContext jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.CLIENT_ACKNOWLEDGE);
         JMSProducer jmsProducer = jmsContext.createProducer();
+        jmsProducer.setDisableMessageID(true);
+        jmsProducer.setDisableMessageTimestamp(true);
 
 //        Message eofMessage = jmsContextForPublishing.createMessage();
 //        eofMessage.setStringProperty(ItertatorJobMessageListener.EOF_MESSAGE, ItertatorJobMessageListener.EOF_MESSAGE);
@@ -722,7 +747,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * @param countDown A synchronization counter to wait for the last message to process
      * @return A task definition
      */
-    private Runnable getDataProcessingTask(String jobInstanceCode, Iterator<T> dataIterator, int threadNr, MeveoUser lastCurrentUser, boolean isRunningAsJobManager, boolean spreadOverCluster, Destination jobQueue,
+    private Runnable getDataProcessingTask(String jobInstanceCode, Iterator<T> dataIterator, int threadNr, MeveoUser lastCurrentUser, boolean isRunningAsJobManager, boolean spreadOverCluster, Queue jobQueue,
             int batchSize, JobExecutionResultImpl jobExecutionResult, boolean isNewTx, boolean useMultipleItemProcessing, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction,
             BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, CountDownLatch countDown) {
 
@@ -790,12 +815,15 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
                     // Now need to wait until all messages were processed, as countDown is released once last message is received, not when all messages are processed
                     // Polling is done
+                    String queueName = jobQueue.getQueueName();
                     do {
                         Thread.sleep(2000);
-                    } while (!isJobRequestedToStop(jobInstanceId) && !areAllMessagesConsumed(jobInstanceCode));
+                    } while (!isJobRequestedToStop(jobInstanceId) && !areAllMessagesConsumed(jobInstanceCode, queueName));
 
                 } catch (InterruptedException e) {
                     log.error("Job message listener was interrupted");
+                } catch (JMSException e) {
+                    log.error("Failed to obtain queue name", e);
                 }
 
                 nrOfItemsQueue = messageListenerFinal.getItemCount();
@@ -930,8 +958,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * Clear pending workload if data set was distributed over a JMS queue
      * 
      * @param jobInstance Job instance to clear
+     * @param queueName Name of the MQ queue to clear
      */
-    private void clearPendingWorkLoad(JobInstance jobInstance) {
+    private void clearPendingWorkLoad(JobInstance jobInstance, String queueName) {
 
         String mqHost = System.getenv(REMOTE_MQ_HOST);
         if (StringUtils.isBlank(mqHost)) {
@@ -950,7 +979,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
             MBeanServerConnection remote = connector.getMBeanServerConnection();
 
-            String queueName = "JOB_" + jobInstance.getCode().replace(' ', '_');
             ObjectName bean = new ObjectName("org.apache.activemq.artemis:broker=\"0.0.0.0\",component=addresses,address=\"" + queueName + "\"");
 
             remote.invoke(bean, "purge", null, null);
@@ -967,9 +995,11 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
     /**
      * Check if there are any messages that were either not delivered or not completely processed yet in a JMS queue
      * 
+     * @param queueName Name of the MQ queue where to check if all messages were delivered and processed
+     * 
      * @param jobInstance Job instance to clear
      */
-    private boolean areAllMessagesConsumed(String jobInstanceCode) {
+    private boolean areAllMessagesConsumed(String jobInstanceCode, String queueName) {
 
         String mqHost = System.getenv(REMOTE_MQ_HOST);
         if (StringUtils.isBlank(mqHost)) {
@@ -988,7 +1018,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
             MBeanServerConnection remote = connector.getMBeanServerConnection();
 
-            String queueName = "JOB_" + jobInstanceCode.replace(' ', '_');
             ObjectName bean = new ObjectName("org.apache.activemq.artemis:broker=\"0.0.0.0\",component=addresses,address=\"" + queueName + "\",subcomponent=queues,routing-type=\"anycast\",queue=\"" + queueName + "\"");
 
             long nrMessagesNotDelivered = (long) remote.invoke(bean, "countMessages", null, null);
@@ -1013,8 +1042,9 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
      * Check if there are any messages that were either not delivered yet in a JMS queue
      * 
      * @param jobInstance Job instance to clear
+     * @param queueName Name of the MQ queue where to check if all messages were delivered
      */
-    public static boolean areAllMessagesDelivered(String jobInstanceCode) {
+    public static boolean areAllMessagesDelivered(String jobInstanceCode, String queueName) {
 
         String mqHost = System.getenv(REMOTE_MQ_HOST);
         if (StringUtils.isBlank(mqHost)) {
@@ -1033,7 +1063,6 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
             MBeanServerConnection remote = connector.getMBeanServerConnection();
 
-            String queueName = "JOB_" + jobInstanceCode.replace(' ', '_');
             ObjectName bean = new ObjectName("org.apache.activemq.artemis:broker=\"0.0.0.0\",component=addresses,address=\"" + queueName + "\",subcomponent=queues,routing-type=\"anycast\",queue=\"" + queueName + "\"");
 
             long nrMessagesNotDelivered = (long) remote.invoke(bean, "countMessages", null, null);
@@ -1048,6 +1077,52 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         return false;
     }
 
+    /**
+     * Create a non durable queue via JMX API
+     * 
+     * @param jobInstance Job instance to clear
+     * @param queueName Name of the MQ queue to create
+     */
+    private boolean createAQueueIfDoesNotExist(String jobInstanceCode, String queueName) {
+
+        String mqHost = System.getenv(REMOTE_MQ_HOST);
+        if (StringUtils.isBlank(mqHost)) {
+            mqHost = "localhost";
+        }
+
+        String jmxPort = System.getenv(REMOTE_MQ_JMX_PORT);
+        if (StringUtils.isBlank(jmxPort)) {
+            jmxPort = "1099";
+        }
+
+        HashMap<String, Object> environment = new HashMap<String, Object>();
+        String[] credentials = new String[] { System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD) };
+        environment.put(JMXConnector.CREDENTIALS, credentials);
+
+        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
+            MBeanServerConnection remote = connector.getMBeanServerConnection();
+
+            ObjectName bean = new ObjectName("org.apache.activemq.artemis:broker=\"0.0.0.0\"");
+
+            Object[] params = new Object[] { queueName, queueName, false, "ANYCAST" };
+            String[] signature = new String[] { "java.lang.String", "java.lang.String", "boolean", "java.lang.String" };
+            remote.invoke(bean, "createQueue", params, signature);
+            log.debug("Created a non-durable queue {}", queueName);
+
+        } catch (Exception e) {
+
+            if (e instanceof RuntimeMBeanException && e.getMessage().contains("AMQ229019")) {
+
+                log.debug("A queue {} already exists", queueName);
+
+            } else {
+                log.error("Failed to create a non-durable queue for a job {}", jobInstanceCode, e);
+                return false;
+            }
+        }
+        return true;
+    }
+
     private class ItertatorJobMessageListener implements MessageListener {
 
         /**
@@ -1057,7 +1132,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
 
         private int msgCount = 0;
         private int itemCount = 0;
-        private CountDownLatch countDown;
+//        private CountDownLatch countDown;
         private boolean isNewTx;
         private boolean useMultipleItemProcessing;
         private BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction;
@@ -1067,7 +1142,7 @@ public abstract class IteratorBasedJobBean<T> extends BaseJobBean {
         public ItertatorJobMessageListener(CountDownLatch countDown, boolean isNewTx, boolean useMultipleItemProcessing, BiConsumer<T, JobExecutionResultImpl> processSingleItemFunction,
                 BiConsumer<List<T>, JobExecutionResultImpl> processMultipleItemFunction, JobExecutionResultImpl jobExecutionResult) {
 
-            this.countDown = countDown;
+//            this.countDown = countDown;
             this.isNewTx = isNewTx;
             this.useMultipleItemProcessing = useMultipleItemProcessing;
             this.processMultipleItemFunction = processMultipleItemFunction;
