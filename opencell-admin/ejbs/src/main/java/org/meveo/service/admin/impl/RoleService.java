@@ -141,8 +141,8 @@ public class RoleService extends PersistenceService<Role> {
      * Create a role in Keycloak and then in Opencell
      */
     
-    public void create(Role role,Boolean replicateInKc) throws BusinessException {
-    	if(BooleanUtils.isTrue(replicateInKc)) {
+    public void create(Role role,Boolean forceReplicateInKc) throws BusinessException {
+    	if(BooleanUtils.isTrue(role.getReplicateInKc()) && (forceReplicateInKc || canSynchroWithKC())) {
     		if (role.getParentRole() == null) {
     			keycloakAdminClientService.createRole(role.getName(), role.getDescription(), role.isClientRole());
     		} else {
@@ -157,7 +157,7 @@ public class RoleService extends PersistenceService<Role> {
      */
     @Override
     public void create(Role role) throws BusinessException {
-    	create(role,role.getReplicateInKc());
+    	create(role,false);
     }
     
     
