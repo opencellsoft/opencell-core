@@ -180,8 +180,6 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @JoinColumn(name = "legal_entity_type_id")
     protected Title legalEntityType;
 	
-	@Transient
-	private List<RegistrationNumber> registrationNumbers = new ArrayList<>();
 	
 	public String getExternalRef1() {
         return externalRef1;
@@ -392,12 +390,4 @@ public abstract class AccountEntity extends BusinessCFEntity {
     public String getAccountType() {
         return this.getClass().getSimpleName();
     }
-	
-	public List<RegistrationNumber> getRegistrationNumbers() {
-		return registrationNumbers;
-	}
-	
-	public void setRegistrationNumbers(List<RegistrationNumber> registrationNumbers) {
-		this.registrationNumbers = registrationNumbers;
-	}
 }

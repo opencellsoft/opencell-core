@@ -11,7 +11,7 @@ public class RegistrationNumberService extends PersistenceService<RegistrationNu
 
 	public RegistrationNumber findByRegistrationNo(String registrationNo) {
 		try{
-			return (RegistrationNumber) getEntityManager().createQuery("from RegistrationNumber r where lower(r.registrationNo)= :registrationNo ")
+			return (RegistrationNumber) getEntityManager().createQuery("from RegistrationNumber r where lower(r.registrationNo)= lower(:registrationNo) ")
 					.setParameter("registrationNo", registrationNo).getSingleResult();
 		}catch (NoResultException e) {
 			log.info("No class found for registration number : {}", registrationNo);

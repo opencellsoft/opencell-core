@@ -170,6 +170,20 @@ public class SellerApiService extends BaseApi {
 			}
 		}
 		seller.setCfValues(postSeller.getCfValues());
+		if(CollectionUtils.isNotEmpty(postSeller.getRegistrationNumbers())) {
+			seller.getRegistrationNumbers().forEach(registrationNumber -> registrationNumber.setSeller(null));
+			postSeller.getRegistrationNumbers().forEach(registrationNumber -> {
+				registrationNumber.setSeller(seller);
+				if (registrationNumber.getIsoIcd() == null) {
+					registrationNumber.setIsoIcd(appProvider.getIcdId());
+				}
+				if (registrationNumber.getId() == null) {
+					registrationNumberService.create(registrationNumber);
+				}else{
+					registrationNumberService.update(registrationNumber);
+				}
+			});
+		}
 		sellerService.update(seller);
 	}
 	

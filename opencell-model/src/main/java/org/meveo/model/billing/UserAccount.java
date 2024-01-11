@@ -50,6 +50,7 @@ import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.IWFEntity;
+import org.meveo.model.RegistrationNumber;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
@@ -158,6 +159,13 @@ public class UserAccount extends AccountEntity implements IInvoicingMinimumAppli
     @Type(type = "numeric_boolean")
     @Column(name = "is_consumer")
     private Boolean isConsumer=Boolean.TRUE;
+	
+	@OneToMany(mappedBy = "userAccount")
+	private List<RegistrationNumber> registrationNumbers = new ArrayList<>();
+	
+	public List<RegistrationNumber> getRegistrationNumbers() {
+		return registrationNumbers;
+	}
 	
 	public BillingAccount getBillingAccount() {
         return billingAccount;

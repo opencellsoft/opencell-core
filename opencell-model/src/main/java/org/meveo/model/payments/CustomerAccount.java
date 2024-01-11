@@ -58,6 +58,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
+import org.meveo.model.RegistrationNumber;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.audit.AuditChangeTypeEnum;
@@ -282,6 +283,17 @@ public class CustomerAccount extends AccountEntity implements IInvoicingMinimumA
 	 */
 	@OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
 	private Set<PaymentPlan> paymentPlans = new HashSet<>();
+	
+	@OneToMany(mappedBy = "customerAccount")
+	private List<RegistrationNumber> registrationNumbers = new ArrayList<>();
+	
+	public List<RegistrationNumber> getRegistrationNumbers() {
+		return registrationNumbers;
+	}
+	
+	public void setRegistrationNumbers(List<RegistrationNumber> registrationNumbers) {
+		this.registrationNumbers = registrationNumbers;
+	}
 
 	/**
 	 * This method is called implicitly by hibernate, used to enable encryption for

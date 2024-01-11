@@ -93,8 +93,6 @@ public class AccountEntityApi extends BaseApi {
         accountEntity.setName(name);
         accountEntity.setJobTitle(postData.getJobTitle());
         accountEntity.setVatNo(postData.getVatNo());
-	    //Todo : the list must be replaced with the real value of registration numbers
-        accountEntity.setRegistrationNumbers(new ArrayList<>());
         
         if (postData.getContactInformation() != null) {
             if (accountEntity.getContactInformation() == null) {
@@ -214,8 +212,6 @@ public class AccountEntityApi extends BaseApi {
             accountEntity.setVatNo(StringUtils.isEmpty(postData.getVatNo()) ? null : postData.getVatNo());
         }
          if (CollectionUtils.isNotEmpty(postData.getRegistrationNumbers())) {
-			 //Todo : the list must be replaced with the real value of registration numbers
-            accountEntity.setRegistrationNumbers(new ArrayList<>());
         }
 
         if (postData.getContactInformation() != null) {

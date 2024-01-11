@@ -52,6 +52,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICounterEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
+import org.meveo.model.RegistrationNumber;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
@@ -155,6 +156,13 @@ public class Customer extends AccountEntity implements IInvoicingMinimumApplicab
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Contract> contracts = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "customer")
+	private List<RegistrationNumber> registrationNumbers = new ArrayList<>();
+	
+	public List<RegistrationNumber> getRegistrationNumbers() {
+		return registrationNumbers;
+	}
     public List<Contract> getContracts() {
         return contracts;
     }

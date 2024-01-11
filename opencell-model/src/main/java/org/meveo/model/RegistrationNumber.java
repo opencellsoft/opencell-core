@@ -93,4 +93,24 @@ public class RegistrationNumber extends  AuditableEntity {
 		else this.userAccount = (UserAccount) accountEntity;
 		return this;
 	}
+	
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+	
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+	
+	public void setCustomerAccount(CustomerAccount customerAccount) {
+		this.customerAccount = customerAccount;
+	}
+	
+	public void setUserAccount(UserAccount userAccount) {
+		this.userAccount = userAccount;
+	}
+	
+	public void setBillingAccount(BillingAccount billingAccount) {
+		this.billingAccount = billingAccount;
+	}
 }

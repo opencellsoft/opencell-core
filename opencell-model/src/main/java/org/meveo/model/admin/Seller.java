@@ -47,6 +47,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IWFEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.RegistrationNumber;
 import org.meveo.model.WorkflowedEntity;
 import org.meveo.model.billing.GeneralLedger;
 import org.meveo.model.billing.InvoiceType;
@@ -155,11 +156,15 @@ public class Seller extends AccountEntity implements IWFEntity {
     @JoinTable(name = "billing_seller_media", joinColumns = @JoinColumn(name = "seller_id"), inverseJoinColumns = @JoinColumn(name = "media_id"))
     private List<Media> medias = new ArrayList<>();
 	
-	@Column(name = "type_of_account")
-	private String typeOfAccount = "SELLER";
+	@OneToMany(mappedBy = "seller")
+	private List<RegistrationNumber> registrationNumbers = new ArrayList<>();
 	
-	public String getTypeOfAccount() {
-		return typeOfAccount;
+	public List<RegistrationNumber> getRegistrationNumbers() {
+		return registrationNumbers;
+	}
+	
+	public void setRegistrationNumbers(List<RegistrationNumber> registrationNumbers) {
+		this.registrationNumbers = registrationNumbers;
 	}
     
     public List<Contract> getContracts() {

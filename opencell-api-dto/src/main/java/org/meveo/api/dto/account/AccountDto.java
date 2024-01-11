@@ -148,7 +148,6 @@ public abstract class AccountDto extends BusinessEntityDto {
         super(e);
 
         setVatNo(e.getVatNo());
-        setRegistrationNumbers(e.getRegistrationNumbers().stream().map(RegistrationNumberDto::new).collect(Collectors.toSet()));
         if (e.getContactInformation() != null) {
             setContactInformation(new ContactInformationDto(e.getContactInformation()));
         }
