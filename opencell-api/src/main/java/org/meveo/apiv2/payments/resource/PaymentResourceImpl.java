@@ -20,6 +20,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.PaymentApi;
 import org.meveo.apiv2.payments.ImportRejectionCodeInput;
 import org.meveo.apiv2.payments.PaymentGatewayInput;
+import org.meveo.apiv2.payments.RejectionAction;
 import org.meveo.apiv2.payments.RejectionCode;
 import org.meveo.apiv2.refund.CardRefund;
 import org.meveo.model.payments.CreditCardTypeEnum;
@@ -168,6 +169,52 @@ public class PaymentResourceImpl implements PaymentResource {
         paymentApi.export(paymentGateway);
         return ok()
                 .entity(paymentApi.export(paymentGateway))
+                .build();
+    }
+
+    /**
+     * Create rejection action
+     *
+     * @param rejectionAction PaymentRejectionAction
+     */
+    @Override
+    public Response createRejectionAction(RejectionAction rejectionAction) {
+        final RejectionAction saved = paymentApi.createRejectionAction(rejectionAction);
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"" +
+                        ",\"message\":\"Rejection action successfully created\"},\"id\":"
+                        + saved.getId() + ", \"code\": \""
+                        + saved.getCode() + "\"}")
+                .build();
+    }
+
+    /**
+     * update rejection action
+     *
+     * @param rejectionAction PaymentRejectionAction
+     */
+    @Override
+    public Response updateRejectionAction(Long id, RejectionAction rejectionAction) {
+        RejectionAction updatedAction = paymentApi.updateRejectionAction(id, rejectionAction);
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"" +
+                        ",\"message\":\"Rejection action successfully updated\"},\"id\":"
+                        + updatedAction.getId() + ", \"code\": \""
+                        + updatedAction.getCode() + "\"}")
+                .build();
+    }
+
+    /**
+     * delete rejection action
+     *
+     * @param id PaymentRejectionAction id
+     */
+    @Override
+    public Response removeRejectionAction(Long id) {
+        paymentApi.removeRejectionAction(id);
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"" +
+                        ",\"message\":\"Rejection action successfully deleted\"}")
                 .build();
     }
 }

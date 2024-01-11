@@ -36,6 +36,7 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -52,8 +53,9 @@ import org.meveo.api.dto.payment.PaymentHistoryDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
-import  org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
@@ -64,6 +66,7 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.payments.ClearingResponse;
 import org.meveo.apiv2.payments.ImmutableClearingResponse;
@@ -71,9 +74,11 @@ import org.meveo.apiv2.payments.ImmutableRejectionCodesExportResult;
 import org.meveo.apiv2.payments.ImmutableRejectionCodesImportResult;
 import org.meveo.apiv2.payments.ImportRejectionCodeInput;
 import org.meveo.apiv2.payments.PaymentGatewayInput;
+import org.meveo.apiv2.payments.RejectionAction;
 import org.meveo.apiv2.payments.RejectionCode;
 import org.meveo.apiv2.payments.RejectionCodesExportResult;
 import org.meveo.apiv2.payments.RejectionCodesImportResult;
+import org.meveo.apiv2.payments.resource.RejectionActionMapper;
 import org.meveo.apiv2.payments.resource.RejectionCodeMapper;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ExchangeRate;
@@ -92,9 +97,11 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentRejectionAction;
 import org.meveo.model.payments.PaymentRejectionCode;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.billing.impl.JournalService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -103,10 +110,12 @@ import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.payments.impl.PaymentHistoryService;
+import org.meveo.service.payments.impl.PaymentRejectionActionService;
 import org.meveo.service.payments.impl.PaymentRejectionCodeService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.payments.impl.RejectionCodeImportResult;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -150,9 +159,16 @@ public class PaymentApi extends BaseApi {
 	@Inject
 	private PaymentRejectionCodeService rejectionCodeService;
 
+	@Inject
+	private PaymentRejectionActionService paymentRejectionActionService;
+
+	@Inject
+	private ScriptInstanceService scriptInstanceService;
+
 	private static final String PAYMENT_GATEWAY_NOT_FOUND_ERROR_MESSAGE = "Payment gateway not found";
 	private static final String PAYMENT_REJECTION_CODE_NOT_FOUND_ERROR_MESSAGE = "Payment rejection code not found";
 	private final RejectionCodeMapper rejectionCodeMapper = new RejectionCodeMapper();
+	private final RejectionActionMapper rejectionActionMapper = new RejectionActionMapper();
 
 	/**
      * @param paymentDto payment object which encapsulates the input data sent by client
@@ -783,5 +799,72 @@ public class PaymentApi extends BaseApi {
 				.importedFile(importRejectionCodeInput.getBase64csv())
 				.importMode(importRejectionCodeInput.getMode())
 				.build();
+	}
+
+	/**
+	 * Create rejection action
+	 *
+	 * @param rejectionAction rejectionAction to create
+	 */
+	public RejectionAction createRejectionAction(RejectionAction rejectionAction) {
+		try {
+			PaymentRejectionAction entity = rejectionActionMapper.toEntity(rejectionAction);
+			if (paymentRejectionActionService.findByCode(rejectionAction.getCode()) != null) {
+				throw new EntityAlreadyExistsException("Payment rejection action with code "
+						+ rejectionAction.getCode() + " already exists");
+			}
+			if (entity.getScript() != null) {
+				final ScriptInstance scriptInstance = ofNullable(scriptInstanceService.findById(entity.getScript().getId()))
+							.orElse(scriptInstanceService.findByCode(entity.getScript().getCode()));
+				if (scriptInstance == null) {
+					throw new NotFoundException("Script instance not found");
+				}
+				entity.setScript(scriptInstance);
+			}
+			paymentRejectionActionService.create(entity);
+			return rejectionActionMapper.toResource(entity);
+		} catch (BusinessException exception) {
+			throw new BadRequestException(exception.getMessage());
+		}
+	}
+
+	/**
+	 * Update rejection action
+	 *
+	 * @param id rejectionAction id
+	 * @param rejectionAction updated rejectionAction
+	 */
+	public RejectionAction updateRejectionAction(Long id, RejectionAction rejectionAction) {
+		PaymentRejectionAction toUpdate = ofNullable(paymentRejectionActionService.findById(id))
+				.orElseThrow(() -> new NotFoundException("Payment rejection action not found"));
+		if (rejectionAction.getCode() != null
+				&& paymentRejectionActionService.findByCode(rejectionAction.getCode()) != null) {
+			throw new EntityAlreadyExistsException("Payment rejection action with code "
+					+ rejectionAction.getCode() + " already exists");
+		}
+		ofNullable(rejectionAction.getCode()).ifPresent(toUpdate::setCode);
+		ofNullable(rejectionAction.getDescription()).ifPresent(toUpdate::setDescription);
+		ofNullable(rejectionAction.getSequence()).ifPresent(toUpdate::setSequence);
+		if (rejectionAction.getScriptInstance() != null) {
+			final Resource script = rejectionAction.getScriptInstance();
+			ScriptInstance scriptInstance = ofNullable(scriptInstanceService.findById(script.getId()))
+					.orElse(scriptInstanceService.findByCode(script.getCode()));
+			if (scriptInstance == null) {
+				throw new NotFoundException("Script instance not found");
+			}
+			toUpdate.setScript(scriptInstance);
+		}
+		return rejectionActionMapper.toResource(toUpdate);
+	}
+
+	/**
+	 * Delete rejection action
+	 *
+	 * @param id payment rejection action id
+	 */
+	public void removeRejectionAction(Long id) {
+		PaymentRejectionAction rejectionAction = ofNullable(paymentRejectionActionService.findById(id))
+				.orElseThrow(() -> new NotFoundException("Payment rejection action not found"));
+		paymentRejectionActionService.remove(rejectionAction);
 	}
 }
