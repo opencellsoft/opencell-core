@@ -199,7 +199,8 @@ public class InvoiceUblHelper {
 		if (!StorageFactory.existsDirectory(ublDirectory)) {
 			StorageFactory.createDirectory(ublDirectory);
 		}
-		File ublInvoiceFileName = new File(	ublDirectory.getAbsolutePath() + File.separator + "invoice_" + invoice.getInvoiceNumber() + "_"	+ new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
+		String invoiceTypeAdj = creditNote != null ? "invoice_ADJ_" : "invoice_";
+		File ublInvoiceFileName = new File(	ublDirectory.getAbsolutePath() + File.separator +  invoiceTypeAdj +  invoice.getInvoiceNumber() + "_"	+ new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + ".xml");
 		Path pathCreatedFile = null;
 
 		try {
@@ -1009,11 +1010,6 @@ public class InvoiceUblHelper {
 		dueDate.setValue(toXmlDate(source.getDueDate()));
 		documentReferenceType.setIssueDate(dueDate);
 		
-		if(source.getInvoiceType() != null && StringUtils.isNotBlank(source.getInvoiceType().getCode())){
-			DocumentTypeCode documentTypeCode = objectFactorycommonBasic.createDocumentTypeCode();
-			documentTypeCode.setValue(source.getInvoiceType().getCode());
-			documentReferenceType.setDocumentTypeCode(documentTypeCode);
-		}
 		target.getBillingReferences().add(billingReference);
 		return billingReference;
 	}

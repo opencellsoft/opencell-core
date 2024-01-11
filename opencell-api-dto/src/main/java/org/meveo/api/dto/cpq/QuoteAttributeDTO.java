@@ -74,7 +74,7 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 	private boolean display;
 	private boolean readOnly = Boolean.FALSE;
 	
-	private Set<String> allowedValues;
+	private List<String> allowedValues;
 	private AttributeCategoryEnum attributeCategoryEnum;
 
 	/**
@@ -99,7 +99,7 @@ public class QuoteAttributeDTO extends BaseEntityDto{
 		booleanValue = quoteAttribute.getBooleanValue();
 	}
 	
-	public QuoteAttributeDTO(QuoteAttribute quoteAttribute, Integer sequence, boolean mandatory, boolean display, boolean readOnly, Set<String> allowedValues, AttributeCategoryEnum attributeCategoryEnum) {
+	public QuoteAttributeDTO(QuoteAttribute quoteAttribute, Integer sequence, boolean mandatory, boolean display, boolean readOnly, List<String> allowedValues, AttributeCategoryEnum attributeCategoryEnum) {
 		this(quoteAttribute);
 		this.sequence = sequence;
 		this.mandatory = mandatory;

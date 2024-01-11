@@ -135,7 +135,7 @@ public class ContractApi extends BaseApi{
 		checkParams(dto);
 		//check if date end great than date begin
 		if(dto.getEndDate()!=null && dto.getBeginDate()!=null && dto.getEndDate().compareTo(dto.getBeginDate()) < 0) { 
-			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			throw new BusinessApiException(String.format(CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN, format.format(dto.getEndDate()), format.format(dto.getBeginDate())));
 		}
 		// check if contract already exist
@@ -222,7 +222,7 @@ public class ContractApi extends BaseApi{
 		checkParams(dto);
 		//check if date end great than date begin
 		if(dto.getEndDate()!=null && dto.getBeginDate()!=null && dto.getEndDate().compareTo(dto.getBeginDate()) < 0) {
-			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			throw new BusinessApiException(String.format(CONTRACT_DATE_END_GREAT_THAN_DATE_BEGIN, format.format(dto.getEndDate()), format.format(dto.getBeginDate())));
 		}
 		//get the current contract

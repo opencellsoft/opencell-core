@@ -8890,13 +8890,11 @@ public class AgedBalanceReporting extends ReportExtractScript {
 	<addColumn tableName="cpq_attribute_allowed_values">
 		<column name="order_idx" type="int4"/>
 	</addColumn>
-	<sql>UPDATE cpq_attribute_allowed_values AS attr
-		SET order_idx = subquery.new_order_idx FROM (SELECT attribute_id, allowed_values,
-		ROW_NUMBER() OVER (PARTITION BY attribute_id ORDER BY allowed_values)
-		AS new_order_idx
-		FROM cpq_attribute_allowed_values
-		) AS subquery WHERE attr.attribute_id = subquery.attribute_id AND attr.allowed_values = subquery.allowed_values;
-	</sql>
+	<sql>UPDATE cpq_attribute_allowed_values AS attr SET order_idx = subquery.new_order_idx - 1 FROM (SELECT attribute_id, allowed_values,
+	    ROW_NUMBER() OVER (PARTITION BY attribute_id ORDER BY allowed_values) AS new_order_idx
+	    FROM cpq_attribute_allowed_values) AS subquery
+	    WHERE attr.attribute_id = subquery.attribute_id AND attr.allowed_values = subquery.allowed_values;
+     </sql>
 
   </changeSet>
 
@@ -9092,6 +9090,26 @@ public class AgedBalanceReporting extends ReportExtractScript {
             <column name="handle_invoice_plan" type="${type.boolean}" defaultValueNumeric="1" />
             <column name="handle_accounting_periods" type="${type.boolean}" defaultValueNumeric="1" />
 		</addColumn>
+	</changeSet>
+
+	<changeSet id="#INTRD-20501_20240104" author="AdilElJaouhari">
+		<addColumn tableName="billing_wallet_operation">
+			<column name="order_product_id" type="bigint" />
+		</addColumn>
+		<addColumn tableName="billing_rated_transaction">
+			<column name="order_product_id" type="bigint" />
+		</addColumn>
+
+		<addForeignKeyConstraint
+			baseColumnNames="order_product_id"
+			baseTableName="billing_wallet_operation"
+			constraintName="fk_wallet_operation_order_product"
+			referencedColumnNames="id" referencedTableName="cpq_order_product" />
+		<addForeignKeyConstraint
+			baseColumnNames="order_product_id"
+			baseTableName="billing_rated_transaction"
+			constraintName="fk_rated_transaction_order_product"
+			referencedColumnNames="id" referencedTableName="cpq_order_product" />
 	</changeSet>
 
     <changeSet id="INTRD-20050_20231226_V2" author="TarikFA.">

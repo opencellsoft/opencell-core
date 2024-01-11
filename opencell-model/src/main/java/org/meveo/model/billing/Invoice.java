@@ -101,7 +101,7 @@ import org.meveo.model.shared.DateUtils;
         @NamedQuery(name = "Invoice.draftByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.allByBRNoXml", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
 
-        @NamedQuery(name = "Invoice.noXmlWithStatus", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.status in(:statusList) and (inv.billingRun IS NULL OR inv.billingRun.disabled = false)"),
+        @NamedQuery(name = "Invoice.noXmlWithStatus", query = "select inv.id from Invoice inv left join inv.billingRun br where inv.xmlFilename IS NULL and inv.status in(:statusList) and (inv.billingRun IS NULL OR br.disabled = false)"),
         @NamedQuery(name = "Invoice.noXmlWithStatusAndBR", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.billingRun.id=:billingRunId and inv.billingRun.disabled = false and inv.status in(:statusList)"),
         @NamedQuery(name = "Invoice.validatedNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.invoiceNumber IS NOT NULL"),
         @NamedQuery(name = "Invoice.draftNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL  and inv.invoiceNumber IS NULL and inv.temporaryInvoiceNumber IS NOT NULL"),

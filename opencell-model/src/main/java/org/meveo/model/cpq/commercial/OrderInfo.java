@@ -22,6 +22,10 @@ public class OrderInfo {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_lot_id")
     private OrderLot orderLot;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_product_id")
+    private OrderProduct orderProduct;
 
     /**
      * @return the order
@@ -58,4 +62,13 @@ public class OrderInfo {
     public OrderLot getOrderLot() {
         return orderLot;
     }
+
+	public OrderProduct getOrderProduct() {
+		return orderProduct;
+	}
+
+	public void setOrderProduct(OrderProduct orderProduct) {
+		this.orderProduct = orderProduct;
+	}
+    
 }

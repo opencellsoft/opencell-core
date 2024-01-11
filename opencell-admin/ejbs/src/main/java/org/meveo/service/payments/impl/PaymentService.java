@@ -870,9 +870,6 @@ public class PaymentService extends PersistenceService<Payment> {
             if (accountOperation == null) {
                 throw new BusinessException("Payment " + paymentReference + " not found");
             }
-            if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L && accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
-                throw new BusinessException("CallBack unexpected  for payment " + paymentReference);
-            }
             if (PaymentStatusEnum.ACCEPTED == paymentStatus) {
                 log.debug("Payment ok, nothing to do.");
             } else {
@@ -913,8 +910,10 @@ public class PaymentService extends PersistenceService<Payment> {
 
                 accountOperationService.handleAccountingPeriods(rejectedPayment);
                 accountOperationService.create(rejectedPayment);
-                for(AccountOperation ao : listAoThatSupposedPaid) {
-                    ao.setRejectedPayment(rejectedPayment);
+                if (listAoThatSupposedPaid != null) {
+                    for (AccountOperation ao : listAoThatSupposedPaid) {
+                        ao.setRejectedPayment(rejectedPayment);
+                    }
                 }
                 Long oARejectPaymentID = rejectedPayment.getId();
 
