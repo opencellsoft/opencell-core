@@ -17422,13 +17422,6 @@
                                  referencedColumnNames="id"/>
     </changeSet>
    	<changeSet id="#INTRD-20501_20240104_fk" author="AdilElJaouhari">
-		<addColumn tableName="billing_wallet_operation">
-			<column name="order_product_id" type="bigint" />
-		</addColumn>
-		<addColumn tableName="billing_rated_transaction">
-			<column name="order_product_id" type="bigint" />
-		</addColumn>
-
 		<addForeignKeyConstraint
 			baseColumnNames="order_product_id"
 			baseTableName="billing_wallet_operation"
