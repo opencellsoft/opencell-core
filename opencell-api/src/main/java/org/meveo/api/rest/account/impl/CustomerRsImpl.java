@@ -476,28 +476,28 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         return filterCustomerCountersByPeriod(customerCode, date);
     }
 
-    public ActionStatus mq1(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq1(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         return customerApi.mq1(threads, count, batchSize, isTempQueue);
     }
 
-    public ActionStatus mq2(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq2(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         return customerApi.mq2(threads, count, batchSize, isTempQueue);
     }
 
-    public ActionStatus mq3(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq3(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         return customerApi.mq3(threads, count, batchSize, isTempQueue);
 
     }
 
-    public ActionStatus mq4(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq4(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         return customerApi.mq4(threads, count, batchSize, isTempQueue);
     }
 
-    public ActionStatus mq5SingleTx(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq5SingleTx(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         return customerApi.mq5SingleTx(threads, count, batchSize, isTempQueue);
     }

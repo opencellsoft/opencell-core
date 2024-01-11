@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
@@ -54,6 +55,12 @@ import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.JMSProducer;
 import javax.jms.Queue;
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.management.RuntimeMBeanException;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -978,7 +985,7 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public ActionStatus mq1(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq1(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         publishDataFork(threads, count, true, batchSize, isTempQueue);
 
@@ -986,7 +993,7 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public ActionStatus mq2(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq2(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         publishDataFork(threads, count, false, batchSize, isTempQueue);
 
@@ -994,7 +1001,7 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public ActionStatus mq3(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq3(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         publishDataExecutor(threads, count, true, batchSize, isTempQueue);
 
@@ -1003,22 +1010,20 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public ActionStatus mq4(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq4(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         publishDataExecutor(threads, count, false, batchSize, isTempQueue);
         return new ActionStatus();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public ActionStatus mq5SingleTx(Integer threads, Integer count, Integer batchSize, Boolean isTempQueue) {
+    public ActionStatus mq5SingleTx(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
 
         publishDataExecutor(threads, count, false, batchSize, isTempQueue);
         return new ActionStatus();
     }
 
-    private void publishDataFork(Integer threads, Integer count, boolean asList, Integer batchSize, Boolean isTempQueue) {
-
-        long start = new Date().getTime();
+    private void publishDataFork(Integer threads, Integer count, boolean asList, Integer batchSize, String isTempQueue) {
 
         if (threads == null) {
             threads = 1;
@@ -1035,7 +1040,11 @@ public class CustomerApi extends AccountEntityApi {
 
         AtomicInteger aInteger = new AtomicInteger(countFinal);
 
-        Queue jobQueue = isTempQueue == null || isTempQueue ? jmsContextForPublishing.createTemporaryQueue() : jmsContextForPublishing.createQueue("AKK_Andrius");
+        if ("ND".equalsIgnoreCase(isTempQueue)) {
+            createAQueueIfDoesNotExist("kuku", "AKK_Andrius");
+        }
+
+        Queue jobQueue = "T".equalsIgnoreCase(isTempQueue) ? jmsContextForPublishing.createTemporaryQueue() : jmsContextForPublishing.createQueue("AKK_Andrius");
 
         String queueName = null;
         try {
@@ -1050,10 +1059,15 @@ public class CustomerApi extends AccountEntityApi {
         ForkJoinPool executor = new ForkJoinPool();
 
         MeveoUser lastCurrentUser = currentUser.unProxy();
+
+        long start = new Date().getTime();
+
         for (int threadNr = 0; threadNr < threads; threadNr++) {
 
-            JMSContext jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.CLIENT_ACKNOWLEDGE);
+            JMSContext jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.DUPS_OK_ACKNOWLEDGE);
             JMSProducer jmsProducer = jmsContext.createProducer();
+            jmsProducer.setDisableMessageID(true);
+            jmsProducer.setDisableMessageTimestamp(true);
 
             final int threadNrFinal = threadNr;
 
@@ -1122,9 +1136,7 @@ public class CustomerApi extends AccountEntityApi {
         log.error("AKK done launching all tasks {} in {}", count, time);
     }
 
-    private void publishDataExecutor(Integer threads, Integer count, boolean asList, Integer batchSize, Boolean isTempQueue) {
-
-        long start = new Date().getTime();
+    private void publishDataExecutor(Integer threads, Integer count, boolean asList, Integer batchSize, String isTempQueue) {
 
         if (threads == null) {
             threads = 1;
@@ -1141,7 +1153,11 @@ public class CustomerApi extends AccountEntityApi {
 
         AtomicInteger aInteger = new AtomicInteger(countFinal);
 
-        Queue jobQueue = isTempQueue == null || isTempQueue ? jmsContextForPublishing.createTemporaryQueue() : jmsContextForPublishing.createQueue("AKK_Andrius");
+        if ("ND".equalsIgnoreCase(isTempQueue)) {
+            createAQueueIfDoesNotExist("kuku", "AKK_Andrius");
+        }
+
+        Queue jobQueue = "T".equalsIgnoreCase(isTempQueue) ? jmsContextForPublishing.createTemporaryQueue() : jmsContextForPublishing.createQueue("AKK_Andrius");
 
         String queueName = null;
         try {
@@ -1154,13 +1170,14 @@ public class CustomerApi extends AccountEntityApi {
         String queueNameFinal = queueName;
 
         MeveoUser lastCurrentUser = currentUser.unProxy();
+        long start = new Date().getTime();
 
         List<Future> futures = new ArrayList<>();
         List<Runnable> tasks = new ArrayList<>();
 
         for (int threadNr = 0; threadNr < threads; threadNr++) {
 
-            JMSContext jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.CLIENT_ACKNOWLEDGE);
+            JMSContext jmsContext = jmsConnectionFactory.createContext(System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD), JMSContext.AUTO_ACKNOWLEDGE);
             JMSProducer jmsProducer = jmsContext.createProducer();
 
             final int threadNrFinal = threadNr;
@@ -1234,5 +1251,51 @@ public class CustomerApi extends AccountEntityApi {
         long time = new Date().getTime() - start;
 
         log.error("AKK done launching all tasks {} in {}", count, time);
+    }
+
+    /**
+     * Create a non durable queue via JMX API
+     * 
+     * @param jobInstance Job instance to clear
+     * @param queueName Name of the MQ queue to create
+     */
+    private boolean createAQueueIfDoesNotExist(String jobInstanceCode, String queueName) {
+
+        String mqHost = System.getenv(REMOTE_MQ_HOST);
+        if (StringUtils.isBlank(mqHost)) {
+            mqHost = "localhost";
+        }
+
+        String jmxPort = System.getenv(REMOTE_MQ_JMX_PORT);
+        if (StringUtils.isBlank(jmxPort)) {
+            jmxPort = "1099";
+        }
+
+        HashMap<String, Object> environment = new HashMap<String, Object>();
+        String[] credentials = new String[] { System.getenv(REMOTE_MQ_ADMIN_USER), System.getenv(REMOTE_MQ_ADMIN_PASSWORD) };
+        environment.put(JMXConnector.CREDENTIALS, credentials);
+
+        try (JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + mqHost + ":" + jmxPort + "/jmxrmi"), environment)) {
+            MBeanServerConnection remote = connector.getMBeanServerConnection();
+
+            ObjectName bean = new ObjectName("org.apache.activemq.artemis:broker=\"0.0.0.0\"");
+
+            Object[] params = new Object[] { queueName, queueName, false, "ANYCAST" };
+            String[] signature = new String[] { "java.lang.String", "java.lang.String", "boolean", "java.lang.String" };
+            remote.invoke(bean, "createQueue", params, signature);
+            log.debug("Created a non-durable queue {}", queueName);
+
+        } catch (Exception e) {
+
+            if (e instanceof RuntimeMBeanException && e.getMessage().contains("AMQ229019")) {
+
+                log.debug("A queue {} already exists", queueName);
+
+            } else {
+                log.error("Failed to create a non-durable queue for a job {}", jobInstanceCode, e);
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -518,22 +518,22 @@ public interface CustomerRs extends IBaseRs {
 
     @GET
     @Path("/mq1")
-    ActionStatus mq1(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") Boolean isTempQueue);
+    ActionStatus mq1(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") String isTempQueue);
 
     @GET
     @Path("/mq2")
-    ActionStatus mq2(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") Boolean isTempQueue);
+    ActionStatus mq2(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") String isTempQueue);
 
     @GET
     @Path("/mq3")
-    ActionStatus mq3(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") Boolean isTempQueue);
+    ActionStatus mq3(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") String isTempQueue);
 
     @GET
     @Path("/mq4")
-    ActionStatus mq4(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") Boolean isTempQueue);
+    ActionStatus mq4(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") String isTempQueue);
 
     @GET
     @Path("/mq5")
-    ActionStatus mq5SingleTx(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") Boolean isTempQueue);
+    ActionStatus mq5SingleTx(@QueryParam("threads") Integer threads, @QueryParam("count") Integer count, @QueryParam("batchSize") Integer batchSize, @QueryParam("isTempQueue") String isTempQueue);
 
 }
