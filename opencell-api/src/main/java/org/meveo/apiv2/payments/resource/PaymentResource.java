@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.apiv2.payments.ImportRejectionCodeInput;
 import org.meveo.apiv2.payments.PaymentGatewayInput;
+import org.meveo.apiv2.payments.RejectionAction;
 import org.meveo.apiv2.payments.RejectionCode;
 import org.meveo.apiv2.refund.CardRefund;
 
@@ -113,7 +114,7 @@ public interface PaymentResource {
     @POST
     @Path("/rejectionCodes/import")
     @Operation(summary = "Import rejectionsCodes by gateway",
-            tags = {"Payment"},
+            tags = {"PaymentRejectionCode"},
             description = "Import rejectionsCodes by gateway",
             responses = {
                     @ApiResponse(responseCode = "200", description = "success"),
@@ -125,7 +126,7 @@ public interface PaymentResource {
     @POST
     @Path("/rejectionCodes/export")
     @Operation(summary = "Export rejectionsCodes by gateway",
-            tags = {"Payment"},
+            tags = {"PaymentRejectionCode"},
             description = "Export rejectionsCodes by gateway",
             responses = {
                     @ApiResponse(responseCode = "200", description = "success"),
@@ -133,4 +134,43 @@ public interface PaymentResource {
                     @ApiResponse(responseCode = "400", description = "Error occurred during export")
             })
     Response export(@Parameter(required = true) PaymentGatewayInput paymentGateway);
+
+    @POST
+    @Path("/rejectionCodes/rejectionActions")
+    @Operation(summary = "Create new payment rejection action",
+            tags = {"RejectionActions"},
+            description = "Create new payment rejection action",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "RejectionActions successfully created"),
+                    @ApiResponse(responseCode = "404", description = "Action does not exist"),
+                    @ApiResponse(responseCode = "400", description = "PaymentRejectionAction creation failed")
+            })
+    Response createRejectionAction(@Parameter(required = true) RejectionAction rejectionAction);
+
+    @PUT
+    @Path("/rejectionCodes/rejectionActions/{id}")
+    @Operation(summary = "Update payment rejection action",
+            tags = {"RejectionActions"},
+            description = "Update payment rejection action",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "RejectionActions successfully updated"),
+                    @ApiResponse(responseCode = "404", description = "Action does not exist"),
+                    @ApiResponse(responseCode = "400", description = "PaymentRejectionAction modification failed")
+            })
+    Response updateRejectionAction(@Parameter(description = "Rejection action id", required = true)
+                                    @PathParam("id") Long id,
+            @Parameter(required = true) RejectionAction rejectionAction);
+
+    @DELETE
+    @Path("/rejectionCodes/rejectionActions/{id}")
+    @Operation(summary = "Remove payment rejection action",
+            tags = {"RejectionActions"},
+            description = "Remove payment rejection action",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "RejectionActions successfully deleted"),
+                    @ApiResponse(responseCode = "404", description = "Entity does not exist"),
+                    @ApiResponse(responseCode = "412", description = "Missing parameters"),
+                    @ApiResponse(responseCode = "400", description = "RejectionActions deletion failed")
+            })
+    Response removeRejectionAction(@Parameter(description = "Rejection action id", required = true) @PathParam("id") Long id);
 }
