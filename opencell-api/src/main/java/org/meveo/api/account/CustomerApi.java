@@ -985,45 +985,30 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public ActionStatus mq1(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
+    public ActionStatus mq1(Integer threads, Integer count, Integer batchSize, String isTempQueue, String msgType) {
 
-        publishDataFork(threads, count, true, batchSize, isTempQueue);
-
-        return new ActionStatus();
-    }
-
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public ActionStatus mq2(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
-
-        publishDataFork(threads, count, false, batchSize, isTempQueue);
+        publishDataFork(threads, count, msgType, batchSize, isTempQueue);
 
         return new ActionStatus();
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public ActionStatus mq3(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
+    public ActionStatus mq3(Integer threads, Integer count, Integer batchSize, String isTempQueue, String msgType) {
 
-        publishDataExecutor(threads, count, true, batchSize, isTempQueue);
+        publishDataExecutor(threads, count, msgType, batchSize, isTempQueue);
 
         return new ActionStatus();
 
-    }
-
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public ActionStatus mq4(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
-
-        publishDataExecutor(threads, count, false, batchSize, isTempQueue);
-        return new ActionStatus();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public ActionStatus mq5SingleTx(Integer threads, Integer count, Integer batchSize, String isTempQueue) {
+    public ActionStatus mq5SingleTx(Integer threads, Integer count, Integer batchSize, String isTempQueue, String msgType) {
 
-        publishDataExecutor(threads, count, false, batchSize, isTempQueue);
+        publishDataExecutor(threads, count, msgType, batchSize, isTempQueue);
         return new ActionStatus();
     }
 
-    private void publishDataFork(Integer threads, Integer count, boolean asList, Integer batchSize, String isTempQueue) {
+    private void publishDataFork(Integer threads, Integer count, String msgType, Integer batchSize, String isTempQueue) {
 
         if (threads == null) {
             threads = 1;
@@ -1056,7 +1041,7 @@ public class CustomerApi extends AccountEntityApi {
 
         String queueNameFinal = queueName;
 
-        ForkJoinPool executor = new ForkJoinPool();
+        ForkJoinPool executor = new ForkJoinPool(threads);
 
         MeveoUser lastCurrentUser = currentUser.unProxy();
 
@@ -1104,7 +1089,7 @@ public class CustomerApi extends AccountEntityApi {
                             nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + itemsToProcess.size();
                             nrMessages++;
 
-                        } else if (asList) {
+                        } else if ("List".equalsIgnoreCase(msgType)) {
                             List<Integer> itemsToProcess = new ArrayList<>();
                             itemsToProcess.add(i);
 
@@ -1112,8 +1097,14 @@ public class CustomerApi extends AccountEntityApi {
                             nrOfItemsProcessedByThread++;
                             nrMessages++;
 
+                        } else if ("Text".equalsIgnoreCase(msgType)) {
+                            jmsProducer.send(jobQueue, "" + i);
+                            nrOfItemsProcessedByThread++;
+                            nrMessages++;
+
                         } else {
-                            jmsProducer.send(jobQueue, i);
+
+                            jmsProducer.send(jobQueue, (Serializable) i);
                             nrOfItemsProcessedByThread++;
                             nrMessages++;
                         }
@@ -1136,7 +1127,7 @@ public class CustomerApi extends AccountEntityApi {
         log.error("AKK done launching all tasks {} in {}", count, time);
     }
 
-    private void publishDataExecutor(Integer threads, Integer count, boolean asList, Integer batchSize, String isTempQueue) {
+    private void publishDataExecutor(Integer threads, Integer count, String msgType, Integer batchSize, String isTempQueue) {
 
         if (threads == null) {
             threads = 1;
@@ -1213,7 +1204,7 @@ public class CustomerApi extends AccountEntityApi {
                         nrOfItemsProcessedByThread = nrOfItemsProcessedByThread + itemsToProcess.size();
                         nrMessages++;
 
-                    } else if (asList) {
+                    } else if ("List".equalsIgnoreCase(msgType)) {
                         List<Integer> itemsToProcess = new ArrayList<>();
                         itemsToProcess.add(i);
 
@@ -1221,8 +1212,14 @@ public class CustomerApi extends AccountEntityApi {
                         nrOfItemsProcessedByThread++;
                         nrMessages++;
 
+                    } else if ("Text".equalsIgnoreCase(msgType)) {
+                        jmsProducer.send(jobQueue, "" + i);
+                        nrOfItemsProcessedByThread++;
+                        nrMessages++;
+
                     } else {
-                        jmsProducer.send(jobQueue, i);
+
+                        jmsProducer.send(jobQueue, (Serializable) i);
                         nrOfItemsProcessedByThread++;
                         nrMessages++;
                     }
