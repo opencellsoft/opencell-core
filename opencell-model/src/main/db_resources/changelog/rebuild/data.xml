@@ -391,6 +391,8 @@
             <column name="currency_code" value="AFN" />
             <column name="description_en" value="Afghani" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Afghan Afghani", "FRA": "afghani afghan"}' />
+            <column name="symbol" value="AFN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="2" />
@@ -399,6 +401,9 @@
             <column name="currency_code" value="ZAR" />
             <column name="description_en" value="Rand" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "South African Rand", "FRA": "rand sud-africain"}' />
+            <column name="symbol" value="ZAR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="3" />
@@ -407,6 +412,8 @@
             <column name="currency_code" value="ALL" />
             <column name="description_en" value="Lek" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Albanian Lek", "FRA": "lek albanais"}' />
+            <column name="symbol" value="ALL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="4" />
@@ -415,6 +422,9 @@
             <column name="currency_code" value="DZD" />
             <column name="description_en" value="Dinar algérien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Algerian Dinar", "FRA": "dinar alg\u00e9rien"}' />
+            <column name="symbol" value="DZD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="5" />
@@ -424,6 +434,7 @@
             <column name="symbol" value="€" />
             <column name="description_en" value="Euro" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Euro", "FRA": "euro"}' />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="6" />
@@ -432,6 +443,8 @@
             <column name="currency_code" value="AOA" />
             <column name="description_en" value="Kwanza" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Angolan Kwanza", "FRA": "kwanza angolais"}' />
+            <column name="symbol" value="AOA" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="7" />
@@ -440,6 +453,9 @@
             <column name="currency_code" value="XCD" />
             <column name="description_en" value="Dollar des Cara bes de lEst" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "East Caribbean Dollar", "FRA": "dollar des Cara\u00efbes orientales"}' />
+            <column name="symbol" value="EC$" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="8" />
@@ -448,6 +464,9 @@
             <column name="currency_code" value="ANG" />
             <column name="description_en" value="Florin des Antilles" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Netherlands Antillean Guilder", "FRA": "florin antillais"}' />
+            <column name="symbol" value="ANG" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="9" />
@@ -456,6 +475,8 @@
             <column name="currency_code" value="SAR" />
             <column name="description_en" value="Riyal saoudien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Saudi Riyal", "FRA": "riyal saoudien"}' />
+            <column name="symbol" value="SAR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="10" />
@@ -464,6 +485,8 @@
             <column name="currency_code" value="ARS" />
             <column name="description_en" value="Peso" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Argentine Peso", "FRA": "peso argentin"}' />
+            <column name="symbol" value="ARS" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="11" />
@@ -472,6 +495,9 @@
             <column name="currency_code" value="AMD" />
             <column name="description_en" value="Dram" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Armenian Dram", "FRA": "dram arm\u00e9nien"}' />
+            <column name="symbol" value="AMD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="12" />
@@ -480,6 +506,8 @@
             <column name="currency_code" value="AWG" />
             <column name="description_en" value="Florin d Aruba" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Aruban Florin", "FRA": "florin arubais"}' />
+            <column name="symbol" value="AWG" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="13" />
@@ -488,6 +516,9 @@
             <column name="currency_code" value="AUD" />
             <column name="description_en" value="Dollar australien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Australian Dollar", "FRA": "dollar australien"}' />
+            <column name="symbol" value="A$" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="14" />
@@ -496,6 +527,9 @@
             <column name="currency_code" value="AZN" />
             <column name="description_en" value="Manat azerbaïdjanais" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Azerbaijani Manat", "FRA": "manat az\u00e9ri"}' />
+            <column name="symbol" value="AZN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="15" />
@@ -504,6 +538,9 @@
             <column name="currency_code" value="BSD" />
             <column name="description_en" value="Dollar des Bahamas" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Bahamian Dollar", "FRA": "dollar baham\u00e9en"}' />
+            <column name="symbol" value="BSD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="16" />
@@ -512,6 +549,9 @@
             <column name="currency_code" value="BHD" />
             <column name="description_en" value="Dinar de Bahreïn" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Bahraini Dinar", "FRA": "dinar bahre\u00efni"}' />
+            <column name="symbol" value="BHD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="17" />
@@ -520,6 +560,9 @@
             <column name="currency_code" value="BDT" />
             <column name="description_en" value="Taka" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Bangladeshi Taka", "FRA": "taka bangladeshi"}' />
+            <column name="symbol" value="BDT" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="18" />
@@ -528,6 +571,9 @@
             <column name="currency_code" value="BBD" />
             <column name="description_en" value="Dollar de Barbade" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Barbadian Dollar", "FRA": "dollar barbadien"}' />
+            <column name="symbol" value="BBD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="19" />
@@ -536,6 +582,9 @@
             <column name="currency_code" value="BZD" />
             <column name="description_en" value="Dollar de Belize" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Belize Dollar", "FRA": "dollar b\u00e9liz\u00e9en"}' />
+            <column name="symbol" value="BZD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="20" />
@@ -544,6 +593,9 @@
             <column name="currency_code" value="XOF" />
             <column name="description_en" value="Franc CFA - BCEAO" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "West African CFA Franc", "FRA": "franc CFA (BCEAO)"}' />
+            <column name="symbol" value="F CFA" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="21" />
@@ -552,6 +604,9 @@
             <column name="currency_code" value="BMD" />
             <column name="description_en" value="Dollar des Bermudes" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Bermudian Dollar", "FRA": "dollar bermudien"}' />
+            <column name="symbol" value="BMD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="22" />
@@ -560,6 +615,9 @@
             <column name="currency_code" value="BTN" />
             <column name="description_en" value="Ngultrum" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Bhutanese Ngultrum", "FRA": "ngultrum bouthanais"}' />
+            <column name="symbol" value="BTN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="23" />
@@ -568,6 +626,9 @@
             <column name="currency_code" value="BYN" />
             <column name="description_en" value="Rouble biélorussie" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Belarusian Rouble", "FRA": "rouble bi\u00e9lorusse"}' />
+            <column name="symbol" value="BYN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="24" />
@@ -576,6 +637,9 @@
             <column name="currency_code" value="BOB" />
             <column name="description_en" value="Boliviano" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Bolivian Boliviano", "FRA": "boliviano bolivien"}' />
+            <column name="symbol" value="BOB" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="25" />
@@ -584,6 +648,9 @@
             <column name="currency_code" value="BAM" />
             <column name="description_en" value="Mark bosniaque convertible" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Bosnia-Herzegovina Convertible Mark", "FRA": "mark convertible bosniaque"}' />
+            <column name="symbol" value="BAM" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="26" />
@@ -592,6 +659,8 @@
             <column name="currency_code" value="BWP" />
             <column name="description_en" value="Pula" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Botswanan Pula", "FRA": "pula botswanais"}' />
+            <column name="symbol" value="BWP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="27" />
@@ -600,6 +669,9 @@
             <column name="currency_code" value="BRL" />
             <column name="description_en" value="Real" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Brazilian Real", "FRA": "r\u00e9al br\u00e9silien"}' />
+            <column name="symbol" value="R$" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="28" />
@@ -608,6 +680,9 @@
             <column name="currency_code" value="BND" />
             <column name="description_en" value="Dollar de Brunéi" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Brunei Dollar", "FRA": "dollar brun\u00e9ien"}' />
+            <column name="symbol" value="BND" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="29" />
@@ -616,6 +691,8 @@
             <column name="currency_code" value="BGN" />
             <column name="description_en" value="Lev" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Bulgarian Lev", "FRA": "lev bulgare"}' />
+            <column name="symbol" value="BGN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="30" />
@@ -624,6 +701,8 @@
             <column name="currency_code" value="BIF" />
             <column name="description_en" value="Franc du Burundi" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Burundian Franc", "FRA": "franc burundais"}' />
+            <column name="symbol" value="BIF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="31" />
@@ -632,6 +711,9 @@
             <column name="currency_code" value="NOK" />
             <column name="description_en" value="Couronne norvégienne" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Norwegian Krone", "FRA": "couronne norv\u00e9gienne"}' />
+            <column name="symbol" value="NOK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="32" />
@@ -640,6 +722,9 @@
             <column name="currency_code" value="KYD" />
             <column name="description_en" value="Dollar des îles Caïmanes" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Cayman Islands Dollar", "FRA": "dollar des \u00eeles Ca\u00efmans"}' />
+            <column name="symbol" value="KYD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="33" />
@@ -648,6 +733,8 @@
             <column name="currency_code" value="KHR" />
             <column name="description_en" value="Riel" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Cambodian Riel", "FRA": "riel cambodgien"}' />
+            <column name="symbol" value="KHR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="34" />
@@ -656,6 +743,9 @@
             <column name="currency_code" value="XAF" />
             <column name="description_en" value="Franc CFA - BEAC" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Central African CFA Franc", "FRA": "franc CFA (BEAC)"}' />
+            <column name="symbol" value="FCFA" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="35" />
@@ -664,6 +754,8 @@
             <column name="currency_code" value="CAD" />
             <column name="description_en" value="Dollar canadien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Canadian Dollar", "FRA": "dollar canadien"}' />
+            <column name="symbol" value="CA$" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="36" />
@@ -672,6 +764,9 @@
             <column name="currency_code" value="CVE" />
             <column name="description_en" value="Escudo du Cap-Vert" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Cape Verdean Escudo", "FRA": "escudo capverdien"}' />
+            <column name="symbol" value="CVE" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="37" />
@@ -688,6 +783,8 @@
             <column name="currency_code" value="CLP" />
             <column name="description_en" value="Peso chilien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Chilean Peso", "FRA": "peso chilien"}' />
+            <column name="symbol" value="CLP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="39" />
@@ -696,6 +793,9 @@
             <column name="currency_code" value="CNY" />
             <column name="description_en" value="Yuan Ren-Min-Bi" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Chinese Yuan", "FRA": "yuan renminbi chinois"}' />
+            <column name="symbol" value="CN¥" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="40" />
@@ -704,6 +804,8 @@
             <column name="currency_code" value="CYP" />
             <column name="description_en" value="Livre chypriote" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Cypriot Pound", "FRA": "livre chypriote"}' />
+            <column name="symbol" value="CYP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="41" />
@@ -712,6 +814,8 @@
             <column name="currency_code" value="COP" />
             <column name="description_en" value="Peso colombien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Colombian Peso", "FRA": "peso colombien"}' />
+            <column name="symbol" value="COP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="42" />
@@ -720,6 +824,8 @@
             <column name="currency_code" value="KMF" />
             <column name="description_en" value="Franc des Comores" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Comorian Franc", "FRA": "franc comorien"}' />
+            <column name="symbol" value="KMF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="43" />
@@ -728,6 +834,8 @@
             <column name="currency_code" value="CDF" />
             <column name="description_en" value="FRANC DU CONGO DEMOCRATIQUE" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Congolese Franc", "FRA": "franc congolais"}' />
+            <column name="symbol" value="CDF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="44" />
@@ -736,6 +844,9 @@
             <column name="currency_code" value="KRW" />
             <column name="description_en" value="Won" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "South Korean Won", "FRA": "won sud-cor\u00e9en"}' />
+            <column name="symbol" value="₩" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="45" />
@@ -744,6 +855,9 @@
             <column name="currency_code" value="KPW" />
             <column name="description_en" value="Won de la Corée du Nord" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "North Korean Won", "FRA": "won nord-cor\u00e9en"}' />
+            <column name="symbol" value="KPW" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="46" />
@@ -752,6 +866,9 @@
             <column name="currency_code" value="CRC" />
             <column name="description_en" value="Colon de Costa Rica" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "Costa Rican Col\u00f3n", "FRA": "col\u00f3n costaricain"}' />
+            <column name="symbol" value="CRC" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="47" />
@@ -760,6 +877,8 @@
             <column name="currency_code" value="HRK" />
             <column name="description_en" value="Kuna" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Croatian Kuna", "FRA": "kuna croate"}' />
+            <column name="symbol" value="HRK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="48" />
@@ -768,6 +887,8 @@
             <column name="currency_code" value="CUP" />
             <column name="description_en" value="Peso cubain" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value='{"ENG": "Cuban Peso", "FRA": "peso cubain"}' />
+            <column name="symbol" value="CUP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="49" />
@@ -777,6 +898,8 @@
             <column name="symbol" value="$"  />
             <column name="description_en" value="Dollar des Etats-unis" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value='{"ENG": "US Dollar", "FRA": "dollar des \u00c9tats-Unis"}' />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="50" />
@@ -785,6 +908,9 @@
             <column name="currency_code" value="DKK" />
             <column name="description_en" value="Couronne danoise" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Danish Krone" , "FRA" : "couronne danoise" }' />
+            <column name="symbol" value="DKK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="51" />
@@ -793,6 +919,9 @@
             <column name="currency_code" value="DJF" />
             <column name="description_en" value="Franc de Djibouti" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Djiboutian Franc" , "FRA" : "franc djiboutien" }' />
+            <column name="symbol" value="DJF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="52" />
@@ -801,6 +930,9 @@
             <column name="currency_code" value="DOP" />
             <column name="description_en" value="Peso dominicain" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Dominican Peso" , "FRA" : "peso dominicain" }' />
+            <column name="symbol" value="DOP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="53" />
@@ -809,6 +941,9 @@
             <column name="currency_code" value="EGP" />
             <column name="description_en" value="Livre égyptienne" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Egyptian Pound" , "FRA" : "livre \u00e9gyptienne" }' />
+            <column name="symbol" value="EGP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="54" />
@@ -817,6 +952,9 @@
             <column name="currency_code" value="AED" />
             <column name="description_en" value="Dirham des émirats arabes unis" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "United Arab Emirates Dirham" , "FRA" : "dirham des \u00c9mirats arabes unis" }' />
+            <column name="symbol" value="AED" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="55" />
@@ -825,6 +963,9 @@
             <column name="currency_code" value="ERN" />
             <column name="description_en" value="Nafka" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Eritrean Nakfa" , "FRA" : "nafka \u00e9rythr\u00e9en" }' />
+            <column name="symbol" value="ERN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="56" />
@@ -833,6 +974,9 @@
             <column name="currency_code" value="EEK" />
             <column name="description_en" value="Couronne d Estonie" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Estonian Kroon" , "FRA" : "couronne estonienne" }' />
+            <column name="symbol" value="EEK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="57" />
@@ -841,6 +985,9 @@
             <column name="currency_code" value="ETB" />
             <column name="description_en" value="Birr éthiopien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Ethiopian Birr" , "FRA" : "birr \u00e9thiopien" }' />
+            <column name="symbol" value="ETB" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="58" />
@@ -849,6 +996,9 @@
             <column name="currency_code" value="FKP" />
             <column name="description_en" value="Livre de Falkland" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Falkland Islands Pound" , "FRA" : "livre des \u00eeles Malouines" }' />
+            <column name="symbol" value="FKP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="59" />
@@ -857,6 +1007,9 @@
             <column name="currency_code" value="FJD" />
             <column name="description_en" value="Dollar des Fidji" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Fijian Dollar" , "FRA" : "dollar fidjien" }' />
+            <column name="symbol" value="FJD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="60" />
@@ -865,6 +1018,9 @@
             <column name="currency_code" value="GMD" />
             <column name="description_en" value="Dalasie" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Gambian Dalasi" , "FRA" : "dalasi gambien" }' />
+            <column name="symbol" value="GMD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="61" />
@@ -873,6 +1029,9 @@
             <column name="currency_code" value="GEL" />
             <column name="description_en" value="Lari" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Georgian Lari" , "FRA" : "lari g\u00e9orgien" }' />
+            <column name="symbol" value="GEL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="62" />
@@ -881,6 +1040,9 @@
             <column name="currency_code" value="GHS" />
             <column name="description_en" value="Cedi ghanéen" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Ghanaian Cedi" , "FRA" : "c\u00e9di ghan\u00e9en" }' />
+            <column name="symbol" value="GHS" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="63" />
@@ -889,6 +1051,9 @@
             <column name="currency_code" value="GIP" />
             <column name="description_en" value="Livre de Gibraltar" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Gibraltar Pound" , "FRA" : "livre de Gibraltar" }' />
+            <column name="symbol" value="GIP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="64" />
@@ -897,6 +1062,9 @@
             <column name="currency_code" value="GTQ" />
             <column name="description_en" value="Quetzal" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Guatemalan Quetzal" , "FRA" : "quetzal guat\u00e9malt\u00e8que" }' />
+            <column name="symbol" value="GTQ" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="65" />
@@ -905,6 +1073,9 @@
             <column name="currency_code" value="GBP" />
             <column name="description_en" value="Livre sterling" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "British Pound" , "FRA" : "livre sterling" }' />
+            <column name="symbol" value="£" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="66" />
@@ -913,6 +1084,9 @@
             <column name="currency_code" value="GNF" />
             <column name="description_en" value="Franc guinéen" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Guinean Franc" , "FRA" : "franc guin\u00e9en" }' />
+            <column name="symbol" value="GNF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="67" />
@@ -921,6 +1095,9 @@
             <column name="currency_code" value="GYD" />
             <column name="description_en" value="Dollar de Guyane" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Guyanaese Dollar" , "FRA" : "dollar du Guyana" }' />
+            <column name="symbol" value="GYD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="68" />
@@ -929,6 +1106,9 @@
             <column name="currency_code" value="HTG" />
             <column name="description_en" value="Gourde" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Haitian Gourde" , "FRA" : "gourde ha\u00eftienne" }' />
+            <column name="symbol" value="HTG" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="69" />
@@ -937,6 +1117,9 @@
             <column name="currency_code" value="HNL" />
             <column name="description_en" value="Lempira" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Honduran Lempira" , "FRA" : "lempira hondurien" }' />
+            <column name="symbol" value="HNL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="70" />
@@ -945,6 +1128,9 @@
             <column name="currency_code" value="HKD" />
             <column name="description_en" value="Dollar de Hong-Kong" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Hong Kong Dollar" , "FRA" : "dollar de Hong Kong" }' />
+            <column name="symbol" value="HK$" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="71" />
@@ -953,6 +1139,9 @@
             <column name="currency_code" value="HUF" />
             <column name="description_en" value="Forint" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Hungarian Forint" , "FRA" : "forint hongrois" }' />
+            <column name="symbol" value="HUF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="72" />
@@ -961,6 +1150,9 @@
             <column name="currency_code" value="NZD" />
             <column name="description_en" value="Dollar néo-zélandais" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "New Zealand Dollar" , "FRA" : "dollar n\u00e9o-z\u00e9landais" }' />
+            <column name="symbol" value="NZ$" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="73" />
@@ -969,6 +1161,9 @@
             <column name="currency_code" value="INR" />
             <column name="description_en" value="Roupie indienne" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Indian Rupee" , "FRA" : "roupie indienne" }' />
+            <column name="symbol" value="₹" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="74" />
@@ -977,6 +1172,9 @@
             <column name="currency_code" value="IDR" />
             <column name="description_en" value="Rupiah" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Indonesian Rupiah" , "FRA" : "roupie indon\u00e9sienne" }' />
+            <column name="symbol" value="IDR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="75" />
@@ -985,6 +1183,8 @@
             <column name="currency_code" value="IRR" />
             <column name="description_en" value="Rial iranien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Iranian Rial" , "FRA" : "riyal iranien" }' />
+            <column name="symbol" value="IRR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="76" />
@@ -993,6 +1193,8 @@
             <column name="currency_code" value="IQD" />
             <column name="description_en" value="Dinar iraquien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Iraqi Dinar" , "FRA" : "dinar irakien" }' />
+            <column name="symbol" value="IQD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="77" />
@@ -1001,6 +1203,9 @@
             <column name="currency_code" value="ISK" />
             <column name="description_en" value="Couronne islandaise" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Icelandic Kr\u00f3na" , "FRA" : "couronne islandaise" }' />
+            <column name="symbol" value="ISK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="78" />
@@ -1009,6 +1214,9 @@
             <column name="currency_code" value="ILS" />
             <column name="description_en" value="Sheqel" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Israeli New Shekel" , "FRA" : "nouveau shekel isra\u00e9lien" }' />
+            <column name="symbol" value="₪" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="79" />
@@ -1017,6 +1225,9 @@
             <column name="currency_code" value="JMD" />
             <column name="description_en" value="Dollar jamaïcain" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Jamaican Dollar" , "FRA" : "dollar jama\u00efcain" }' />
+            <column name="symbol" value="JMD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="80" />
@@ -1025,6 +1236,8 @@
             <column name="currency_code" value="JPY" />
             <column name="description_en" value="Yen" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Japanese Yen" , "FRA" : "yen japonais" }' />
+            <column name="symbol" value="¥" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="81" />
@@ -1033,6 +1246,9 @@
             <column name="currency_code" value="JOD" />
             <column name="description_en" value="Dinar jordanien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Jordanian Dinar" , "FRA" : "dinar jordanien" }' />
+            <column name="symbol" value="JOD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="82" />
@@ -1041,6 +1257,9 @@
             <column name="currency_code" value="KZT" />
             <column name="description_en" value="Tenge" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Kazakhstani Tenge" , "FRA" : "tenge kazakh" }' />
+            <column name="symbol" value="KZT" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="83" />
@@ -1049,6 +1268,9 @@
             <column name="currency_code" value="KES" />
             <column name="description_en" value="Shilling du Kenya" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Kenyan Shilling" , "FRA" : "shilling k\u00e9nyan" }' />
+            <column name="symbol" value="KES" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="84" />
@@ -1057,6 +1279,9 @@
             <column name="currency_code" value="KGS" />
             <column name="description_en" value="Som" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Kyrgystani Som" , "FRA" : "som kirghize" }' />
+            <column name="symbol" value="KGS" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="85" />
@@ -1065,6 +1290,9 @@
             <column name="currency_code" value="KWD" />
             <column name="description_en" value="Dinar koweïtien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Kuwaiti Dinar" , "FRA" : "dinar kowe\u00eftien" }' />
+            <column name="symbol" value="KWD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="86" />
@@ -1073,6 +1301,8 @@
             <column name="currency_code" value="LAK" />
             <column name="description_en" value="Kip" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Laotian Kip" , "FRA" : "kip loatien" }' />
+            <column name="symbol" value="LAK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="87" />
@@ -1081,6 +1311,8 @@
             <column name="currency_code" value="LSL" />
             <column name="description_en" value="Loti" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Lesotho Loti" , "FRA" : "loti lesothan" }' />
+            <column name="symbol" value="LSL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="88" />
@@ -1089,6 +1321,8 @@
             <column name="currency_code" value="LVL" />
             <column name="description_en" value="Lats letton" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Latvian Lats" , "FRA" : "lats letton" }' />
+            <column name="symbol" value="LVL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="89" />
@@ -1097,6 +1331,9 @@
             <column name="currency_code" value="LBP" />
             <column name="description_en" value="Livre libanaise" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Lebanese Pound" , "FRA" : "livre libanaise" }' />
+            <column name="symbol" value="LBP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="90" />
@@ -1105,6 +1342,9 @@
             <column name="currency_code" value="LRD" />
             <column name="description_en" value="Dollar libérien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Liberian Dollar" , "FRA" : "dollar lib\u00e9rien" }' />
+            <column name="symbol" value="LRD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="91" />
@@ -1113,6 +1353,8 @@
             <column name="currency_code" value="LYD" />
             <column name="description_en" value="Dinar libyen" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Libyan Dinar" , "FRA" : "dinar libyen" }' />
+            <column name="symbol" value="LYD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="92" />
@@ -1121,6 +1363,8 @@
             <column name="currency_code" value="CHF" />
             <column name="description_en" value="Franc suisse" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Swiss Franc" , "FRA" : "franc suisse" }' />
+            <column name="symbol" value="CHF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="93" />
@@ -1129,6 +1373,9 @@
             <column name="currency_code" value="LTL" />
             <column name="description_en" value="Litas lituanien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Lithuanian Litas" , "FRA" : "litas lituanien" }' />
+            <column name="symbol" value="LTL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="94" />
@@ -1137,6 +1384,9 @@
             <column name="currency_code" value="MOP" />
             <column name="description_en" value="Pataca" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Macanese Pataca" , "FRA" : "pataca macanaise" }' />
+            <column name="symbol" value="MOP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="95" />
@@ -1145,6 +1395,9 @@
             <column name="currency_code" value="MKD" />
             <column name="description_en" value="Denar" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Macedonian Denar" , "FRA" : "denar mac\u00e9donien" }' />
+            <column name="symbol" value="MKD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="96" />
@@ -1153,6 +1406,9 @@
             <column name="currency_code" value="MGA" />
             <column name="description_en" value="Ariary malgache" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Malagasy Ariary" , "FRA" : "ariary malgache" }' />
+            <column name="symbol" value="MGA" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="97" />
@@ -1161,6 +1417,9 @@
             <column name="currency_code" value="MGF" />
             <column name="description_en" value="Franc malgache" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Malagasy Franc" , "FRA" : "franc malgache" }' />
+            <column name="symbol" value="MGF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="98" />
@@ -1169,6 +1428,9 @@
             <column name="currency_code" value="MYR" />
             <column name="description_en" value="Ringgit de Malaisie" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Malaysian Ringgit" , "FRA" : "ringgit malais" }' />
+            <column name="symbol" value="MYR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="99" />
@@ -1177,6 +1439,9 @@
             <column name="currency_code" value="MWK" />
             <column name="description_en" value="Kwacha" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Malawian Kwacha" , "FRA" : "kwacha malawite" }' />
+            <column name="symbol" value="MWK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="100" />
@@ -1185,6 +1450,9 @@
             <column name="currency_code" value="MVR" />
             <column name="description_en" value="Rufiyaa" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Maldivian Rufiyaa" , "FRA" : "rufiyaa maldivien" }' />
+            <column name="symbol" value="MVR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="101" />
@@ -1193,6 +1461,8 @@
             <column name="currency_code" value="MTL" />
             <column name="description_en" value="Livre maltaise" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Maltese Lira" , "FRA" : "lire maltaise" }' />
+            <column name="symbol" value="MTL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="102" />
@@ -1201,6 +1471,9 @@
             <column name="currency_code" value="MAD" />
             <column name="description_en" value="Dirham marocain" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Moroccan Dirham" , "FRA" : "dirham marocain" }' />
+            <column name="symbol" value="MAD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="103" />
@@ -1209,6 +1482,9 @@
             <column name="currency_code" value="MUR" />
             <column name="description_en" value="Roupie mauricienne" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Mauritian Rupee" , "FRA" : "roupie mauricienne" }' />
+            <column name="symbol" value="MUR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="104" />
@@ -1217,6 +1493,9 @@
             <column name="currency_code" value="MRU" />
             <column name="description_en" value="Ouguija" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Mauritanian Ouguiya" , "FRA" : "ouguiya mauritanien" }' />
+            <column name="symbol" value="MRU" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="105" />
@@ -1225,6 +1504,8 @@
             <column name="currency_code" value="MXN" />
             <column name="description_en" value="Peso mexicain" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Mexican Peso" , "FRA" : "peso mexicain" }' />
+            <column name="symbol" value="MX$" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="106" />
@@ -1233,6 +1514,8 @@
             <column name="currency_code" value="MDL" />
             <column name="description_en" value="Leu de Moldave" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Moldovan Leu" , "FRA" : "leu moldave" }' />
+            <column name="symbol" value="MDL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="107" />
@@ -1241,6 +1524,9 @@
             <column name="currency_code" value="MNT" />
             <column name="description_en" value="Tugrik" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Mongolian Tugrik" , "FRA" : "tugrik mongol" }' />
+            <column name="symbol" value="MNT" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="108" />
@@ -1249,6 +1535,9 @@
             <column name="currency_code" value="MZM" />
             <column name="description_en" value="Metical" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Mozambican Metical (1980\u20132006)" , "FRA" : "m\u00e9tical" }' />
+            <column name="symbol" value="MZM" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="109" />
@@ -1257,6 +1546,9 @@
             <column name="currency_code" value="MMK" />
             <column name="description_en" value="Kyat" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Myanmar Kyat" , "FRA" : "kyat myanmarais" }' />
+            <column name="symbol" value="MMK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="110" />
@@ -1265,6 +1557,9 @@
             <column name="currency_code" value="NAD" />
             <column name="description_en" value="Dollar namibien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Namibian Dollar" , "FRA" : "dollar namibien" }' />
+            <column name="symbol" value="NAD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="111" />
@@ -1273,6 +1568,9 @@
             <column name="currency_code" value="NPR" />
             <column name="description_en" value="Roupie Népalaise" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Nepalese Rupee" , "FRA" : "roupie n\u00e9palaise" }' />
+            <column name="symbol" value="NPR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="112" />
@@ -1281,6 +1579,9 @@
             <column name="currency_code" value="NIO" />
             <column name="description_en" value="Cordoba oro" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Nicaraguan C\u00f3rdoba" , "FRA" : "c\u00f3rdoba oro nicaraguayen" }' />
+            <column name="symbol" value="NIO" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="113" />
@@ -1289,6 +1590,9 @@
             <column name="currency_code" value="NGN" />
             <column name="description_en" value="Naira" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Nigerian Naira" , "FRA" : "naira nig\u00e9rian" }' />
+            <column name="symbol" value="NGN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="114" />
@@ -1297,6 +1601,8 @@
             <column name="currency_code" value="XPF" />
             <column name="description_en" value="Franc CFP" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "CFP Franc" , "FRA" : "franc CFP" }' />
+            <column name="symbol" value="CFPF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="115" />
@@ -1305,6 +1611,8 @@
             <column name="currency_code" value="OMR" />
             <column name="description_en" value="Rial Omani" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Omani Rial" , "FRA" : "riyal omanais" }' />
+            <column name="symbol" value="OMR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="116" />
@@ -1313,6 +1621,8 @@
             <column name="currency_code" value="XAU" />
             <column name="description_en" value="Opérations sur or" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Gold" , "FRA" : "or" }' />
+            <column name="symbol" value="XAU" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="117" />
@@ -1321,6 +1631,9 @@
             <column name="currency_code" value="UGX" />
             <column name="description_en" value="Shilling ougandais" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Ugandan Shilling" , "FRA" : "shilling ougandais" }' />
+            <column name="symbol" value="UGX" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="118" />
@@ -1329,6 +1642,8 @@
             <column name="currency_code" value="UZS" />
             <column name="description_en" value="Soum ouzbek" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Uzbekistani Som" , "FRA" : "sum ouzbek" }' />
+            <column name="symbol" value="UZS" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="119" />
@@ -1337,6 +1652,9 @@
             <column name="currency_code" value="PKR" />
             <column name="description_en" value="Roupie pakistanaise" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Pakistani Rupee" , "FRA" : "roupie pakistanaise" }' />
+            <column name="symbol" value="PKR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="120" />
@@ -1345,6 +1663,9 @@
             <column name="currency_code" value="PAB" />
             <column name="description_en" value="Balboa" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Panamanian Balboa" , "FRA" : "balboa panam\u00e9en" }' />
+            <column name="symbol" value="PAB" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="121" />
@@ -1353,6 +1674,9 @@
             <column name="currency_code" value="PGK" />
             <column name="description_en" value="Kina" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Papua New Guinean Kina" , "FRA" : "kina papouan-n\u00e9o-guin\u00e9en" }' />
+            <column name="symbol" value="PGK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="122" />
@@ -1361,6 +1685,9 @@
             <column name="currency_code" value="PYG" />
             <column name="description_en" value="Guarani" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Paraguayan Guarani" , "FRA" : "guaran\u00ed paraguayen" }' />
+            <column name="symbol" value="PYG" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="123" />
@@ -1369,6 +1696,9 @@
             <column name="currency_code" value="PEN" />
             <column name="description_en" value="Nouveau sol" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Peruvian Sol" , "FRA" : "sol p\u00e9ruvien" }' />
+            <column name="symbol" value="PEN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="124" />
@@ -1377,6 +1707,9 @@
             <column name="currency_code" value="PHP" />
             <column name="description_en" value="Peso philippin" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Philippine Peso" , "FRA" : "peso philippin" }' />
+            <column name="symbol" value="₱" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="125" />
@@ -1385,6 +1718,9 @@
             <column name="currency_code" value="PLN" />
             <column name="description_en" value="Zloty" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Polish Zloty" , "FRA" : "zloty polonais" }' />
+            <column name="symbol" value="PLN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="126" />
@@ -1393,6 +1729,8 @@
             <column name="currency_code" value="QAR" />
             <column name="description_en" value="Riyal du Qatar" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Qatari Rial" , "FRA" : "riyal qatari" }' />
+            <column name="symbol" value="QAR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="127" />
@@ -1401,6 +1739,8 @@
             <column name="currency_code" value="RON" />
             <column name="description_en" value="LEI (Nouveau Leu)" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Romanian Leu" , "FRA" : "leu roumain" }' />
+            <column name="symbol" value="RON" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="128" />
@@ -1409,6 +1749,9 @@
             <column name="currency_code" value="ROL" />
             <column name="description_en" value="Leu" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Romanian Leu (1952\u20132006)" , "FRA" : "ancien leu roumain" }' />
+            <column name="symbol" value="ROL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="129" />
@@ -1417,6 +1760,9 @@
             <column name="currency_code" value="RUB" />
             <column name="description_en" value="Rouble russe (nouveau)" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Russian Rouble" , "FRA" : "rouble russe" }' />
+            <column name="symbol" value="RUB" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="130" />
@@ -1425,6 +1771,9 @@
             <column name="currency_code" value="RWF" />
             <column name="description_en" value="Franc du Rwanda" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Rwandan Franc" , "FRA" : "franc rwandais" }' />
+            <column name="symbol" value="RWF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="131" />
@@ -1433,6 +1782,9 @@
             <column name="currency_code" value="SBD" />
             <column name="description_en" value="Dollar des îles Salomon" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Solomon Islands Dollar" , "FRA" : "dollar des \u00eeles Salomon" }' />
+            <column name="symbol" value="SBD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="132" />
@@ -1441,6 +1793,9 @@
             <column name="currency_code" value="SVC" />
             <column name="description_en" value="Colon salvadorien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Salvadoran Col\u00f3n" , "FRA" : "col\u00f3n salvadorien" }' />
+            <column name="symbol" value="SVC" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="133" />
@@ -1449,6 +1804,8 @@
             <column name="currency_code" value="WST" />
             <column name="description_en" value="Tala" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Samoan Tala" , "FRA" : "tala samoan" }' />
+            <column name="symbol" value="WST" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="134" />
@@ -1457,6 +1814,9 @@
             <column name="currency_code" value="STN" />
             <column name="description_en" value="Dobra" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "S\u00e3o Tom\u00e9 &amp; Pr\u00edncipe Dobra" , "FRA" : "dobra santom\u00e9en" }' />
+            <column name="symbol" value="STN" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="135" />
@@ -1465,6 +1825,9 @@
             <column name="currency_code" value="CSD" />
             <column name="description_en" value="Dinar Serbe" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Serbian Dinar (2002\u20132006)" , "FRA" : "dinar serbo-mont\u00e9n\u00e9grin" }' />
+            <column name="symbol" value="CSD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="136" />
@@ -1473,6 +1836,9 @@
             <column name="currency_code" value="SCR" />
             <column name="description_en" value="Roupie des Seychelles" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Seychellois Rupee" , "FRA" : "roupie des Seychelles" }' />
+            <column name="symbol" value="SCR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="137" />
@@ -1481,6 +1847,9 @@
             <column name="currency_code" value="SLL" />
             <column name="description_en" value="Leone" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Sierra Leonean Leone" , "FRA" : "leone sierra-l\u00e9onais" }' />
+            <column name="symbol" value="SLL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="138" />
@@ -1489,6 +1858,9 @@
             <column name="currency_code" value="SGD" />
             <column name="description_en" value="Dollar de Singapour" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Singapore Dollar" , "FRA" : "dollar de Singapour" }' />
+            <column name="symbol" value="SGD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="139" />
@@ -1497,6 +1869,9 @@
             <column name="currency_code" value="SKK" />
             <column name="description_en" value="Couronne slovaque" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Slovak Koruna" , "FRA" : "couronne slovaque" }' />
+            <column name="symbol" value="SKK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="140" />
@@ -1505,6 +1880,9 @@
             <column name="currency_code" value="SIT" />
             <column name="description_en" value="Tolar" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Slovenian Tolar" , "FRA" : "tolar slov\u00e8ne" }' />
+            <column name="symbol" value="SIT" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="141" />
@@ -1513,6 +1891,9 @@
             <column name="currency_code" value="SOS" />
             <column name="description_en" value="Shilling Somalien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Somali Shilling" , "FRA" : "shilling somalien" }' />
+            <column name="symbol" value="SOS" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="142" />
@@ -1521,6 +1902,9 @@
             <column name="currency_code" value="SDG" />
             <column name="description_en" value="Livre soudanaise" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Sudanese Pound" , "FRA" : "livre soudanaise" }' />
+            <column name="symbol" value="SDG" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="143" />
@@ -1529,6 +1913,9 @@
             <column name="currency_code" value="LKR" />
             <column name="description_en" value="Roupie de Sri Lanka" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Sri Lankan Rupee" , "FRA" : "roupie srilankaise" }' />
+            <column name="symbol" value="LKR" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="144" />
@@ -1537,6 +1924,9 @@
             <column name="currency_code" value="SHP" />
             <column name="description_en" value="Livre de Sainte-Hélène" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "St Helena Pound" , "FRA" : "livre de Sainte-H\u00e9l\u00e8ne" }' />
+            <column name="symbol" value="SHP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="145" />
@@ -1545,6 +1935,9 @@
             <column name="currency_code" value="SEK" />
             <column name="description_en" value="Couronne suédoise" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Swedish Krona" , "FRA" : "couronne su\u00e9doise" }' />
+            <column name="symbol" value="SEK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="146" />
@@ -1553,6 +1946,9 @@
             <column name="currency_code" value="SRD" />
             <column name="description_en" value="Florin du suriname" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Surinamese Dollar" , "FRA" : "dollar surinamais" }' />
+            <column name="symbol" value="SRD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="147" />
@@ -1561,6 +1957,9 @@
             <column name="currency_code" value="SZL" />
             <column name="description_en" value="Lilangeni" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Swazi Lilangeni" , "FRA" : "lilangeni swazi" }' />
+            <column name="symbol" value="SZL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="148" />
@@ -1569,6 +1968,9 @@
             <column name="currency_code" value="SYP" />
             <column name="description_en" value="Livre syrienne" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Syrian Pound" , "FRA" : "livre syrienne" }' />
+            <column name="symbol" value="SYP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="149" />
@@ -1577,6 +1979,9 @@
             <column name="currency_code" value="TJS" />
             <column name="description_en" value="Somoni" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Tajikistani Somoni" , "FRA" : "somoni tadjik" }' />
+            <column name="symbol" value="TJS" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="150" />
@@ -1585,6 +1990,9 @@
             <column name="currency_code" value="TWD" />
             <column name="description_en" value="Nouveau dollar de Taïwan" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "New Taiwan Dollar" , "FRA" : "nouveau dollar ta\u00efwanais" }' />
+            <column name="symbol" value="NT$" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="151" />
@@ -1593,6 +2001,9 @@
             <column name="currency_code" value="TZS" />
             <column name="description_en" value="Shilling tanzanien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Tanzanian Shilling" , "FRA" : "shilling tanzanien" }' />
+            <column name="symbol" value="TZS" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="152" />
@@ -1601,6 +2012,9 @@
             <column name="currency_code" value="CZK" />
             <column name="description_en" value="Couronne tchèque" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Czech Koruna" , "FRA" : "couronne tch\u00e8que" }' />
+            <column name="symbol" value="CZK" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="153" />
@@ -1609,6 +2023,9 @@
             <column name="currency_code" value="THB" />
             <column name="description_en" value="Baht" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Thai Baht" , "FRA" : "baht tha\u00eflandais" }' />
+            <column name="symbol" value="THB" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="154" />
@@ -1617,6 +2034,9 @@
             <column name="currency_code" value="TOP" />
             <column name="description_en" value="Pa anga" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Tongan Pa\u02bbanga" , "FRA" : "pa\u2019anga tongan" }' />
+            <column name="symbol" value="TOP" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="155" />
@@ -1625,6 +2045,9 @@
             <column name="currency_code" value="TTD" />
             <column name="description_en" value="Dollar de Trinité et de Tobago" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Trinidad &amp; Tobago Dollar" , "FRA" : "dollar de Trinit\u00e9-et-Tobago" }' />
+            <column name="symbol" value="TTD" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="156" />
@@ -1633,6 +2056,9 @@
             <column name="currency_code" value="TND" />
             <column name="description_en" value="Dinar tunisien" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Tunisian Dinar" , "FRA" : "dinar tunisien" }' />
+            <column name="symbol" value="TND" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="157" />
@@ -1641,6 +2067,9 @@
             <column name="currency_code" value="TMT" />
             <column name="description_en" value="Manat turkmène" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Turkmenistani Manat" , "FRA" : "nouveau manat turkm\u00e8ne" }' />
+            <column name="symbol" value="TMT" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="158" />
@@ -1649,6 +2078,8 @@
             <column name="currency_code" value="TRY" />
             <column name="description_en" value="Nouvelle Livre turque" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n" value=' {"ENG" : "Turkish Lira" , "FRA" : "livre turque" }' />
+            <column name="symbol" value="TRY" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="159" />
@@ -1657,6 +2088,9 @@
             <column name="currency_code" value="TRL" />
             <column name="description_en" value="Livre turque" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Turkish Lira (1922\u20132005)" , "FRA" : "livre turque (1844\u20132005)" }' />
+            <column name="symbol" value="TRL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="160" />
@@ -1665,6 +2099,9 @@
             <column name="currency_code" value="UAH" />
             <column name="description_en" value="HRYVNIA" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Ukrainian Hryvnia" , "FRA" : "hryvnia ukrainienne" }' />
+            <column name="symbol" value="UAH" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="161" />
@@ -1673,6 +2110,9 @@
             <column name="currency_code" value="UYU" />
             <column name="description_en" value="Nouveau Peso uruguayen" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Uruguayan Peso" , "FRA" : "peso uruguayen" }' />
+            <column name="symbol" value="UYU" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="162" />
@@ -1681,6 +2121,9 @@
             <column name="currency_code" value="VUV" />
             <column name="description_en" value="Vatu" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Vanuatu Vatu" , "FRA" : "vatu vanuatuan" }' />
+            <column name="symbol" value="VUV" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="163" />
@@ -1689,6 +2132,9 @@
             <column name="currency_code" value="VEF" />
             <column name="description_en" value="Bolivar Fuerte" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Venezuelan Bol\u00edvar (2008\u20132018)" , "FRA" : "bolivar v\u00e9n\u00e9zu\u00e9lien (2008\u20132018)" }' />
+            <column name="symbol" value="VEF" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="164" />
@@ -1697,6 +2143,9 @@
             <column name="currency_code" value="VND" />
             <column name="description_en" value="Dong" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Vietnamese Dong" , "FRA" : "d\u00f4ng vietnamien" }' />
+            <column name="symbol" value="₫" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="165" />
@@ -1705,6 +2154,9 @@
             <column name="currency_code" value="YER" />
             <column name="description_en" value="Riyal yéménite" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Yemeni Rial" , "FRA" : "riyal y\u00e9m\u00e9nite" }' />
+            <column name="symbol" value="YER" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="166" />
@@ -1713,6 +2165,9 @@
             <column name="currency_code" value="ZMW" />
             <column name="description_en" value="Kwacha de Zambie" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Zambian Kwacha" , "FRA" : "kwacha zambien" }' />
+            <column name="symbol" value="ZMW" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="167" />
@@ -1721,6 +2176,9 @@
             <column name="currency_code" value="ZWL" />
             <column name="description_en" value="Dollar du Zimbabwe" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Zimbabwean Dollar (2009)" , "FRA" : "dollar zimbabw\u00e9en (2009)" }' />
+            <column name="symbol" value="ZWL" />
         </insert>
         <insert tableName="adm_currency">
             <column name="id" valueNumeric="-168" />
@@ -1729,6 +2187,9 @@
             <column name="currency_code" value="BOV" />
             <column name="description_en" value="Mvdol" />
             <column name="system_currency" valueNumeric="1" />
+            <column name="description_i18n"
+                value=' {"ENG" : "Bolivian Mvdol" , "FRA" : "mvdol bolivien" }' />
+            <column name="symbol" value="BOV" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-169" />
@@ -1737,6 +2198,8 @@
 		            <column name="currency_code" value="CHE" />
 		            <column name="description_en" value="WIR Euro" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n" value=' {"ENG" : "WIR Euro" , "FRA" : "euro WIR" }' />
+		            <column name="symbol" value="CHE" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-170" />
@@ -1745,14 +2208,19 @@
 		            <column name="currency_code" value="CHW" />
 		            <column name="description_en" value="WIR Franc" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n" value=' {"ENG" : "WIR Franc" , "FRA" : "franc WIR" }' />
+		            <column name="symbol" value="CHW" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-171" />
-		            <column name="created"  valueDate="2023-02-15 00:04:03.53" />
+		            <column name="created" valueDate="2023-02-15 00:04:03.53" />
 		            <column name="version" valueNumeric="1" />
 		            <column name="currency_code" value="CLF" />
 		            <column name="description_en" value="Unidad de Fomento" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                value=' {"ENG" : "Chilean Unit of Account (UF)" , "FRA" : "unit\u00e9 d\u2019investissement chilienne" }' />
+		            <column name="symbol" value="CLF" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-172" />
@@ -1761,6 +2229,9 @@
 		            <column name="currency_code" value="COU" />
 		            <column name="description_en" value="Unidad de Valor Real" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                value=' {"ENG" : "Colombian Real Value Unit" , "FRA" : "unit\u00e9 de valeur r\u00e9elle colombienne" }' />
+		            <column name="symbol" value="COU" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-173" />
@@ -1769,6 +2240,9 @@
 		            <column name="currency_code" value="CUC" />
 		            <column name="description_en" value="Peso Convertible" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                value=' {"ENG" : "Cuban Convertible Peso" , "FRA" : "peso cubain convertible" }' />
+		            <column name="symbol" value="CUC" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-174" />
@@ -1777,6 +2251,9 @@
 		            <column name="currency_code" value="MXV" />
 		            <column name="description_en" value="Mexican Unidad de Inversion (UDI)" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                value=' {"ENG" : "Mexican Investment Unit" , "FRA" : "unit\u00e9 de conversion mexicaine (UDI)" }' />
+		            <column name="symbol" value="MXV" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-175" />
@@ -1785,6 +2262,8 @@
 		            <column name="currency_code" value="RSD" />
 		            <column name="description_en" value="Serbian Dinar" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n" value=' {"ENG" : "Serbian Dinar" , "FRA" : "dinar serbe" }' />
+		            <column name="symbol" value="RSD" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-176" />
@@ -1793,6 +2272,9 @@
 		            <column name="currency_code" value="SSP" />
 		            <column name="description_en" value="South Sudanese Pound" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "South Sudanese Pound" , "FRA" : "livre sud-soudanaise" }' />
+		            <column name="symbol" value="SSP" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-177" />
@@ -1801,6 +2283,9 @@
 		            <column name="currency_code" value="USN" />
 		            <column name="description_en" value="US Dollar (Next day)" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "US Dollar (Next day)" , "FRA" : "dollar des Etats-Unis (jour suivant)" }' />
+		            <column name="symbol" value="USN" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-178" />
@@ -1809,6 +2294,9 @@
 		            <column name="currency_code" value="UYI" />
 		            <column name="description_en" value="Uruguay Peso en Unidades Indexadas (UI)" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "Uruguayan Peso (Indexed Units)" , "FRA" : "peso uruguayen (unit\u00e9s index\u00e9es)" }' />
+		            <column name="symbol" value="UYI" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-179" />
@@ -1825,6 +2313,9 @@
 		            <column name="currency_code" value="VES" />
 		            <column name="description_en" value="Bolívar Soberano" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "Venezuelan Bol\u00edvar" , "FRA" : "bolivar v\u00e9n\u00e9zu\u00e9lien" }' />
+		            <column name="symbol" value="VES" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-181" />
@@ -1833,6 +2324,8 @@
 		            <column name="currency_code" value="XAG" />
 		            <column name="description_en" value="Silver" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n" value=' {"ENG" : "Silver" , "FRA" : "argent" }' />
+		            <column name="symbol" value="XAG" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-182" />
@@ -1841,6 +2334,9 @@
 		            <column name="currency_code" value="XBA" />
 		            <column name="description_en" value="Bond Markets Unit European Composite Unit (EURCO)" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "European Composite Unit" , "FRA" : "unit\u00e9 europ\u00e9enne compos\u00e9e" }' />
+		            <column name="symbol" value="XBA" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-183" />
@@ -1849,6 +2345,9 @@
 		            <column name="currency_code" value="XBB" />
 		            <column name="description_en" value="Bond Markets Unit European Monetary Unit (E.M.U.-6)" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "European Monetary Unit" , "FRA" : "unit\u00e9 mon\u00e9taire europ\u00e9enne" }' />
+		            <column name="symbol" value="XBB" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-184" />
@@ -1857,6 +2356,9 @@
 		            <column name="currency_code" value="XBC" />
 		            <column name="description_en" value="Bond Markets Unit European Unit of Account 9 (E.U.A.-9)" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "European Unit of Account (XBC)" , "FRA" : "unit\u00e9 de compte europ\u00e9enne (XBC)" }' />
+		            <column name="symbol" value="XBC" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-185" />
@@ -1865,6 +2367,9 @@
 		            <column name="currency_code" value="XBD" />
 		            <column name="description_en" value="Bond Markets Unit European Unit of Account 17 (E.U.A.-17)" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "European Unit of Account (XBD)" , "FRA" : "unit\u00e9 de compte europ\u00e9enne (XBD)" }' />
+		            <column name="symbol" value="XBD" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-186" />
@@ -1873,6 +2378,9 @@
 		            <column name="currency_code" value="XDR" />
 		            <column name="description_en" value="SDR (Special Drawing Right)" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "Special Drawing Rights" , "FRA" : "droit de tirage sp\u00e9cial" }' />
+		            <column name="symbol" value="XDR" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-187" />
@@ -1881,6 +2389,8 @@
 		            <column name="currency_code" value="XPD" />
 		            <column name="description_en" value="Palladium" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n" value=' {"ENG" : "Palladium" , "FRA" : "palladium" }' />
+		            <column name="symbol" value="XPD" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-188" />
@@ -1889,6 +2399,8 @@
 		            <column name="currency_code" value="XPT" />
 		            <column name="description_en" value="Platinum" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n" value=' {"ENG" : "Platinum" , "FRA" : "platine" }' />
+		            <column name="symbol" value="XPT" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-189" />
@@ -1897,6 +2409,8 @@
 		            <column name="currency_code" value="XSU" />
 		            <column name="description_en" value="Sucre" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n" value=' {"ENG" : "Sucre" , "FRA" : "Sucre" }' />
+		            <column name="symbol" value="XSU" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-190" />
@@ -1905,6 +2419,9 @@
 		            <column name="currency_code" value="XTS" />
 		            <column name="description_en" value="Codes specifically reserved for testing purposes" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                value=' {"ENG" : "Testing Currency Code" , "FRA" : "(devise de test)" }' />
+		            <column name="symbol" value="XTS" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-191" />
@@ -1913,6 +2430,9 @@
 		            <column name="currency_code" value="XUA" />
 		            <column name="description_en" value="ADB Unit of Account" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "ADB Unit of Account" , "FRA" : "ADB Unit of Account" }' />
+		            <column name="symbol" value="XUA" />
 		</insert>
 		<insert tableName="adm_currency">
 		            <column name="id" valueNumeric="-192" />
@@ -1921,6 +2441,9 @@
 		            <column name="currency_code" value="XXX" />
 		            <column name="description_en" value="The codes assigned for transactions where no currency is involved" />
 		            <column name="system_currency" valueNumeric="1" />
+		            <column name="description_i18n"
+                		value=' {"ENG" : "Unknown Currency" , "FRA" : "devise inconnue ou non valide" }' />
+		            <column name="symbol" value="¤" />
 		</insert>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-languages">
@@ -12125,6 +12648,7 @@ Veuillez ne pas tenir compte de cette lettre si votre règlement nous a été ad
     <changeSet id="#INTRD-18995_20231107" author="zelmeliani" />
     <changeSet id="#INTRD-19093_20231109" author="aeljaouhari" />
     <changeSet id="#INTRD-19021_20231109" author="AbdelmounaimAkadid" />
+	<changeSet id="#INTRD-19279_update-currencies" author="a.rouaguebe" />
 
     <!-- DONT REMOVE THIS CHANGESET - KEEP AT THE BOTTOM OF THE FILE  -->
     <changeSet id="#liquibase_hack_data" author="AbdelmounaimAkadid">

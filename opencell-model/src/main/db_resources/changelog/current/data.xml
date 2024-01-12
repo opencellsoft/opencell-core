@@ -22372,5 +22372,197 @@ public class ImportJobNotification extends Script {
             <where>code = 'PPL_INSTALLMENT'</where>
         </update>
     </changeSet>
+    <changeSet id="#INTRD-19279_update-currencies" author="a.rouaguebe">
+        <sql>update adm_currency set description_i18n = '{"ENG": "Afghan Afghani", "FRA": "afghani afghan"}', symbol = 'AFN' where currency_code = 'AFN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "South African Rand", "FRA": "rand sud-africain"}', symbol = 'ZAR' where currency_code = 'ZAR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Albanian Lek", "FRA": "lek albanais"}', symbol = 'ALL' where currency_code = 'ALL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Algerian Dinar", "FRA": "dinar algérien"}', symbol = 'DZD' where currency_code = 'DZD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Euro", "FRA": "euro"}', symbol = '€' where currency_code = 'EUR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Angolan Kwanza", "FRA": "kwanza angolais"}', symbol = 'AOA' where currency_code = 'AOA'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "East Caribbean Dollar", "FRA": "dollar des Caraïbes orientales"}', symbol = 'EC$' where currency_code = 'XCD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Netherlands Antillean Guilder", "FRA": "florin antillais"}', symbol = 'ANG' where currency_code = 'ANG'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Saudi Riyal", "FRA": "riyal saoudien"}', symbol = 'SAR' where currency_code = 'SAR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Argentine Peso", "FRA": "peso argentin"}', symbol = 'ARS' where currency_code = 'ARS'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Armenian Dram", "FRA": "dram arménien"}', symbol = 'AMD' where currency_code = 'AMD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Aruban Florin", "FRA": "florin arubais"}', symbol = 'AWG' where currency_code = 'AWG'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Australian Dollar", "FRA": "dollar australien"}', symbol = 'A$' where currency_code = 'AUD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Azerbaijani Manat", "FRA": "manat azéri"}', symbol = 'AZN' where currency_code = 'AZN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Bahamian Dollar", "FRA": "dollar bahaméen"}', symbol = 'BSD' where currency_code = 'BSD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Bahraini Dinar", "FRA": "dinar bahreïni"}', symbol = 'BHD' where currency_code = 'BHD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Bangladeshi Taka", "FRA": "taka bangladeshi"}', symbol = 'BDT' where currency_code = 'BDT'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Barbadian Dollar", "FRA": "dollar barbadien"}', symbol = 'BBD' where currency_code = 'BBD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Belize Dollar", "FRA": "dollar bélizéen"}', symbol = 'BZD' where currency_code = 'BZD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "West African CFA Franc", "FRA": "franc CFA (BCEAO)"}', symbol = 'F CFA' where currency_code = 'XOF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Bermudian Dollar", "FRA": "dollar bermudien"}', symbol = 'BMD' where currency_code = 'BMD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Bhutanese Ngultrum", "FRA": "ngultrum bouthanais"}', symbol = 'BTN' where currency_code = 'BTN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Belarusian Rouble", "FRA": "rouble biélorusse"}', symbol = 'BYN' where currency_code = 'BYN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Bolivian Boliviano", "FRA": "boliviano bolivien"}', symbol = 'BOB' where currency_code = 'BOB'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Bosnia-Herzegovina Convertible Mark", "FRA": "mark convertible bosniaque"}', symbol = 'BAM' where currency_code = 'BAM'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Botswanan Pula", "FRA": "pula botswanais"}', symbol = 'BWP' where currency_code = 'BWP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Brazilian Real", "FRA": "réal brésilien"}', symbol = 'R$' where currency_code = 'BRL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Brunei Dollar", "FRA": "dollar brunéien"}', symbol = 'BND' where currency_code = 'BND'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Bulgarian Lev", "FRA": "lev bulgare"}', symbol = 'BGN' where currency_code = 'BGN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Burundian Franc", "FRA": "franc burundais"}', symbol = 'BIF' where currency_code = 'BIF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Norwegian Krone", "FRA": "couronne norvégienne"}', symbol = 'NOK' where currency_code = 'NOK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Cayman Islands Dollar", "FRA": "dollar des îles Caïmans"}', symbol = 'KYD' where currency_code = 'KYD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Cambodian Riel", "FRA": "riel cambodgien"}', symbol = 'KHR' where currency_code = 'KHR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Central African CFA Franc", "FRA": "franc CFA (BEAC)"}', symbol = 'FCFA' where currency_code = 'XAF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Canadian Dollar", "FRA": "dollar canadien"}', symbol = 'CA$' where currency_code = 'CAD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Cape Verdean Escudo", "FRA": "escudo capverdien"}', symbol = 'CVE' where currency_code = 'CVE'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Chilean Peso", "FRA": "peso chilien"}', symbol = 'CLP' where currency_code = 'CLP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Chinese Yuan", "FRA": "yuan renminbi chinois"}', symbol = 'CN¥' where currency_code = 'CNY'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Cypriot Pound", "FRA": "livre chypriote"}', symbol = 'CYP' where currency_code = 'CYP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Colombian Peso", "FRA": "peso colombien"}', symbol = 'COP' where currency_code = 'COP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Comorian Franc", "FRA": "franc comorien"}', symbol = 'KMF' where currency_code = 'KMF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Congolese Franc", "FRA": "franc congolais"}', symbol = 'CDF' where currency_code = 'CDF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "South Korean Won", "FRA": "won sud-coréen"}', symbol = '₩' where currency_code = 'KRW'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "North Korean Won", "FRA": "won nord-coréen"}', symbol = 'KPW' where currency_code = 'KPW'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Costa Rican Colón", "FRA": "colón costaricain"}', symbol = 'CRC' where currency_code = 'CRC'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Croatian Kuna", "FRA": "kuna croate"}', symbol = 'HRK' where currency_code = 'HRK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Cuban Peso", "FRA": "peso cubain"}', symbol = 'CUP' where currency_code = 'CUP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "US Dollar", "FRA": "dollar des États-Unis"}', symbol = '$' where currency_code = 'USD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Danish Krone", "FRA": "couronne danoise"}', symbol = 'DKK' where currency_code = 'DKK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Djiboutian Franc", "FRA": "franc djiboutien"}', symbol = 'DJF' where currency_code = 'DJF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Dominican Peso", "FRA": "peso dominicain"}', symbol = 'DOP' where currency_code = 'DOP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Egyptian Pound", "FRA": "livre égyptienne"}', symbol = 'EGP' where currency_code = 'EGP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "United Arab Emirates Dirham", "FRA": "dirham des Émirats arabes unis"}', symbol = 'AED' where currency_code = 'AED'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Eritrean Nakfa", "FRA": "nafka érythréen"}', symbol = 'ERN' where currency_code = 'ERN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Estonian Kroon", "FRA": "couronne estonienne"}', symbol = 'EEK' where currency_code = 'EEK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Ethiopian Birr", "FRA": "birr éthiopien"}', symbol = 'ETB' where currency_code = 'ETB'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Falkland Islands Pound", "FRA": "livre des îles Malouines"}', symbol = 'FKP' where currency_code = 'FKP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Fijian Dollar", "FRA": "dollar fidjien"}', symbol = 'FJD' where currency_code = 'FJD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Gambian Dalasi", "FRA": "dalasi gambien"}', symbol = 'GMD' where currency_code = 'GMD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Georgian Lari", "FRA": "lari géorgien"}', symbol = 'GEL' where currency_code = 'GEL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Ghanaian Cedi", "FRA": "cédi ghanéen"}', symbol = 'GHS' where currency_code = 'GHS'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Gibraltar Pound", "FRA": "livre de Gibraltar"}', symbol = 'GIP' where currency_code = 'GIP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Guatemalan Quetzal", "FRA": "quetzal guatémaltèque"}', symbol = 'GTQ' where currency_code = 'GTQ'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "British Pound", "FRA": "livre sterling"}', symbol = '£' where currency_code = 'GBP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Guinean Franc", "FRA": "franc guinéen"}', symbol = 'GNF' where currency_code = 'GNF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Guyanaese Dollar", "FRA": "dollar du Guyana"}', symbol = 'GYD' where currency_code = 'GYD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Haitian Gourde", "FRA": "gourde haïtienne"}', symbol = 'HTG' where currency_code = 'HTG'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Honduran Lempira", "FRA": "lempira hondurien"}', symbol = 'HNL' where currency_code = 'HNL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Hong Kong Dollar", "FRA": "dollar de Hong Kong"}', symbol = 'HK$' where currency_code = 'HKD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Hungarian Forint", "FRA": "forint hongrois"}', symbol = 'HUF' where currency_code = 'HUF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "New Zealand Dollar", "FRA": "dollar néo-zélandais"}', symbol = 'NZ$' where currency_code = 'NZD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Indian Rupee", "FRA": "roupie indienne"}', symbol = '₹' where currency_code = 'INR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Indonesian Rupiah", "FRA": "roupie indonésienne"}', symbol = 'IDR' where currency_code = 'IDR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Iranian Rial", "FRA": "riyal iranien"}', symbol = 'IRR' where currency_code = 'IRR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Iraqi Dinar", "FRA": "dinar irakien"}', symbol = 'IQD' where currency_code = 'IQD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Icelandic Króna", "FRA": "couronne islandaise"}', symbol = 'ISK' where currency_code = 'ISK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Israeli New Shekel", "FRA": "nouveau shekel israélien"}', symbol = '₪' where currency_code = 'ILS'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Jamaican Dollar", "FRA": "dollar jamaïcain"}', symbol = 'JMD' where currency_code = 'JMD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Japanese Yen", "FRA": "yen japonais"}', symbol = '¥' where currency_code = 'JPY'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Jordanian Dinar", "FRA": "dinar jordanien"}', symbol = 'JOD' where currency_code = 'JOD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Kazakhstani Tenge", "FRA": "tenge kazakh"}', symbol = 'KZT' where currency_code = 'KZT'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Kenyan Shilling", "FRA": "shilling kényan"}', symbol = 'KES' where currency_code = 'KES'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Kyrgystani Som", "FRA": "som kirghize"}', symbol = 'KGS' where currency_code = 'KGS'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Kuwaiti Dinar", "FRA": "dinar koweïtien"}', symbol = 'KWD' where currency_code = 'KWD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Laotian Kip", "FRA": "kip loatien"}', symbol = 'LAK' where currency_code = 'LAK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Lesotho Loti", "FRA": "loti lesothan"}', symbol = 'LSL' where currency_code = 'LSL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Latvian Lats", "FRA": "lats letton"}', symbol = 'LVL' where currency_code = 'LVL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Lebanese Pound", "FRA": "livre libanaise"}', symbol = 'LBP' where currency_code = 'LBP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Liberian Dollar", "FRA": "dollar libérien"}', symbol = 'LRD' where currency_code = 'LRD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Libyan Dinar", "FRA": "dinar libyen"}', symbol = 'LYD' where currency_code = 'LYD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Swiss Franc", "FRA": "franc suisse"}', symbol = 'CHF' where currency_code = 'CHF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Lithuanian Litas", "FRA": "litas lituanien"}', symbol = 'LTL' where currency_code = 'LTL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Macanese Pataca", "FRA": "pataca macanaise"}', symbol = 'MOP' where currency_code = 'MOP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Macedonian Denar", "FRA": "denar macédonien"}', symbol = 'MKD' where currency_code = 'MKD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Malagasy Ariary", "FRA": "ariary malgache"}', symbol = 'MGA' where currency_code = 'MGA'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Malagasy Franc", "FRA": "franc malgache"}', symbol = 'MGF' where currency_code = 'MGF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Malaysian Ringgit", "FRA": "ringgit malais"}', symbol = 'MYR' where currency_code = 'MYR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Malawian Kwacha", "FRA": "kwacha malawite"}', symbol = 'MWK' where currency_code = 'MWK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Maldivian Rufiyaa", "FRA": "rufiyaa maldivien"}', symbol = 'MVR' where currency_code = 'MVR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Maltese Lira", "FRA": "lire maltaise"}', symbol = 'MTL' where currency_code = 'MTL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Moroccan Dirham", "FRA": "dirham marocain"}', symbol = 'MAD' where currency_code = 'MAD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Mauritian Rupee", "FRA": "roupie mauricienne"}', symbol = 'MUR' where currency_code = 'MUR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Mauritanian Ouguiya", "FRA": "ouguiya mauritanien"}', symbol = 'MRU' where currency_code = 'MRU'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Mexican Peso", "FRA": "peso mexicain"}', symbol = 'MX$' where currency_code = 'MXN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Moldovan Leu", "FRA": "leu moldave"}', symbol = 'MDL' where currency_code = 'MDL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Mongolian Tugrik", "FRA": "tugrik mongol"}', symbol = 'MNT' where currency_code = 'MNT'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Mozambican Metical (1980–2006)", "FRA": "métical"}', symbol = 'MZM' where currency_code = 'MZM'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Myanmar Kyat", "FRA": "kyat myanmarais"}', symbol = 'MMK' where currency_code = 'MMK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Namibian Dollar", "FRA": "dollar namibien"}', symbol = 'NAD' where currency_code = 'NAD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Nepalese Rupee", "FRA": "roupie népalaise"}', symbol = 'NPR' where currency_code = 'NPR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Nicaraguan Córdoba", "FRA": "córdoba oro nicaraguayen"}', symbol = 'NIO' where currency_code = 'NIO'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Nigerian Naira", "FRA": "naira nigérian"}', symbol = 'NGN' where currency_code = 'NGN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "CFP Franc", "FRA": "franc CFP"}', symbol = 'CFPF' where currency_code = 'XPF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Omani Rial", "FRA": "riyal omanais"}', symbol = 'OMR' where currency_code = 'OMR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Gold", "FRA": "or"}', symbol = 'XAU' where currency_code = 'XAU'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Ugandan Shilling", "FRA": "shilling ougandais"}', symbol = 'UGX' where currency_code = 'UGX'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Uzbekistani Som", "FRA": "sum ouzbek"}', symbol = 'UZS' where currency_code = 'UZS'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Pakistani Rupee", "FRA": "roupie pakistanaise"}', symbol = 'PKR' where currency_code = 'PKR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Panamanian Balboa", "FRA": "balboa panaméen"}', symbol = 'PAB' where currency_code = 'PAB'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Papua New Guinean Kina", "FRA": "kina papouan-néo-guinéen"}', symbol = 'PGK' where currency_code = 'PGK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Paraguayan Guarani", "FRA": "guaraní paraguayen"}', symbol = 'PYG' where currency_code = 'PYG'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Peruvian Sol", "FRA": "sol péruvien"}', symbol = 'PEN' where currency_code = 'PEN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Philippine Peso", "FRA": "peso philippin"}', symbol = '₱' where currency_code = 'PHP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Polish Zloty", "FRA": "zloty polonais"}', symbol = 'PLN' where currency_code = 'PLN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Qatari Rial", "FRA": "riyal qatari"}', symbol = 'QAR' where currency_code = 'QAR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Romanian Leu", "FRA": "leu roumain"}', symbol = 'RON' where currency_code = 'RON'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Romanian Leu (1952–2006)", "FRA": "ancien leu roumain"}', symbol = 'ROL' where currency_code = 'ROL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Russian Rouble", "FRA": "rouble russe"}', symbol = 'RUB' where currency_code = 'RUB'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Rwandan Franc", "FRA": "franc rwandais"}', symbol = 'RWF' where currency_code = 'RWF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Solomon Islands Dollar", "FRA": "dollar des îles Salomon"}', symbol = 'SBD' where currency_code = 'SBD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Salvadoran Colón", "FRA": "colón salvadorien"}', symbol = 'SVC' where currency_code = 'SVC'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Samoan Tala", "FRA": "tala samoan"}', symbol = 'WST' where currency_code = 'WST'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "São Tomé &amp; Príncipe Dobra", "FRA": "dobra santoméen"}', symbol = 'STN' where currency_code = 'STN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Serbian Dinar (2002–2006)", "FRA": "dinar serbo-monténégrin"}', symbol = 'CSD' where currency_code = 'CSD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Seychellois Rupee", "FRA": "roupie des Seychelles"}', symbol = 'SCR' where currency_code = 'SCR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Sierra Leonean Leone", "FRA": "leone sierra-léonais"}', symbol = 'SLL' where currency_code = 'SLL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Singapore Dollar", "FRA": "dollar de Singapour"}', symbol = 'SGD' where currency_code = 'SGD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Slovak Koruna", "FRA": "couronne slovaque"}', symbol = 'SKK' where currency_code = 'SKK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Slovenian Tolar", "FRA": "tolar slovène"}', symbol = 'SIT' where currency_code = 'SIT'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Somali Shilling", "FRA": "shilling somalien"}', symbol = 'SOS' where currency_code = 'SOS'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Sudanese Pound", "FRA": "livre soudanaise"}', symbol = 'SDG' where currency_code = 'SDG'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Sri Lankan Rupee", "FRA": "roupie srilankaise"}', symbol = 'LKR' where currency_code = 'LKR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "St Helena Pound", "FRA": "livre de Sainte-Hélène"}', symbol = 'SHP' where currency_code = 'SHP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Swedish Krona", "FRA": "couronne suédoise"}', symbol = 'SEK' where currency_code = 'SEK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Surinamese Dollar", "FRA": "dollar surinamais"}', symbol = 'SRD' where currency_code = 'SRD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Swazi Lilangeni", "FRA": "lilangeni swazi"}', symbol = 'SZL' where currency_code = 'SZL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Syrian Pound", "FRA": "livre syrienne"}', symbol = 'SYP' where currency_code = 'SYP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Tajikistani Somoni", "FRA": "somoni tadjik"}', symbol = 'TJS' where currency_code = 'TJS'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "New Taiwan Dollar", "FRA": "nouveau dollar taïwanais"}', symbol = 'NT$' where currency_code = 'TWD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Tanzanian Shilling", "FRA": "shilling tanzanien"}', symbol = 'TZS' where currency_code = 'TZS'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Czech Koruna", "FRA": "couronne tchèque"}', symbol = 'CZK' where currency_code = 'CZK'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Thai Baht", "FRA": "baht thaïlandais"}', symbol = 'THB' where currency_code = 'THB'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Tongan Paʻanga", "FRA": "pa’anga tongan"}', symbol = 'TOP' where currency_code = 'TOP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Trinidad &amp; Tobago Dollar", "FRA": "dollar de Trinité-et-Tobago"}', symbol = 'TTD' where currency_code = 'TTD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Tunisian Dinar", "FRA": "dinar tunisien"}', symbol = 'TND' where currency_code = 'TND'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Turkmenistani Manat", "FRA": "nouveau manat turkmène"}', symbol = 'TMT' where currency_code = 'TMT'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Turkish Lira", "FRA": "livre turque"}', symbol = 'TRY' where currency_code = 'TRY'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Turkish Lira (1922–2005)", "FRA": "livre turque (1844–2005)"}', symbol = 'TRL' where currency_code = 'TRL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Ukrainian Hryvnia", "FRA": "hryvnia ukrainienne"}', symbol = 'UAH' where currency_code = 'UAH'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Uruguayan Peso", "FRA": "peso uruguayen"}', symbol = 'UYU' where currency_code = 'UYU'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Vanuatu Vatu", "FRA": "vatu vanuatuan"}', symbol = 'VUV' where currency_code = 'VUV'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Venezuelan Bolívar (2008–2018)", "FRA": "bolivar vénézuélien (2008–2018)"}', symbol = 'VEF' where currency_code = 'VEF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Vietnamese Dong", "FRA": "dông vietnamien"}', symbol = '₫' where currency_code = 'VND'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Yemeni Rial", "FRA": "riyal yéménite"}', symbol = 'YER' where currency_code = 'YER'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Zambian Kwacha", "FRA": "kwacha zambien"}', symbol = 'ZMW' where currency_code = 'ZMW'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Zimbabwean Dollar (2009)", "FRA": "dollar zimbabwéen (2009)"}', symbol = 'ZWL' where currency_code = 'ZWL'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Bolivian Mvdol", "FRA": "mvdol bolivien"}', symbol = 'BOV' where currency_code = 'BOV'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "WIR Euro", "FRA": "euro WIR"}', symbol = 'CHE' where currency_code = 'CHE'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "WIR Franc", "FRA": "franc WIR"}', symbol = 'CHW' where currency_code = 'CHW'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Chilean Unit of Account (UF)", "FRA": "unité d’investissement chilienne"}', symbol = 'CLF' where currency_code = 'CLF'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Colombian Real Value Unit", "FRA": "unité de valeur réelle colombienne"}', symbol = 'COU' where currency_code = 'COU'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Cuban Convertible Peso", "FRA": "peso cubain convertible"}', symbol = 'CUC' where currency_code = 'CUC'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Mexican Investment Unit", "FRA": "unité de conversion mexicaine (UDI)"}', symbol = 'MXV' where currency_code = 'MXV'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Serbian Dinar", "FRA": "dinar serbe"}', symbol = 'RSD' where currency_code = 'RSD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "South Sudanese Pound", "FRA": "livre sud-soudanaise"}', symbol = 'SSP' where currency_code = 'SSP'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "US Dollar (Next day)", "FRA": "dollar des Etats-Unis (jour suivant)"}', symbol = 'USN' where currency_code = 'USN'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Uruguayan Peso (Indexed Units)", "FRA": "peso uruguayen (unités indexées)"}', symbol = 'UYI' where currency_code = 'UYI'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Venezuelan Bolívar", "FRA": "bolivar vénézuélien"}', symbol = 'VES' where currency_code = 'VES'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Silver", "FRA": "argent"}', symbol = 'XAG' where currency_code = 'XAG'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "European Composite Unit", "FRA": "unité européenne composée"}', symbol = 'XBA' where currency_code = 'XBA'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "European Monetary Unit", "FRA": "unité monétaire européenne"}', symbol = 'XBB' where currency_code = 'XBB'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "European Unit of Account (XBC)", "FRA": "unité de compte européenne (XBC)"}', symbol = 'XBC' where currency_code = 'XBC'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "European Unit of Account (XBD)", "FRA": "unité de compte européenne (XBD)"}', symbol = 'XBD' where currency_code = 'XBD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Special Drawing Rights", "FRA": "droit de tirage spécial"}', symbol = 'XDR' where currency_code = 'XDR'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Palladium", "FRA": "palladium"}', symbol = 'XPD' where currency_code = 'XPD'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Platinum", "FRA": "platine"}', symbol = 'XPT' where currency_code = 'XPT'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Sucre", "FRA": "Sucre"}', symbol = 'XSU' where currency_code = 'XSU'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Testing Currency Code", "FRA": "(devise de test)"}', symbol = 'XTS' where currency_code = 'XTS'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "ADB Unit of Account", "FRA": "ADB Unit of Account"}', symbol = 'XUA' where currency_code = 'XUA'</sql>
+        <sql>update adm_currency set description_i18n = '{"ENG": "Unknown Currency", "FRA": "devise inconnue ou non valide"}', symbol = '¤' where currency_code = 'XXX'</sql>
+    </changeSet>
 
 </databaseChangeLog>
