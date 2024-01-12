@@ -18,41 +18,17 @@
 
 package org.meveo.service.payments.impl;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.http.client.utils.DateUtils;
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.payment.HostedCheckoutInput;
-import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
-import org.meveo.api.dto.payment.MandatInfoDto;
-import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
-import org.meveo.api.dto.payment.PaymentResponseDto;
-import org.meveo.api.exception.MeveoApiException;
-import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
-import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.Invoice;
-import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.CreditCardTypeEnum;
-import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.DDPaymentMethod;
-import org.meveo.model.payments.DDRequestLOT;
-import org.meveo.model.payments.MandatStateEnum;
-import org.meveo.model.payments.PaymentGateway;
-import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.PaymentStatusEnum;
-import org.meveo.service.crm.impl.ProviderService;
-import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.util.PaymentGatewayClass;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ingenico.connect.gateway.sdk.java.ApiException;
@@ -113,16 +89,40 @@ import com.ingenico.connect.gateway.sdk.java.domain.payout.definitions.PayoutRef
 import com.ingenico.connect.gateway.sdk.java.domain.token.ApproveTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenResponse;
-import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.ContactDetailsToken;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.CustomerToken;
-import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.CustomerTokenWithContactDetails;
-import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.Debtor;
-import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.MandateSepaDirectDebitWithoutCreditor;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.PersonalInformationToken;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.PersonalNameToken;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCard;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardData;
-import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenSepaDirectDebitWithoutCreditor;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.http.client.utils.DateUtils;
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.payment.HostedCheckoutInput;
+import org.meveo.api.dto.payment.HostedCheckoutStatusResponseDto;
+import org.meveo.api.dto.payment.MandatInfoDto;
+import org.meveo.api.dto.payment.PaymentHostedCheckoutResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.api.exception.MeveoApiException;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CreditCardTypeEnum;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.MandatStateEnum;
+import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.util.PaymentGatewayClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Class IngenicoGatewayPayment.
@@ -331,7 +331,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     	    getClient().merchant(paymentGateway.getMarchandId()).mandates().create(body); 
 
     	} catch (ApiException ev) { 
-    		throw new MeveoApiException("Connection to ingenico is not allowed");
+    		JsonReader reader = Json.createReader(new StringReader(ev.getResponseBody()));
+    		JsonObject jsonObject = reader.readObject();
+    		JsonArray errorsArray = jsonObject.getJsonArray("errors");
+    		JsonObject firstError = errorsArray.getJsonObject(0);
+    		String message = firstError.getString("message");
+    		throw new MeveoApiException(message);
     	} catch (Exception e) { 
     		throw new MeveoApiException(e.getMessage());
     	}
