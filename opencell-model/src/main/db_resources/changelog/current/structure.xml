@@ -7791,5 +7791,17 @@ public class AgedBalanceReporting extends ReportExtractScript {
 			constraintName="fk_rated_transaction_order_product"
 			referencedColumnNames="id" referencedTableName="cpq_order_product" />
 	</changeSet>
+	
+	<changeSet id="#INTRD-20725_20240112" author="AdilElJaouhari">
+		<addColumn tableName="billing_service_instance">
+			<column name="order_product_id" type="bigint" />
+		</addColumn>
+
+		<addForeignKeyConstraint
+			baseColumnNames="order_product_id"
+			baseTableName="billing_service_instance"
+			constraintName="fk_service_instance_order_product"
+			referencedColumnNames="id" referencedTableName="cpq_order_product" />
+	</changeSet>
 
 </databaseChangeLog>
