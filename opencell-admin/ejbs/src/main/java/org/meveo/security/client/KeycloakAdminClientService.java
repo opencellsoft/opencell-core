@@ -360,9 +360,10 @@ public class KeycloakAdminClientService implements Serializable {
         	return null;
         }
 
-        if (!isUpdate && StringUtils.isBlank(password)) {
+		//commented out to respect the backwards compatibility of our APIs
+        /*if (!isUpdate && StringUtils.isBlank(password)) {
             throw new InvalidParameterException("Password is required to create a user");
-        }
+        }*/
 
         // Define new user
         if (user == null) {
