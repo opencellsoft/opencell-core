@@ -775,17 +775,23 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	public PaymentMethod getPreferredPaymentMethod(AccountOperation ao, PaymentMethodEnum paymentMethodType) {
-
+        PaymentMethod paymentMethod= ao.getCustomerAccount().getPreferredPaymentMethod();
 		if (ao.getSubscription() != null && ao.getSubscription().getPaymentMethod() != null && ao.getSubscription().getPaymentMethod().getPaymentType() == paymentMethodType) {
-			return ao.getSubscription().getPaymentMethod();
+			paymentMethod= ao.getSubscription().getPaymentMethod();
 		}
 		if (ao instanceof RecordedInvoice) {
+			
+			if (((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getPaymentMethod() != null
+					&& ((RecordedInvoice) ao).getInvoice().getPaymentMethod().getPaymentType() == paymentMethodType) {
+				paymentMethod= ((RecordedInvoice) ao).getInvoice().getPaymentMethod();
+			}
 			if (((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod() != null
 					&& ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod().getPaymentType() == paymentMethodType) {
-				return ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod();
+				paymentMethod=((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod();
 			}
 		}
-		return ao.getCustomerAccount().getPreferredPaymentMethod();
+		log.info("getPreferredPaymentMethod Id={} ",paymentMethod.getId());
+		return paymentMethod;
 	}
 
     /**
