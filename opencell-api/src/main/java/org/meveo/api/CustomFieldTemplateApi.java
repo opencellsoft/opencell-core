@@ -60,6 +60,7 @@ import java.util.stream.Collectors;
 @Stateless
 public class CustomFieldTemplateApi extends BaseApi {
 
+    public static final String FIELD_CODE_REGEX = "^[A-Za-z0-9_]+$";
     @Inject
     private CalendarService calendarService;
 
@@ -83,6 +84,8 @@ public class CustomFieldTemplateApi extends BaseApi {
 	private void create(CustomFieldTemplateDto postData, String appliesTo, Boolean updateUniqueConstraint) {
 		if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
+        } else if (!org.meveo.commons.utils.StringUtils.isMatch(postData.getCode(), FIELD_CODE_REGEX)) {
+            throw new BusinessException(String.format("code must match %s", FIELD_CODE_REGEX));
         }
         if (StringUtils.isBlank(postData.getDescription())) {
             missingParameters.add("description");
