@@ -55,9 +55,9 @@ public class RatingCancellationJobBean extends IteratorBasedJobBean<List<Object[
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRED)
-	public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-		super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::applyRatingCancellation, null, null, this::closeResultset, null);
-	}
+    public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::applyRatingCancellation, null, null, this::closeResultset, null);
+    }
 
 	private Optional<Iterator<List<Object[]>>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
 

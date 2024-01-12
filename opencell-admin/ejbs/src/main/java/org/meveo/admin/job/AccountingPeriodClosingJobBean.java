@@ -61,11 +61,11 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
 
     @Inject
     private SubAccountingPeriodService subAccountingPeriodService;
-    
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::closeSubAccountingPeriods, null, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, null, this::closeSubAccountingPeriods, null, null, null);
     }
 
     /**
@@ -94,8 +94,7 @@ public class AccountingPeriodClosingJobBean extends IteratorBasedJobBean<SubAcco
             }
         }
 
-        List<SubAccountingPeriod> subAccountingPeriods =
-                subAccountingPeriodService.findByAccountingPeriodAndEndDate(accountingPeriod, endDate);
+        List<SubAccountingPeriod> subAccountingPeriods = subAccountingPeriodService.findByAccountingPeriodAndEndDate(accountingPeriod, endDate);
         return of(new SynchronizedIterator<>(subAccountingPeriods));
     }
 

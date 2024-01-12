@@ -45,7 +45,7 @@ public class ResumeDunningCollectionPlanJobBean extends IteratorBasedJobBean<Dun
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::readData, null, this::processData, null, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::readData, null, null, this::processData, null, null, null);
     }
 
     private Optional<Iterator<DunningCollectionPlan>> readData(JobExecutionResultImpl jobExecutionResult) {
