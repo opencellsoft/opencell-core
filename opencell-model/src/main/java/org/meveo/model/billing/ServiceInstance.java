@@ -76,6 +76,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.cpq.Attribute;
 import org.meveo.model.cpq.AttributeValue;
 import org.meveo.model.cpq.ProductVersion;
+import org.meveo.model.cpq.commercial.OrderProduct;
 import org.meveo.model.cpq.enums.PriceVersionDateSettingEnum;
 import org.meveo.model.crm.IInvoicingMinimumApplicable;
 import org.meveo.model.order.OrderHistory;
@@ -365,6 +366,10 @@ public class ServiceInstance extends BusinessCFEntity implements IInvoicingMinim
 
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DiscountPlanInstance> discountPlanInstances = new ArrayList<>();
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_product_id")
+    private OrderProduct orderProduct;
 
     /**
      * Gets the end agreement date.
@@ -1323,8 +1328,15 @@ public class ServiceInstance extends BusinessCFEntity implements IInvoicingMinim
 		this.discountPlanInstances = discountPlanInstance;
 	}
 
+    public OrderProduct getOrderProduct() {
+		return orderProduct;
+	}
 
-    @Override
+	public void setOrderProduct(OrderProduct orderProduct) {
+		this.orderProduct = orderProduct;
+	}
+
+	@Override
     public List<DiscountPlanInstance> getAllDiscountPlanInstances() {
         return this.getDiscountPlanInstances();
     }
