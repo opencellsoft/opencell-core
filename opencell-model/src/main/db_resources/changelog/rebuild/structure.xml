@@ -3669,6 +3669,7 @@
             <column name="delivery_date" type="datetime" />
             <column name="price_version_date_setting" type="varchar(255)" />
             <column name="price_version_date" type="datetime" />
+            <column name="order_product_id" type="bigint" />
         </createTable>
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-str-tbl-192">
@@ -17988,6 +17989,14 @@
 			constraintName="fk_rated_transaction_order_product"
 			referencedColumnNames="id" referencedTableName="cpq_order_product" />
 	</changeSet>
+	
+	<changeSet id="#INTRD-20725_20240112_fk" author="AdilElJaouhari">
+		<addForeignKeyConstraint
+			baseColumnNames="order_product_id"
+			baseTableName="billing_service_instance"
+			constraintName="fk_service_instance_order_product"
+			referencedColumnNames="id" referencedTableName="cpq_order_product" />
+	</changeSet>
 
     <!-- end fk -->
 
@@ -21371,6 +21380,7 @@
     <changeSet id="#INTRD-19244_27102023" author="Mbarek-Ay" />
     <changeSet id="#INTRD-20460_20240104" author="zelmeliani" />
     <changeSet id="#INTRD-20501_20240104" author="AdilElJaouhari" />
+    <changeSet id="#INTRD-20725_20240112" author="AdilElJaouhari" />
 
     <!--  !!! PLEASE KEEP THIS CHANGESET AT THE END OF FILE !!! -->
     <changeSet id="#liquibase_hack_structure" author="AbdelmounaimAkadid">
