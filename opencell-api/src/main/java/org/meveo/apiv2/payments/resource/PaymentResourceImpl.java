@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.payment.PayByCardOrSepaDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.PaymentApi;
@@ -215,6 +216,24 @@ public class PaymentResourceImpl implements PaymentResource {
         return ok()
                 .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"" +
                         ",\"message\":\"Rejection action successfully deleted\"}")
+                .build();
+    }
+
+    /**
+     * Delete rejection code based on filters
+     *
+     * @param filters PagingAndFiltering
+     */
+    @Override
+    public Response removeRejectionCode(PagingAndFiltering filters) {
+        if (filters == null || filters.getFilters() == null || filters.getFilters().isEmpty()) {
+            throw new MissingParameterException("No filter provided");
+        }
+        final int deletedCodeCount = paymentApi.removeRejectionCode(filters);
+        return ok()
+                .entity("{\"actionStatus\":{\"status\":\"SUCCESS\"" +
+                        ",\"message\":\"Rejection action successfully deleted\"," +
+                        " \"numberOfDeletedCodes\":" + deletedCodeCount + "}")
                 .build();
     }
 }

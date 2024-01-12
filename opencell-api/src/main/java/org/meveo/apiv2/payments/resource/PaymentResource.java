@@ -13,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.apiv2.payments.ImportRejectionCodeInput;
 import org.meveo.apiv2.payments.PaymentGatewayInput;
 import org.meveo.apiv2.payments.RejectionAction;
@@ -173,4 +174,16 @@ public interface PaymentResource {
                     @ApiResponse(responseCode = "400", description = "RejectionActions deletion failed")
             })
     Response removeRejectionAction(@Parameter(description = "Rejection action id", required = true) @PathParam("id") Long id);
+
+    @DELETE
+    @Path("/rejectionCodes")
+    @Operation(summary = "remove payment rejection code based on filters",
+            tags = {"PaymentRejectionCode"},
+            description = "remove payment rejection code based on filters",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "RejectionCodes successfully deleted"),
+                    @ApiResponse(responseCode = "404", description = "No entity found to remove"),
+                    @ApiResponse(responseCode = "400", description = "RejectionCode deletion failed")
+            })
+    Response removeRejectionCode(@Parameter(required = true) PagingAndFiltering filters);
 }

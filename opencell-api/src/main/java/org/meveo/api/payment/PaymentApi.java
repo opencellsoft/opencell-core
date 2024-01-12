@@ -66,7 +66,6 @@ import org.meveo.api.security.config.annotation.FilterResults;
 import org.meveo.api.security.config.annotation.SecureMethodParameter;
 import org.meveo.api.security.config.annotation.SecuredBusinessEntityMethod;
 import org.meveo.api.security.filter.ListFilter;
-import org.meveo.apiv2.models.ImmutableResource;
 import org.meveo.apiv2.models.Resource;
 import org.meveo.apiv2.payments.ClearingResponse;
 import org.meveo.apiv2.payments.ImmutableClearingResponse;
@@ -866,5 +865,24 @@ public class PaymentApi extends BaseApi {
 		PaymentRejectionAction rejectionAction = ofNullable(paymentRejectionActionService.findById(id))
 				.orElseThrow(() -> new NotFoundException("Payment rejection action not found"));
 		paymentRejectionActionService.remove(rejectionAction);
+	}
+
+	/**
+	 * Delete payment rejection code
+	 *
+	 * @param filters PagingAndFiltering
+	 */
+	public int removeRejectionCode(PagingAndFiltering filters) {
+		PaginationConfiguration configuration = new PaginationConfiguration(filters.getFilters());
+		List<PaymentRejectionCode> paymentRejectionCodes = rejectionCodeService.list(configuration);
+		if (paymentRejectionCodes == null || paymentRejectionCodes.isEmpty()) {
+			throw new NotFoundException("No payment rejection code found");
+		}
+		try {
+			rejectionCodeService.remove(paymentRejectionCodes);
+			return paymentRejectionCodes.size();
+		} catch (Exception exception) {
+			throw new BusinessApiException(exception.getMessage());
+		}
 	}
 }
