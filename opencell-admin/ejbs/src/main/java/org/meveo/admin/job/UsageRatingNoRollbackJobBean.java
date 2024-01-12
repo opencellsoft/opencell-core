@@ -56,8 +56,6 @@ public class UsageRatingNoRollbackJobBean extends IteratorBasedJobBean<EDR> {
     @MeveoJpa
     private EntityManagerWrapper emWrapper;
 
-    private Date rateUntilDate = null;
-    private String ratingGroup = null;
     private boolean hasMore = false;
     private StatelessSession statelessSession;
     private ScrollableResults scrollableResults;
@@ -66,10 +64,7 @@ public class UsageRatingNoRollbackJobBean extends IteratorBasedJobBean<EDR> {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
 
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::rateEDRBatch, this::hasMore, null, null);
-
-        rateUntilDate = null;
-        ratingGroup = null;
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, null, this::rateEDRBatch, this::hasMore, null, null);
     }
 
     /**
@@ -82,8 +77,9 @@ public class UsageRatingNoRollbackJobBean extends IteratorBasedJobBean<EDR> {
 
         JobInstance jobInstance = jobExecutionResult.getJobInstance();
 
-        rateUntilDate = null;
-        ratingGroup = null;
+        Date rateUntilDate = null;
+        String ratingGroup = null;
+
         try {
             rateUntilDate = (Date) this.getParamOrCFValue(jobInstance, "rateUntilDate");
             ratingGroup = (String) this.getParamOrCFValue(jobInstance, "ratingGroup");

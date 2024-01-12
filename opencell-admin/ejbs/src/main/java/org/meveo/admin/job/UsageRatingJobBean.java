@@ -56,7 +56,7 @@ public class UsageRatingJobBean extends IteratorBasedScopedJobBean<Long> {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
 
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::rateEDR, this::rateEDRBatch, this::hasMore, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::rateEDR, this::rateEDRBatch, this::hasMore, null, null);
 
         rateUntilDate = null;
         ratingGroup = null;

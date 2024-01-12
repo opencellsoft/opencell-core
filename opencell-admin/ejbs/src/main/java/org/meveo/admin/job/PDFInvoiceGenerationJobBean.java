@@ -46,7 +46,7 @@ import static java.util.Optional.of;
 public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
     private static final long serialVersionUID = 4420234995792447633L;
-    
+
     @Inject
     private BillingRunService billingRunService;
 
@@ -58,7 +58,7 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::convertToPdf, this::convertToPdfBatch, null, null, this::clearJasperReportCache);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertToPdf, this::convertToPdfBatch, null, null, this::clearJasperReportCache);
     }
 
     /**
@@ -83,7 +83,7 @@ public class PDFInvoiceGenerationJobBean extends IteratorBasedJobBean<Long> {
                 jobExecutionResult.addErrorReport(e.getMessage());
             }
         }
-        
+
         if (billingRunId != null) {
             BillingRun billingRun = billingRunService.findById(billingRunId);
             if (billingRun != null) {

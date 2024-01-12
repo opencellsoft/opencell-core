@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 @Stateless
 public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
 
+    private static final long serialVersionUID = -8747049868178914722L;
+
     @Inject
     private AccountOperationService accountOperationService;
     @Inject
@@ -47,7 +49,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::executeScript, null, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, null, this::executeScript, null, null, null);
     }
 
     private Optional<Iterator<Long>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
@@ -60,15 +62,13 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
             return Optional.of(new SynchronizedIterator<>(Collections.emptyList()));
         }
 
-        return Optional.of(new SynchronizedIterator<>(accountOperations.stream()
-                .map(AccountOperation::getId).collect(Collectors.toList())));
+        return Optional.of(new SynchronizedIterator<>(accountOperations.stream().map(AccountOperation::getId).collect(Collectors.toList())));
     }
 
     private void executeScript(List<Long> idAOs, JobExecutionResultImpl jobExecutionResult) throws BusinessException {
         List<AccountOperation> accountOperations = accountOperationService.findByIds(idAOs);
 
-        Optional.ofNullable(accountOperations).orElse(Collections.emptyList())
-                .forEach(accountOperation -> {
+        Optional.ofNullable(accountOperations).orElse(Collections.emptyList()).forEach(accountOperation -> {
                     OCCTemplate occT = null;
                     try {
                         // Find OOC Template
@@ -95,9 +95,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
                         script.execute(methodContext);
 
                         List<JournalEntry> createdEntries = (List<JournalEntry>) methodContext.get(Script.RESULT_VALUE);
-                        log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}",
-                                createdEntries == null ? 0 : createdEntries.size(),
-                                accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
+                log.info("Process {} JournalEntry for AO={}, OCC={}, ASCH={}", createdEntries == null ? 0 : createdEntries.size(), accountOperation.getId(), occT.getId(), occT.getAccountingScheme().getCode());
 
                         accountOperation.setStatus(AccountOperationStatus.EXPORTED);
                         accountOperationService.update(accountOperation);
@@ -111,8 +109,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
                     } catch (Exception e) {
                         log.error("Error during process AO={} - {}", accountOperation.getId(), e.getMessage());
                         log.debug("Error during process AO={} - {}", accountOperation.getId(), e.getMessage(), e);
-                        jobExecutionResult.registerError(buildTechnicalError(accountOperation,
-                                (occT == null ? "UNDEFINED" : occT.getAccountingScheme().getScriptInstance().getCode()), e));
+                jobExecutionResult.registerError(buildTechnicalError(accountOperation, (occT == null ? "UNDEFINED" : occT.getAccountingScheme().getScriptInstance().getCode()), e));
                         accountOperationService.updateStatusInNewTransaction(List.of(accountOperation), AccountOperationStatus.EXPORT_FAILED, e.getMessage());
                         throw new BusinessException(e);
                     }
@@ -134,8 +131,7 @@ public class AccountingSchemesJobBean extends IteratorBasedJobBean<Long> {
     }
 
     private String buildTechnicalError(AccountOperation ao, String scriptCode, Exception e) {
-        return "Account operation (id=" + ao.getId() + ", type=" + ao.getType() + ")" +
-                " couldn't be processed by accounting scheme (code=" + scriptCode + "): " + e.getMessage();
+        return "Account operation (id=" + ao.getId() + ", type=" + ao.getType() + ")" + " couldn't be processed by accounting scheme (code=" + scriptCode + "): " + e.getMessage();
     }
 
 }

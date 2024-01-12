@@ -82,7 +82,7 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED) // Transaction set to REQUIRED, so ScrollableResultset would do paging. With TX=NEVER all data is retrieved at once resulting in memory increase
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::bindRTs);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::initJobOnWorkerNode, null, this::convertWoToRTBatch, this::hasMore, this::closeResultset, this::bindRTs);
     }
 
     /**
@@ -113,6 +113,15 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
     }
 
     /**
+     * Initialize job settings on worker node
+     * 
+     * @param jobExecutionResult Job execution result
+     */
+    private void initJobOnWorkerNode(JobExecutionResultImpl jobExecutionResult) {
+
+    }
+
+    /**
      * Convert a multiple Wallet operations to a Rated transactions
      * 
      * @param walletOperations Wallet operations
@@ -132,8 +141,12 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
      * @param jobExecutionResult Job execution result
      */
     private void closeResultset(JobExecutionResultImpl jobExecutionResult) {
-        if(scrollableResults !=null) scrollableResults.close();
-        if(statelessSession !=null) statelessSession.close();
+        if (scrollableResults != null) {
+            scrollableResults.close();
+        }
+        if (statelessSession != null) {
+            statelessSession.close();
+        }
     }
 
     /**
@@ -142,7 +155,6 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
      * @param jobExecutionResult Job execution result
      */
     private void bindRTs(JobExecutionResultImpl jobExecutionResult) {
-
         if (jobExecutionResult.getJobLauncherEnum() != JobLauncherEnum.WORKER && jobExecutionResult.getStatus() != JobExecutionResultStatusEnum.CANCELLED && nrOfRecords != null && nrOfRecords.intValue() > 0) {
             ratedTransactionService.bridgeDiscountRTs(minId, maxId);
         }
@@ -166,8 +178,7 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
         int processNrInJobRun = ParamBean.getInstance().getPropertyAsInteger("jobs.ratedTransactionsJob.processNrInJobRun", 4000000);
 
         if (jobItemsLimit > 0) {
-            List<Long> ids = emWrapper.getEntityManager().createNamedQuery("WalletOperation.getOpenIds", Long.class)
-                    .setMaxResults(jobItemsLimit).getResultList();
+            List<Long> ids = emWrapper.getEntityManager().createNamedQuery("WalletOperation.getOpenIds", Long.class).setMaxResults(jobItemsLimit).getResultList();
 
             nrOfRecords = Long.valueOf(ids.size());
             if (!ids.isEmpty()) {
@@ -187,9 +198,8 @@ public class RatedTransactionsJobBean extends IteratorBasedScopedJobBean<WalletO
         }
 
         statelessSession = emWrapper.getEntityManager().unwrap(Session.class).getSessionFactory().openStatelessSession();
-        scrollableResults = statelessSession.createNamedQuery("WalletOperationNative.listConvertToRTs").setParameter("maxId", maxId)
-                .setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun > jobItemsLimit && jobItemsLimit > 0 ? jobItemsLimit : processNrInJobRun)
-                .setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
+        scrollableResults = statelessSession.createNamedQuery("WalletOperationNative.listConvertToRTs").setParameter("maxId", maxId).setReadOnly(true).setCacheable(false)
+            .setMaxResults(processNrInJobRun > jobItemsLimit && jobItemsLimit > 0 ? jobItemsLimit : processNrInJobRun).setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
 
         hasMore = nrOfRecords >= processNrInJobRun;
 

@@ -70,7 +70,7 @@ public class AuditDataLogAggregationJobBean extends IteratorBasedJobBean<List<Au
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::aggregateAuditDataLogs, this::hasMore, this::closeResultset, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, null, this::aggregateAuditDataLogs, this::hasMore, this::closeResultset, null);
     }
 
     /**

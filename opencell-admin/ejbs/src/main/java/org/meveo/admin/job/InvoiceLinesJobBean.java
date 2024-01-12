@@ -74,6 +74,8 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
 
     private static final String BR_PROCESSED = "brProcessed";
 
+    private static final String BR_CURRENT = "brCurrent";
+
     @Inject
     private BillingRunExtensionService billingRunExtensionService;
 
@@ -110,7 +112,7 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED) // Transaction set to REQUIRED, so ScrollableResultset would do paging. With TX=NEVER all data is retrieved at once resulting in memory increase
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::createInvoiceLines, null, this::hasMore, this::closeResultset, this::closeBillingRun);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::initJobOnWorkerNode, this::createInvoiceLines, null, this::hasMore, this::closeResultset, this::closeBillingRun);
     }
 
     /**
@@ -119,7 +121,6 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
      * @param jobExecutionResult Job execution result
      * @return An iterator over a list of Wallet operation Ids to convert to Rated transactions
      */
-    @SuppressWarnings({"unchecked"})
     private Optional<Iterator<List<Map<String, Object>>>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
         return getIterator(jobExecutionResult);
     }
@@ -226,10 +227,10 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
             Long minId = ((Number) minMax[0]).longValue();
             Long maxId = ((Number) minMax[1]).longValue();
 
-            return new Long[]{minId, maxId};
+            return new Long[] { minId, maxId };
 
         } else {
-            return new Long[]{null, null};
+            return new Long[] { null, null };
         }
     }
 
@@ -423,6 +424,8 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
                 }
             }
 
+            jobInstance.setParamValue(BR_CURRENT, currentBillingRun.getId());
+
             break;
         }
 
@@ -430,8 +433,8 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
         minId = (Long) convertSummary[0];
         maxId = (Long) convertSummary[1];
 
-        scrollableResults = aggregationQueryInfo.getQuery().setReadOnly(true).setCacheable(false)
-                .setMaxResults(processNrInJobRun > jobItemsLimit ? jobItemsLimit : processNrInJobRun).setFetchSize(fetchSize).scroll(ScrollMode.FORWARD_ONLY);
+        scrollableResults = aggregationQueryInfo.getQuery().setReadOnly(true).setCacheable(false).setMaxResults(processNrInJobRun > jobItemsLimit ? jobItemsLimit : processNrInJobRun).setFetchSize(fetchSize)
+            .scroll(ScrollMode.FORWARD_ONLY);
 
         Long nrOfRecords = aggregationQueryInfo.getNumberOfIL();
         List<String> aggregationFields = aggregationQueryInfo.getFieldNames();
@@ -482,6 +485,27 @@ public class InvoiceLinesJobBean extends IteratorBasedScopedJobBean<List<Map<Str
 
             });
         }
+    }
+
+    /**
+     * Initialize job settings on Worker node
+     * 
+     * @param jobExecutionResult Job execution result
+     */
+    private void initJobOnWorkerNode(JobExecutionResultImpl jobExecutionResult) {
+
+        JobInstance jobInstance = jobExecutionResult.getJobInstance();
+
+        Long brId = (Long) jobInstance.getParamValue(BR_CURRENT);
+        if (brId== null) {
+            jobExecutionResult.addReportToBeginning("No billing run ID received in job execution parameters");
+            return;
+        }
+        currentBillingRun = billingRunService.findById(brId);
+
+        // Determine aggregation options from Billing run
+        aggregationConfiguration = new AggregationConfiguration(currentBillingRun);
+        aggregationConfiguration.setEnterprise(appProvider.isEntreprise());
     }
 
     @Override

@@ -38,7 +38,7 @@ public class ArticleMappingJobBean extends IteratorBasedScopedJobBean<Accounting
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl jobExecutionResult, JobInstance jobInstance) {
-        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, this::assignAccountingArticle, this::assignAccountingArticles, null, null, null);
+        super.execute(jobExecutionResult, jobInstance, this::initJobAndGetDataToProcess, null, this::assignAccountingArticle, this::assignAccountingArticles, null, null, null);
     }
 
     private Optional<Iterator<AccountingArticleAssignmentItem>> initJobAndGetDataToProcess(JobExecutionResultImpl jobExecutionResult) {
