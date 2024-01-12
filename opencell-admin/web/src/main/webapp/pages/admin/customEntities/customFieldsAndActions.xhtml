@@ -262,7 +262,7 @@
 
                 <h:panelGrid columns="2" columnClasses="Wid40 Responsive100 VAlignTop, Wid60 Responsive100 VAlignTop">
                     <h:panelGroup>
-                        <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" required="true" allowEdit="false" componentWidth="100" size="56" />
+                        <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" pattern="[A-Za-z0-9_]+" required="true" allowEdit="false" componentWidth="100" size="56" />
                         <hftl:decorateFormField label="#{messages['customFieldTemplate.dbFieldname']}" rendered="#{!customEntityTemplateBean.entity.transient and customEntityTemplateBean.customTable}">
                             <h:outputText value="#{customFieldTemplateBean.entity.dbFieldname}" />
                         </hftl:decorateFormField>
