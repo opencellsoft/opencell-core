@@ -40,6 +40,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.AccountOperation;
@@ -775,23 +776,26 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	}
 
 	public PaymentMethod getPreferredPaymentMethod(AccountOperation ao, PaymentMethodEnum paymentMethodType) {
-        PaymentMethod paymentMethod= ao.getCustomerAccount().getPreferredPaymentMethod();
-		if (ao.getSubscription() != null && ao.getSubscription().getPaymentMethod() != null && ao.getSubscription().getPaymentMethod().getPaymentType() == paymentMethodType) {
-			paymentMethod= ao.getSubscription().getPaymentMethod();
-		}
+		
 		if (ao instanceof RecordedInvoice) {
-			
-			if (((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getPaymentMethod() != null
-					&& ((RecordedInvoice) ao).getInvoice().getPaymentMethod().getPaymentType() == paymentMethodType) {
-				paymentMethod= ((RecordedInvoice) ao).getInvoice().getPaymentMethod();
-			}
-			if (((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod() != null
-					&& ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod().getPaymentType() == paymentMethodType) {
-				paymentMethod=((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod();
-			}
+			Invoice invoice =((RecordedInvoice) ao).getInvoice();
+			if (invoice!= null && invoice.getPaymentMethod() != null
+					&& invoice.getPaymentMethod().getPaymentType() == paymentMethodType) {
+				log.info("getPreferredPaymentMethod invoiceId={},paymentMethodId={}",invoice.getId(),invoice.getPaymentMethod().getId());
+				return invoice.getPaymentMethod();
+			}	
 		}
-		log.info("getPreferredPaymentMethod Id={} ",paymentMethod.getId());
-		return paymentMethod;
+		if (ao.getSubscription() != null && ao.getSubscription().getPaymentMethod() != null && ao.getSubscription().getPaymentMethod().getPaymentType() == paymentMethodType) {
+			return ao.getSubscription().getPaymentMethod();
+		}
+		
+		if (((RecordedInvoice) ao).getInvoice() != null && ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod() != null
+				&& ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod().getPaymentType() == paymentMethodType) {
+			return ((RecordedInvoice) ao).getInvoice().getBillingAccount().getPaymentMethod();
+		}
+		
+		
+		return ao.getCustomerAccount().getPreferredPaymentMethod();
 	}
 
     /**
