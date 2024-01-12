@@ -22,6 +22,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,6 +42,8 @@ import org.meveo.model.BaseEntity;
 @Table(name = "audit_log")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "audit_log_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "AuditLog.purgeAuditLog", query = "delete from AuditLog a where a.created < :purgeDate")})
 public class AuditLog extends BaseEntity {
 
     private static final long serialVersionUID = -8920671560100707762L;
