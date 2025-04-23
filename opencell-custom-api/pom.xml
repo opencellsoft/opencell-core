@@ -7,7 +7,7 @@
 		<groupId>com.opencellsoft</groupId>
 		<artifactId>opencell</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>17.0.0-SNAPSHOT</version>
+		<version>17.0.0</version>
 	</parent>
 	<artifactId>opencell-custom-api</artifactId>
 	<name>Opencell Custom API</name>
